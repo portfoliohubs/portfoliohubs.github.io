@@ -1,293 +1,2149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ .Site.Language.Lang }}" dir="{{ if eq .Site.Language.LanguageDirection "rtl" }}rtl{{ else }}ltr{{ end }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page - Language Switcher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .language-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .language-switcher select {
-            padding: 8px 15px;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #667eea;
-            background: white;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .language-switcher select:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        p {
-            color: #666;
-            line-height: 1.8;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            animation: fadeIn 0.7s ease-in;
-        }
-
-        .feature-list {
-            text-align: left;
-            margin: 30px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .feature-list li {
-            margin: 10px 0;
-            color: #555;
-            font-size: 1em;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .welcome-message {
-            font-size: 1.3em;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>{{ if .Site.Params.seo.title }}{{ .Site.Params.seo.title }}{{ else }}{{ .Site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ .Site.Params.seo.description }}">
+  <meta name="keywords" content="{{ .Site.Params.seo.keywords }}">
+  <meta name="author" content="{{ .Site.Params.author }}">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ .Site.Title }}">
+  <meta property="og:description" content="{{ .Site.Params.seo.description }}">
+  <meta property="og:image" content="{{ .Site.BaseURL }}{{ .Site.Params.seo.og_image }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="{{ .Site.Language.Lang }}_{{ upper .Site.Language.Lang }}">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Site.Title }}">
+  <meta name="twitter:description" content="{{ .Site.Params.seo.description }}">
+  <meta name="twitter:image" content="{{ .Site.BaseURL }}{{ .Site.Params.seo.og_image }}">
+  {{ if .Site.Params.seo.twitter_handle }}<meta name="twitter:site" content="{{ .Site.Params.seo.twitter_handle }}">{{ end }}
+  
+  <!-- Google Search Console -->
+  {{ if .Site.Params.seo.google_search_console_verify }}
+  <meta name="google-site-verification" content="{{ .Site.Params.seo.google_search_console_verify }}">
+  {{ end }}
+  
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics 4 -->
+  {{ if .Site.Params.seo.google_analytics_id }}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.seo.google_analytics_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ .Site.Params.seo.google_analytics_id }}');
+  </script>
+  {{ end }}
+  
+  <!-- Critical CSS (Inline) -->
+  <style>
+    /* ============================================
+       CSS VARIABLES - Blue Premium Design System
+       ============================================ */
+    :root {
+      /* Light Mode */
+      --bg-primary: {{ .Site.Params.style.bg_primary_light }};
+      --bg-secondary: {{ .Site.Params.style.bg_secondary_light }};
+      --bg-surface: {{ .Site.Params.style.bg_surface_light }};
+      --text-primary: {{ .Site.Params.style.text_primary_light }};
+      --text-secondary: {{ .Site.Params.style.text_secondary_light }};
+      --text-muted: {{ .Site.Params.style.text_muted_light }};
+      --border: {{ .Site.Params.style.border_light }};
+      
+      /* Brand Colors */
+      --brand-primary: {{ .Site.Params.style.brand_primary }};
+      --brand-secondary: {{ .Site.Params.style.brand_secondary }};
+      --brand-accent: {{ .Site.Params.style.brand_accent }};
+      --brand-dark: {{ .Site.Params.style.brand_dark }};
+      
+      /* Status Colors */
+      --success: {{ .Site.Params.style.success }};
+      --warning: {{ .Site.Params.style.warning }};
+      --error: {{ .Site.Params.style.error }};
+      
+      /* Fonts */
+      --font-primary: {{ .Site.Params.style.font_primary }};
+      --font-arabic: {{ .Site.Params.style.font_arabic }};
+      
+      /* Spacing */
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+      --spacing-2xl: 4rem;
+      
+      /* Border Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Dark Mode */
+    [data-theme="dark"] {
+      --bg-primary: {{ .Site.Params.style.bg_primary_dark }};
+      --bg-secondary: {{ .Site.Params.style.bg_secondary_dark }};
+      --bg-surface: {{ .Site.Params.style.bg_surface_dark }};
+      --text-primary: {{ .Site.Params.style.text_primary_dark }};
+      --text-secondary: {{ .Site.Params.style.text_secondary_dark }};
+      --text-muted: {{ .Site.Params.style.text_muted_dark }};
+      --border: {{ .Site.Params.style.border_dark }};
+      --brand-primary: {{ .Site.Params.style.brand_secondary }};
+      --brand-secondary: {{ .Site.Params.style.brand_primary }};
+    }
+    
+    /* ============================================
+       RESET & BASE STYLES
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+    
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    /* Arabic Typography Fix */
+    [lang="ar"] {
+      font-family: var(--font-arabic);
+    }
+    
+    [lang="ar"] h1,
+    [lang="ar"] h2,
+    [lang="ar"] h3,
+    [lang="ar"] h4 {
+      line-height: 1.7;
+      font-weight: 700;
+    }
+    
+    /* RTL Support */
+    [dir="rtl"] {
+      direction: rtl;
+      text-align: right;
+    }
+    
+    [dir="rtl"] .whatsapp-float {
+      left: auto;
+      right: 24px;
+    }
+    
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+    
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.875rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+    h6 { font-size: 1.125rem; }
+    
+    p {
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-secondary);
+    }
+    
+    a {
+      color: var(--brand-primary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    a:hover {
+      color: var(--brand-accent);
+    }
+    
+    /* ============================================
+       CONTAINER & LAYOUT
+       ============================================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+    
+    section {
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    /* ============================================
+       NAVBAR
+       ============================================ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    [data-theme="dark"] .navbar {
+      background: rgba(2, 6, 23, 0.8);
+      border-bottom-color: rgba(96, 165, 250, 0.1);
+    }
+    
+    .navbar-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-sm) var(--spacing-md);
+      height: 70px;
+    }
+    
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      list-style: none;
+    }
+    
+    .nav-link {
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: var(--brand-primary);
+    }
+    
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .lang-switcher {
+      display: flex;
+      gap: var(--spacing-xs);
+      background: var(--bg-surface);
+      padding: 4px;
+      border-radius: var(--radius-md);
+    }
+    
+    .lang-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .lang-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    
+    .lang-btn.active {
+      background: var(--brand-primary);
+      color: white;
+    }
+    
+    .lang-btn.active:hover {
+      background: var(--brand-accent);
+    }
+    
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+    
+    .theme-toggle:hover {
+      background: var(--brand-primary);
+      color: white;
+      border-color: var(--brand-primary);
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background-color 0.2s ease;
+    }
+    
+    .mobile-menu-btn:active {
+      background: var(--bg-surface);
+    }
+    
+    .nav-link {
+      padding: var(--spacing-sm) var(--spacing-md);
+      display: block;
+      border-radius: var(--radius-sm);
+      transition: background-color 0.2s ease;
+    }
+    
+    .nav-link:active {
+      background: var(--bg-surface);
+    }
+    
+    /* ============================================
+       BUTTONS
+       ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      min-height: 44px; /* Better touch target */
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      color: white;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+      border-color: var(--brand-primary);
+    }
+    
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      padding-top: 70px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-2xl) var(--spacing-md);
+    }
+    
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-subtitle {
+      font-size: clamp(1.125rem, 2vw, 1.5rem);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xl);
+      max-width: 700px;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-2xl);
+    }
+    
+    .hero-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-xl);
+    }
+    
+    .feature-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--brand-primary);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-primary);
+    }
+    
+    .feature-desc {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+    
+    /* ============================================
+       STATISTICS SECTION
+       ============================================ */
+    .stats-section {
+      background: var(--bg-secondary);
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    
+    .stat-card {
+      text-align: center;
+      padding: var(--spacing-md);
+    }
+    
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    
+    /* ============================================
+       NICHES SECTION
+       ============================================ */
+    .niches-section {
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+    
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .niches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    
+    .niche-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .niche-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--brand-primary);
+    }
+    
+    .niche-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    
+    .niche-content {
+      padding: var(--spacing-md);
+    }
+    
+    .niche-icon {
+      font-size: 2rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .niche-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .niche-description {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .niche-link {
+      color: var(--brand-primary);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    /* ============================================
+       FEATURES SECTION
+       ============================================ */
+    .features-section {
+      background: var(--bg-secondary);
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    
+    /* ============================================
+       PROCESS SECTION
+       ============================================ */
+    .process-section {
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    
+    .process-step {
+      position: relative;
+      padding: var(--spacing-md);
+    }
+    
+    .process-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      opacity: 0.2;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .process-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .process-desc {
+      color: var(--text-secondary);
+    }
+    
+    /* ============================================
+       TESTIMONIALS SECTION
+       ============================================ */
+    .testimonials-section {
+      background: var(--bg-secondary);
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    
+    .testimonial-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+    }
+    
+    .testimonial-rating {
+      color: var(--warning);
+      margin-bottom: var(--spacing-sm);
+      font-size: 1.25rem;
+    }
+    
+    .testimonial-content {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      font-style: italic;
+    }
+    
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .testimonial-role {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    /* ============================================
+       CTA SECTION
+       ============================================ */
+    .final-cta {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      color: white;
+      padding: var(--spacing-2xl) 0;
+      text-align: center;
+    }
+    
+    .final-cta h2 {
+      color: white;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .final-cta p {
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+    
+    .final-cta .btn {
+      background: white;
+      color: var(--brand-primary);
+    }
+    
+    .final-cta .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* ============================================
+       FOOTER
+       ============================================ */
+    .footer {
+      background: var(--bg-surface);
+      padding: var(--spacing-xl) 0;
+      border-top: 1px solid var(--border);
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .footer-section h3 {
+      font-size: 1.25rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .footer-links a {
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    .footer-links a:hover {
+      color: var(--brand-primary);
+    }
+    
+    .footer-links li {
+      color: var(--text-primary);
+    }
+    
+    /* Fix contrast for light mode */
+    [data-theme="light"] .footer-links a,
+    [data-theme="light"] .footer-links li {
+      color: var(--text-primary);
+    }
+    
+    [data-theme="light"] .stat-label {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .testimonial-content {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .testimonial-role {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="light"] .project-meta {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="light"] .niche-description {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .feature-desc {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .process-desc {
+      color: var(--text-secondary);
+    }
+    
+    /* Icon styles */
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .icon-md {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .icon-lg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .icon-xl {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .social-link svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+    
+    .footer-social {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-sm);
+    }
+    
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 1.25rem;
+    }
+    
+    .social-link:hover {
+      background: var(--brand-primary);
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    
+    /* ============================================
+       WHATSAPP FLOATING BUTTON
+       ============================================ */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      width: 60px;
+      height: 60px;
+      background: #25D366;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      z-index: 999;
+      font-size: 1.5rem;
+      text-decoration: none;
+      animation: pulse 2s infinite;
+      transition: transform 0.3s ease;
+    }
+    
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      }
+      50% {
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.6);
+      }
+    }
+    
+    /* ============================================
+       MOBILE-FIRST RESPONSIVE DESIGN
+       ============================================ */
+    
+    /* Mobile Styles (default - up to 767px) */
+    @media (max-width: 767px) {
+      /* Navigation */
+      .nav-menu {
+        display: none;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+        box-shadow: var(--shadow-lg);
+      }
+      
+      .nav-menu.active {
+        display: flex;
+        transform: translateX(0);
+      }
+      
+      [dir="rtl"] .nav-menu {
+        transform: translateX(100%);
+      }
+      
+      [dir="rtl"] .nav-menu.active {
+        transform: translateX(0);
+      }
+      
+      .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .navbar-container {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        height: 64px;
+      }
+      
+      .nav-logo {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      
+      .lang-switcher {
+        gap: 2px;
+        padding: 2px;
+      }
+      
+      .lang-btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+      }
+      
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+      }
+      
+      /* Hero Section */
+      .hero {
+        padding-top: 64px;
+        min-height: auto;
+        padding-bottom: var(--spacing-xl);
+      }
+      
+      .hero-content {
+        padding: var(--spacing-lg) var(--spacing-sm);
+      }
+      
+      .hero-title {
+        font-size: 1.875rem;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-sm);
+        word-wrap: break-word;
+      }
+      
+      .hero-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: var(--spacing-lg);
+      }
+      
+      .hero-cta {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-xl);
+        width: 100%;
+      }
+      
+      .hero-cta .btn {
+        width: 100%;
+        padding: 16px 24px;
+        font-size: 1rem;
+        justify-content: center;
+        min-height: 48px;
+      }
+      
+      .hero-features {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+      }
+      
+      .feature-card {
+        padding: var(--spacing-md);
+        text-align: center;
+      }
+      
+      .feature-icon {
+        font-size: 2.25rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .feature-title {
+        font-size: 1.125rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .feature-desc {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      
+      /* Statistics */
+      .stats-section {
+        padding: var(--spacing-lg) 0;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+      }
+      
+      .stat-card {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+      
+      .stat-icon {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .stat-number {
+        font-size: 2.25rem;
+        margin-bottom: 6px;
+        line-height: 1;
+      }
+      
+      .stat-label {
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+      
+      /* Sections */
+      section {
+        padding: var(--spacing-lg) 0;
+      }
+      
+      .section-header {
+        margin-bottom: var(--spacing-lg);
+      }
+      
+      .section-title {
+        font-size: 1.75rem;
+        line-height: 1.3;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .section-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      
+      /* Typography */
+      h1 { font-size: 1.75rem; line-height: 1.3; }
+      h2 { font-size: 1.5rem; line-height: 1.3; }
+      h3 { font-size: 1.25rem; line-height: 1.4; }
+      
+      /* Grids */
+      .niches-grid,
+      .features-grid,
+      .process-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+      }
+      
+      .niche-card {
+        margin-bottom: 0;
+      }
+      
+      .niche-image {
+        height: 160px;
+        font-size: 2.5rem;
+      }
+      
+      .niche-content {
+        padding: var(--spacing-md);
+      }
+      
+      .niche-icon {
+        font-size: 1.75rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .niche-title {
+        font-size: 1.25rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .niche-description {
+        font-size: 0.875rem;
+        margin-bottom: var(--spacing-md);
+        line-height: 1.6;
+      }
+      
+      .niche-link {
+        font-size: 0.9rem;
+      }
+      
+      .process-step {
+        padding: var(--spacing-sm);
+      }
+      
+      .process-number {
+        font-size: 2.5rem;
+      }
+      
+      .process-title {
+        font-size: 1.2rem;
+      }
+      
+      .process-desc {
+        font-size: 0.9rem;
+      }
+      
+      /* Testimonials */
+      .testimonial-card {
+        padding: var(--spacing-sm);
+      }
+      
+      .testimonial-rating {
+        font-size: 1rem;
+      }
+      
+      .testimonial-content {
+        font-size: 0.9rem;
+      }
+      
+      /* CTA Section */
+      .final-cta {
+        padding: var(--spacing-xl) var(--spacing-sm);
+      }
+      
+      .final-cta h2 {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+      }
+      
+      .final-cta p {
+        font-size: 0.95rem;
+        margin-bottom: var(--spacing-md);
+      }
+      
+      .final-cta .btn {
+        width: 100%;
+        margin: 4px 0;
+      }
+      
+      /* Footer */
+      .footer {
+        padding: var(--spacing-lg) 0;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+      }
+      
+      .footer-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .footer-links li {
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .footer-links a {
+        font-size: 0.9rem;
+      }
+      
+      /* Container */
+      .container {
+        padding: 0 var(--spacing-sm);
+      }
+      
+      /* WhatsApp Float */
+      .whatsapp-float {
+        width: 56px;
+        height: 56px;
+        bottom: 20px;
+        left: 20px;
+      }
+      
+      [dir="rtl"] .whatsapp-float {
+        left: auto;
+        right: 20px;
+      }
+      
+      .whatsapp-float svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    /* Tablet Styles (768px - 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .nav-menu {
+        display: flex;
+      }
+      
+      .mobile-menu-btn {
+        display: none;
+      }
+      
+      .hero-features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .niches-grid,
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .hero-title {
+        font-size: 2.75rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.15rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+      
+      .hero-cta {
+        flex-direction: row;
+      }
+      
+      .hero-cta .btn {
+        width: auto;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* Desktop Styles (1024px+) */
+    @media (min-width: 1024px) {
+      .nav-menu {
+        display: flex;
+      }
+      
+      .mobile-menu-btn {
+        display: none;
+      }
+      
+      .hero-features {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .niches-grid,
+      .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .process-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+      }
+      
+      .hero-subtitle {
+        font-size: clamp(1.125rem, 2vw, 1.5rem);
+      }
+      
+      .section-title {
+        font-size: clamp(2rem, 4vw, 3rem);
+      }
+      
+      .section-subtitle {
+        font-size: 1.25rem;
+      }
+      
+      h1 { font-size: 3rem; }
+      h2 { font-size: 2.25rem; }
+      h3 { font-size: 1.875rem; }
+      
+      .hero-cta {
+        flex-direction: row;
+      }
+      
+      .hero-cta .btn {
+        width: auto;
+      }
+      
+      .navbar-container {
+        height: 70px;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+    }
+    
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* ============================================
+       UTILITY CLASSES
+       ============================================ */
+    .text-center {
+      text-align: center;
+    }
+    
+    .mt-1 { margin-top: var(--spacing-sm); }
+    .mt-2 { margin-top: var(--spacing-md); }
+    .mt-3 { margin-top: var(--spacing-lg); }
+    
+    .mb-1 { margin-bottom: var(--spacing-sm); }
+    .mb-2 { margin-bottom: var(--spacing-md); }
+    .mb-3 { margin-bottom: var(--spacing-lg); }
+  </style>
 </head>
 <body>
-    <div class="language-switcher">
-        <select id="languageSelect" onchange="switchLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="ar">العربية</option>
-            <option value="zh">中文</option>
-            <option value="ja">日本語</option>
-        </select>
-    </div>
-
-    <div class="container">
-        <h1 id="title">Welcome to Our Home Page</h1>
-        <p class="welcome-message" id="welcome">We're glad you're here!</p>
-        <p id="description">This is a beautiful home page with built-in language switching functionality. You can change the language using the dropdown menu in the top right corner.</p>
-        
-        <div class="feature-list">
-            <ul id="features">
-                <li>Easy language switching</li>
-                <li>No external files required</li>
-                <li>Beautiful modern design</li>
-                <li>Responsive layout</li>
-            </ul>
+  
+  <!-- Fixed Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      {{ $homeURL := "/" }}
+      {{ range .Site.Sites }}
+        {{ if eq .Language.Lang $.Site.Language.Lang }}
+          {{ $homeURL = .BaseURL }}
+        {{ end }}
+      {{ end }}
+      <a href="{{ $homeURL }}" class="nav-logo">
+        {{ .Site.Title }}
+      </a>
+      
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="{{ $homeURL }}#niches" class="nav-link" 
+               data-lang-en="Portfolio" 
+               data-lang-ar="المحفظة">
+          {{ if eq .Site.Language.Lang "ar" }}المحفظة{{ else }}Portfolio{{ end }}
+        </a></li>
+        <li><a href="{{ $homeURL }}#contact" class="nav-link"
+               data-lang-en="Contact"
+               data-lang-ar="اتصل بنا">
+          {{ if eq .Site.Language.Lang "ar" }}اتصل بنا{{ else }}Contact{{ end }}
+        </a></li>
+      </ul>
+      
+      <div class="nav-actions">
+        <div class="lang-switcher">
+          {{ range .Site.Sites }}
+            <button 
+              type="button"
+              class="lang-btn {{ if eq .Language.Lang $.Site.Language.Lang }}active{{ end }}"
+              data-lang="{{ .Language.Lang }}"
+              data-dir="{{ if eq .Language.LanguageDirection "rtl" }}rtl{{ else }}ltr{{ end }}"
+              aria-label="Switch to {{ .Language.LanguageName }}">
+              {{ .Language.LanguageName }}
+            </button>
+          {{ end }}
         </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span id="themeIcon" class="icon icon-md">
+            {{ partial "icons.html" (dict "icon" "moon" "size" "20") }}
+          </span>
+        </button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <span class="icon icon-lg">
+            {{ partial "icons.html" (dict "icon" "menu" "size" "24") }}
+          </span>
+        </button>
+      </div>
     </div>
-
-    <script>
-        // Language translations - all contained in this file
-        const translations = {
-            en: {
-                title: "Welcome to Our Home Page",
-                welcome: "We're glad you're here!",
-                description: "This is a beautiful home page with built-in language switching functionality. You can change the language using the dropdown menu in the top right corner.",
-                features: [
-                    "Easy language switching",
-                    "No external files required",
-                    "Beautiful modern design",
-                    "Responsive layout"
-                ]
-            },
-            es: {
-                title: "Bienvenido a Nuestra Página de Inicio",
-                welcome: "¡Nos alegra que estés aquí!",
-                description: "Esta es una hermosa página de inicio con funcionalidad de cambio de idioma integrada. Puedes cambiar el idioma usando el menú desplegable en la esquina superior derecha.",
-                features: [
-                    "Cambio de idioma fácil",
-                    "No se requieren archivos externos",
-                    "Diseño moderno y hermoso",
-                    "Diseño responsivo"
-                ]
-            },
-            fr: {
-                title: "Bienvenue sur Notre Page d'Accueil",
-                welcome: "Nous sommes ravis que vous soyez ici!",
-                description: "Ceci est une belle page d'accueil avec une fonctionnalité de changement de langue intégrée. Vous pouvez changer la langue en utilisant le menu déroulant dans le coin supérieur droit.",
-                features: [
-                    "Changement de langue facile",
-                    "Aucun fichier externe requis",
-                    "Design moderne et magnifique",
-                    "Mise en page responsive"
-                ]
-            },
-            de: {
-                title: "Willkommen auf Unserer Startseite",
-                welcome: "Wir freuen uns, dass Sie hier sind!",
-                description: "Dies ist eine schöne Startseite mit integrierter Sprachumschaltfunktion. Sie können die Sprache über das Dropdown-Menü in der oberen rechten Ecke ändern.",
-                features: [
-                    "Einfacher Sprachwechsel",
-                    "Keine externen Dateien erforderlich",
-                    "Schönes modernes Design",
-                    "Responsives Layout"
-                ]
-            },
-            it: {
-                title: "Benvenuto nella Nostra Home Page",
-                welcome: "Siamo felici che tu sia qui!",
-                description: "Questa è una bellissima home page con funzionalità di cambio lingua integrata. Puoi cambiare la lingua usando il menu a tendina nell'angolo in alto a destra.",
-                features: [
-                    "Cambio lingua facile",
-                    "Nessun file esterno richiesto",
-                    "Design moderno e bellissimo",
-                    "Layout responsive"
-                ]
-            },
-            pt: {
-                title: "Bem-vindo à Nossa Página Inicial",
-                welcome: "Estamos felizes por você estar aqui!",
-                description: "Esta é uma bela página inicial com funcionalidade de troca de idioma integrada. Você pode alterar o idioma usando o menu suspenso no canto superior direito.",
-                features: [
-                    "Troca de idioma fácil",
-                    "Nenhum arquivo externo necessário",
-                    "Design moderno e bonito",
-                    "Layout responsivo"
-                ]
-            },
-            ar: {
-                title: "مرحباً بك في صفحتنا الرئيسية",
-                welcome: "نحن سعداء لوجودك هنا!",
-                description: "هذه صفحة رئيسية جميلة مع وظيفة تبديل اللغة المدمجة. يمكنك تغيير اللغة باستخدام القائمة المنسدلة في الزاوية اليمنى العلوية.",
-                features: [
-                    "تبديل اللغة السهل",
-                    "لا حاجة لملفات خارجية",
-                    "تصميم حديث وجميل",
-                    "تخطيط متجاوب"
-                ]
-            },
-            zh: {
-                title: "欢迎来到我们的主页",
-                welcome: "我们很高兴您在这里！",
-                description: "这是一个带有内置语言切换功能的精美主页。您可以使用右上角的下拉菜单更改语言。",
-                features: [
-                    "轻松切换语言",
-                    "无需外部文件",
-                    "美观的现代设计",
-                    "响应式布局"
-                ]
-            },
-            ja: {
-                title: "ホームページへようこそ",
-                welcome: "いらっしゃいませ！",
-                description: "これは組み込みの言語切り替え機能を備えた美しいホームページです。右上のドロップダウンメニューを使用して言語を変更できます。",
-                features: [
-                    "簡単な言語切り替え",
-                    "外部ファイル不要",
-                    "美しいモダンデザイン",
-                    "レスポンシブレイアウト"
-                ]
-            }
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <h1 class="hero-title fade-in" 
+          data-lang-en="{{ .Site.Params.home.hero.title_en }}"
+          data-lang-ar="{{ .Site.Params.home.hero.title_ar }}">
+        {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.hero.title_ar }}{{ else }}{{ .Site.Params.home.hero.title_en }}{{ end }}
+      </h1>
+      <p class="hero-subtitle fade-in"
+         data-lang-en="{{ .Site.Params.home.hero.subtitle_en }}"
+         data-lang-ar="{{ .Site.Params.home.hero.subtitle_ar }}">
+        {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.hero.subtitle_ar }}{{ else }}{{ .Site.Params.home.hero.subtitle_en }}{{ end }}
+      </p>
+      
+      <div class="hero-cta fade-in">
+        <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
+          <span class="icon icon-md" style="margin-right: 8px;">
+            {{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}
+          </span>
+          <span data-lang-en="{{ .Site.Params.home.hero.cta_primary_en }}" data-lang-ar="{{ .Site.Params.home.hero.cta_primary_ar }}">
+            {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.hero.cta_primary_ar }}{{ else }}{{ .Site.Params.home.hero.cta_primary_en }}{{ end }}
+          </span>
+        </a>
+        <a href="#niches" class="btn btn-secondary">
+          <span data-lang-en="{{ .Site.Params.home.hero.cta_secondary_en }}" data-lang-ar="{{ .Site.Params.home.hero.cta_secondary_ar }}">
+            {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.hero.cta_secondary_ar }}{{ else }}{{ .Site.Params.home.hero.cta_secondary_en }}{{ end }}
+          </span>
+        </a>
+      </div>
+      
+      <div class="hero-features">
+        {{ range $index, $feature := .Site.Params.home.hero.features }}
+        <div class="feature-card fade-in" data-feature-index="{{ $index }}">
+          <div class="feature-icon">{{ .icon }}</div>
+          <h3 class="feature-title" 
+              data-lang-en="{{ .title_en }}" 
+              data-lang-ar="{{ .title_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}
+          </h3>
+          <p class="feature-desc"
+             data-lang-en="{{ .desc_en }}" 
+             data-lang-ar="{{ .desc_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .desc_ar }}{{ else }}{{ .desc_en }}{{ end }}
+          </p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Statistics Section -->
+  <section class="stats-section" id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        {{ range .Site.Params.home.stats.items }}
+        <div class="stat-card fade-in">
+          <div class="stat-icon">{{ .icon }}</div>
+          <div class="stat-number" data-target="{{ .number }}">0</div>
+          <div class="stat-label"
+               data-lang-en="{{ .label_en }}{{ if .suffix }}{{ .suffix }}{{ end }}"
+               data-lang-ar="{{ .label_ar }}{{ if .suffix }}{{ .suffix }}{{ end }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .label_ar }}{{ else }}{{ .label_en }}{{ end }}{{ if .suffix }}{{ .suffix }}{{ end }}
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Niches Section -->
+  <section class="niches-section" id="niches">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in" 
+            data-lang-en="Specialized Niches" 
+            data-lang-ar="التخصصات">
+          {{ if eq .Site.Language.Lang "ar" }}التخصصات{{ else }}Specialized Niches{{ end }}
+        </h2>
+        <p class="section-subtitle fade-in"
+           data-lang-en="We specialize in professional website design for these industries"
+           data-lang-ar="نحن متخصصون في تصميم مواقع احترافية لهذه المجالات">
+          {{ if eq .Site.Language.Lang "ar" }}نحن متخصصون في تصميم مواقع احترافية لهذه المجالات{{ else }}We specialize in professional website design for these industries{{ end }}
+        </p>
+      </div>
+      
+      <div class="niches-grid">
+        {{ range .Site.Params.niches }}
+        {{ $nicheURL := .page_url_en }}
+        {{ if eq $.Site.Language.Lang "ar" }}
+          {{ $nicheURL = .page_url_ar }}
+        {{ end }}
+        <div class="niche-card fade-in" onclick="window.location.href='{{ $nicheURL }}'">
+          <div class="niche-image">{{ .icon }}</div>
+          <div class="niche-content">
+            <div class="niche-icon">{{ .icon }}</div>
+            <h3 class="niche-title"
+                data-lang-en="{{ .name_en }}"
+                data-lang-ar="{{ .name_ar }}">
+              {{ if eq $.Site.Language.Lang "ar" }}{{ .name_ar }}{{ else }}{{ .name_en }}{{ end }}
+            </h3>
+            <p class="niche-description"
+               data-lang-en="{{ .description_en }}"
+               data-lang-ar="{{ .description_ar }}">
+              {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+            </p>
+            <a href="{{ $nicheURL }}" class="niche-link"
+               data-lang-en="View Projects →"
+               data-lang-ar="عرض المشاريع →">
+              {{ if eq $.Site.Language.Lang "ar" }}عرض المشاريع →{{ else }}View Projects →{{ end }}
+            </a>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in"
+            data-lang-en="{{ .Site.Params.home.features.title_en }}"
+            data-lang-ar="{{ .Site.Params.home.features.title_ar }}">
+          {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.features.title_ar }}{{ else }}{{ .Site.Params.home.features.title_en }}{{ end }}
+        </h2>
+        <p class="section-subtitle fade-in"
+           data-lang-en="{{ .Site.Params.home.features.subtitle_en }}"
+           data-lang-ar="{{ .Site.Params.home.features.subtitle_ar }}">
+          {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.features.subtitle_ar }}{{ else }}{{ .Site.Params.home.features.subtitle_en }}{{ end }}
+        </p>
+      </div>
+      
+      <div class="features-grid">
+        {{ range .Site.Params.home.features.items }}
+        <div class="feature-card fade-in">
+          <div class="feature-icon">{{ .icon }}</div>
+          <h3 class="feature-title"
+              data-lang-en="{{ .title_en }}"
+              data-lang-ar="{{ .title_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}
+          </h3>
+          <p class="feature-desc"
+             data-lang-en="{{ .description_en }}"
+             data-lang-ar="{{ .description_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+          </p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Process Section -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in"
+            data-lang-en="{{ .Site.Params.home.process.title_en }}"
+            data-lang-ar="{{ .Site.Params.home.process.title_ar }}">
+          {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.process.title_ar }}{{ else }}{{ .Site.Params.home.process.title_en }}{{ end }}
+        </h2>
+        <p class="section-subtitle fade-in"
+           data-lang-en="{{ .Site.Params.home.process.subtitle_en }}"
+           data-lang-ar="{{ .Site.Params.home.process.subtitle_ar }}">
+          {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.process.subtitle_ar }}{{ else }}{{ .Site.Params.home.process.subtitle_en }}{{ end }}
+        </p>
+      </div>
+      
+      <div class="process-grid">
+        {{ range .Site.Params.home.process.steps }}
+        <div class="process-step fade-in">
+          <div class="process-number">{{ .number }}</div>
+          <h3 class="process-title"
+              data-lang-en="{{ .title_en }}"
+              data-lang-ar="{{ .title_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}
+          </h3>
+          <p class="process-desc"
+             data-lang-en="{{ .description_en }}"
+             data-lang-ar="{{ .description_ar }}">
+            {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+          </p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Testimonials Section -->
+  {{ if .Site.Params.testimonials }}
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title fade-in"
+            data-lang-en="What Our Clients Say"
+            data-lang-ar="ماذا يقول عملاؤنا">
+          {{ if eq .Site.Language.Lang "ar" }}ماذا يقول عملاؤنا{{ else }}What Our Clients Say{{ end }}
+        </h2>
+      </div>
+      
+      <div class="testimonials-grid">
+        {{ range .Site.Params.testimonials }}
+        <div class="testimonial-card fade-in">
+          <div class="testimonial-rating">
+            {{ range seq .rating }}⭐{{ end }}
+          </div>
+          <p class="testimonial-content">"{{ if eq $.Site.Language.Lang "ar" }}{{ .content_ar }}{{ else }}{{ .content_en }}{{ end }}"</p>
+          <div class="testimonial-author">{{ if eq $.Site.Language.Lang "ar" }}{{ .name_ar }}{{ else }}{{ .name }}{{ end }}</div>
+          <div class="testimonial-role">{{ if eq $.Site.Language.Lang "ar" }}{{ .role_ar }}{{ else }}{{ .role_en }}{{ end }}</div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  {{ end }}
+  
+  <!-- Final CTA Section -->
+  <section class="final-cta" id="contact">
+    <div class="container">
+      <h2 class="fade-in"
+          data-lang-en="Ready to Get Started?"
+          data-lang-ar="جاهز للبدء؟">
+        {{ if eq .Site.Language.Lang "ar" }}جاهز للبدء؟{{ else }}Ready to Get Started?{{ end }}
+      </h2>
+      <p class="fade-in"
+         data-lang-en="Contact us now and get your professional website in 48 hours"
+         data-lang-ar="اتصل بنا الآن واحصل على موقعك الاحترافي خلال 48 ساعة">
+        {{ if eq .Site.Language.Lang "ar" }}اتصل بنا الآن واحصل على موقعك الاحترافي خلال 48 ساعة{{ else }}Contact us now and get your professional website in 48 hours{{ end }}
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn" target="_blank" style="background: white; color: var(--brand-primary);">
+          <span class="icon icon-md" style="margin-right: 8px;">{{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}</span>
+          <span data-lang-en="WhatsApp" data-lang-ar="واتساب">
+            {{ if eq .Site.Language.Lang "ar" }}واتساب{{ else }}WhatsApp{{ end }}
+          </span>
+        </a>
+        <a href="mailto:{{ .Site.Params.contact.email }}" class="btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid white;">
+          <span class="icon icon-md" style="margin-right: 8px;">{{ partial "icons.html" (dict "icon" "email" "size" "20") }}</span>
+          <span data-lang-en="Email" data-lang-ar="البريد الإلكتروني">
+            {{ if eq .Site.Language.Lang "ar" }}البريد الإلكتروني{{ else }}Email{{ end }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>{{ .Site.Title }}</h3>
+          <p>{{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.footer.tagline_ar }}{{ else }}{{ .Site.Params.footer.tagline_en }}{{ end }}</p>
+        </div>
+        
+        <div class="footer-section">
+          <h3 data-lang-en="Contact" data-lang-ar="اتصل بنا">
+            {{ if eq .Site.Language.Lang "ar" }}اتصل بنا{{ else }}Contact{{ end }}
+          </h3>
+          <ul class="footer-links">
+            <li><a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" target="_blank">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "whatsapp" "size" "16") }}</span>
+              {{ .Site.Params.contact.whatsapp }}
+            </a></li>
+            <li><a href="mailto:{{ .Site.Params.contact.email }}">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "email" "size" "16") }}</span>
+              {{ .Site.Params.contact.email }}
+            </a></li>
+            <li style="display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "location" "size" "16") }}</span>
+              {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.contact.location_ar }}{{ else }}{{ .Site.Params.contact.location_en }}{{ end }}
+            </li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3 data-lang-en="Follow Us" data-lang-ar="تابعنا">
+            {{ if eq .Site.Language.Lang "ar" }}تابعنا{{ else }}Follow Us{{ end }}
+          </h3>
+          <div class="footer-social">
+            {{ range .Site.Params.footer.social }}
+            <a href="{{ .url }}" class="social-link" target="_blank" aria-label="{{ .platform }}">
+              {{ if eq .platform "whatsapp" }}
+                {{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}
+              {{ else if eq .platform "instagram" }}
+                {{ partial "icons.html" (dict "icon" "instagram" "size" "20") }}
+              {{ else if eq .platform "twitter" }}
+                {{ partial "icons.html" (dict "icon" "twitter" "size" "20") }}
+              {{ else if eq .platform "linkedin" }}
+                {{ partial "icons.html" (dict "icon" "linkedin" "size" "20") }}
+              {{ else }}
+                {{ .icon }}
+              {{ end }}
+            </a>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>{{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.footer.copyright_ar }}{{ else }}{{ .Site.Params.footer.copyright_en }}{{ end }}</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+    {{ partial "icons.html" (dict "icon" "whatsapp" "size" "28" "class" "icon") }}
+  </a>
+  
+  <!-- JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ .Site.Params.author }}",
+    "url": "{{ .Site.BaseURL }}",
+    "jobTitle": "{{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.job_title_ar }}{{ else }}{{ .Site.Params.job_title_en }}{{ end }}",
+    "description": "{{ .Site.Params.seo.description }}",
+    "image": "{{ .Site.BaseURL }}{{ .Site.Params.avatar }}",
+    "sameAs": [
+      "{{ .Site.Params.social.linkedin }}",
+      "{{ .Site.Params.social.github }}",
+      "{{ .Site.Params.social.twitter }}"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "{{ .Site.Params.contact.phone }}",
+      "contactType": "Customer Service",
+      "availableLanguage": ["English", "Arabic"]
+    }
+  }
+  </script>
+  
+  <!-- JavaScript -->
+  <script>
+    // ============================================
+    // DARK MODE TOGGLE
+    // ============================================
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const html = document.documentElement;
+      
+      // Check localStorage for saved theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+      
+      themeToggle.addEventListener('click', function() {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+      });
+      
+      function updateThemeIcon(theme) {
+        const iconHTML = theme === 'dark' 
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        themeIcon.innerHTML = iconHTML;
+      }
+    })();
+    
+    // ============================================
+    // MOBILE MENU TOGGLE
+    // ============================================
+    (function() {
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const navMenu = document.getElementById('navMenu');
+      
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+          navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            navMenu.classList.remove('active');
+          }
+        });
+      }
+    })();
+    
+    // ============================================
+    // SMOOTH SCROLL
+    // ============================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          // Close mobile menu if open
+          document.getElementById('navMenu').classList.remove('active');
+        }
+      });
+    });
+    
+    // ============================================
+    // INTERSECTION OBSERVER FOR ANIMATIONS
+    // ============================================
+    (function() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+      
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    })();
+    
+    // ============================================
+    // COUNTER ANIMATION
+    // ============================================
+    (function() {
+      const counters = document.querySelectorAll('.stat-number');
+      
+      const animateCounter = (counter) => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+        
+        const updateCounter = () => {
+          current += increment;
+          if (current < target) {
+            counter.textContent = Math.floor(current);
+            requestAnimationFrame(updateCounter);
+          } else {
+            counter.textContent = target;
+          }
         };
-
-        // Get saved language from localStorage or default to English
-        let currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
-
-        // Initialize the page with the saved language
-        function initLanguage() {
-            document.getElementById('languageSelect').value = currentLanguage;
-            switchLanguage(currentLanguage);
+        
+        updateCounter();
+      };
+      
+      const counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+            entry.target.classList.add('counted');
+            animateCounter(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      
+      counters.forEach(counter => {
+        counterObserver.observe(counter);
+      });
+    })();
+    
+    // ============================================
+    // NAVBAR SCROLL EFFECT
+    // ============================================
+    (function() {
+      const navbar = document.querySelector('.navbar');
+      let lastScroll = 0;
+      
+      window.addEventListener('scroll', function() {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 100) {
+          navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        } else {
+          navbar.style.boxShadow = 'none';
         }
-
-        // Switch language function
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            localStorage.setItem('selectedLanguage', lang);
-            
-            const t = translations[lang];
-            if (!t) return;
-
-            // Update text content
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('welcome').textContent = t.welcome;
-            document.getElementById('description').textContent = t.description;
-
-            // Update features list
-            const featuresList = document.getElementById('features');
-            featuresList.innerHTML = '';
-            t.features.forEach(feature => {
-                const li = document.createElement('li');
-                li.textContent = feature;
-                featuresList.appendChild(li);
-            });
-
-            // Update HTML lang attribute for accessibility
-            document.documentElement.lang = lang;
-
-            // Update text direction for RTL languages
-            if (lang === 'ar') {
-                document.body.style.direction = 'rtl';
-                document.querySelector('.container').style.textAlign = 'right';
+        
+        lastScroll = currentScroll;
+      });
+    })();
+    
+    // ============================================
+    // LANGUAGE SWITCHER
+    // ============================================
+    (function() {
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const html = document.documentElement;
+      
+      // Language content data (stored in data attributes)
+      const languageData = {
+        en: {
+          dir: 'ltr',
+          lang: 'en',
+          nav: {
+            portfolio: 'Portfolio',
+            contact: 'Contact'
+          },
+          niches: {
+            title: 'Specialized Niches',
+            subtitle: 'We specialize in professional website design for these industries',
+            viewProjects: 'View Projects →'
+          },
+          features: {
+            title: '{{ .Site.Params.home.features.title_en }}',
+            subtitle: '{{ .Site.Params.home.features.subtitle_en }}'
+          },
+          process: {
+            title: '{{ .Site.Params.home.process.title_en }}',
+            subtitle: '{{ .Site.Params.home.process.subtitle_en }}'
+          },
+          testimonials: {
+            title: 'What Our Clients Say'
+          },
+          cta: {
+            title: 'Ready to Get Started?',
+            subtitle: 'Contact us now and get your professional website in 48 hours',
+            whatsapp: 'WhatsApp',
+            email: 'Email'
+          },
+          footer: {
+            contact: 'Contact',
+            follow: 'Follow Us'
+          }
+        },
+        ar: {
+          dir: 'rtl',
+          lang: 'ar',
+          nav: {
+            portfolio: 'المحفظة',
+            contact: 'اتصل بنا'
+          },
+          niches: {
+            title: 'التخصصات',
+            subtitle: 'نحن متخصصون في تصميم مواقع احترافية لهذه المجالات',
+            viewProjects: 'عرض المشاريع →'
+          },
+          features: {
+            title: '{{ .Site.Params.home.features.title_ar }}',
+            subtitle: '{{ .Site.Params.home.features.subtitle_ar }}'
+          },
+          process: {
+            title: '{{ .Site.Params.home.process.title_ar }}',
+            subtitle: '{{ .Site.Params.home.process.subtitle_ar }}'
+          },
+          testimonials: {
+            title: 'ماذا يقول عملاؤنا'
+          },
+          cta: {
+            title: 'جاهز للبدء؟',
+            subtitle: 'اتصل بنا الآن واحصل على موقعك الاحترافي خلال 48 ساعة',
+            whatsapp: 'واتساب',
+            email: 'البريد الإلكتروني'
+          },
+          footer: {
+            contact: 'اتصل بنا',
+            follow: 'تابعنا'
+          }
+        }
+      };
+      
+      // Function to switch language
+      function switchLanguage(lang) {
+        const langData = languageData[lang];
+        if (!langData) return;
+        
+        // Update HTML attributes
+        html.setAttribute('dir', langData.dir);
+        html.setAttribute('lang', langData.lang);
+        
+        // Update all elements with data-lang attributes
+        document.querySelectorAll('[data-lang-en], [data-lang-ar]').forEach(el => {
+          const enText = el.getAttribute('data-lang-en');
+          const arText = el.getAttribute('data-lang-ar');
+          if (enText && arText) {
+            // For elements that contain other elements (like buttons with icons), update only text
+            if (el.children.length > 0 && el.querySelector('span[data-lang-en]')) {
+              // Handle nested spans
+              el.querySelectorAll('span[data-lang-en], span[data-lang-ar]').forEach(span => {
+                const spanEn = span.getAttribute('data-lang-en');
+                const spanAr = span.getAttribute('data-lang-ar');
+                if (spanEn && spanAr) {
+                  span.textContent = lang === 'en' ? spanEn : spanAr;
+                }
+              });
             } else {
-                document.body.style.direction = 'ltr';
-                document.querySelector('.container').style.textAlign = 'center';
+              el.textContent = lang === 'en' ? enText : arText;
             }
+          }
+        });
+        
+        // Update navigation links
+        const navLinks = document.querySelectorAll('.nav-link');
+        if (navLinks.length >= 2) {
+          navLinks[0].textContent = langData.nav.portfolio;
+          navLinks[1].textContent = langData.nav.contact;
         }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', initLanguage);
-    </script>
+        
+        // Update section titles and subtitles
+        const nichesTitle = document.querySelector('#niches .section-title');
+        const nichesSubtitle = document.querySelector('#niches .section-subtitle');
+        if (nichesTitle) nichesTitle.textContent = langData.niches.title;
+        if (nichesSubtitle) nichesSubtitle.textContent = langData.niches.subtitle;
+        
+        const featuresTitle = document.querySelector('#features .section-title');
+        const featuresSubtitle = document.querySelector('#features .section-subtitle');
+        if (featuresTitle && featuresTitle.getAttribute('data-lang-en')) {
+          featuresTitle.textContent = lang === 'en' ? featuresTitle.getAttribute('data-lang-en') : featuresTitle.getAttribute('data-lang-ar');
+        }
+        if (featuresSubtitle && featuresSubtitle.getAttribute('data-lang-en')) {
+          featuresSubtitle.textContent = lang === 'en' ? featuresSubtitle.getAttribute('data-lang-en') : featuresSubtitle.getAttribute('data-lang-ar');
+        }
+        
+        const processTitle = document.querySelector('#process .section-title');
+        const processSubtitle = document.querySelector('#process .section-subtitle');
+        if (processTitle && processTitle.getAttribute('data-lang-en')) {
+          processTitle.textContent = lang === 'en' ? processTitle.getAttribute('data-lang-en') : processTitle.getAttribute('data-lang-ar');
+        }
+        if (processSubtitle && processSubtitle.getAttribute('data-lang-en')) {
+          processSubtitle.textContent = lang === 'en' ? processSubtitle.getAttribute('data-lang-en') : processSubtitle.getAttribute('data-lang-ar');
+        }
+        
+        // Update testimonials title
+        const testimonialsTitle = document.querySelector('#testimonials .section-title');
+        if (testimonialsTitle) testimonialsTitle.textContent = langData.testimonials.title;
+        
+        // Update CTA section
+        const ctaTitle = document.querySelector('#contact h2');
+        const ctaSubtitle = document.querySelector('#contact p');
+        if (ctaTitle && ctaTitle.getAttribute('data-lang-en')) {
+          ctaTitle.textContent = lang === 'en' ? ctaTitle.getAttribute('data-lang-en') : ctaTitle.getAttribute('data-lang-ar');
+        }
+        if (ctaSubtitle && ctaSubtitle.getAttribute('data-lang-en')) {
+          ctaSubtitle.textContent = lang === 'en' ? ctaSubtitle.getAttribute('data-lang-en') : ctaSubtitle.getAttribute('data-lang-ar');
+        }
+        
+        // Update footer headings
+        const footerContact = document.querySelector('.footer-section:nth-child(2) h3');
+        const footerFollow = document.querySelector('.footer-section:nth-child(3) h3');
+        if (footerContact) footerContact.textContent = langData.footer.contact;
+        if (footerFollow) footerFollow.textContent = langData.footer.follow;
+        
+        // Update niche links
+        document.querySelectorAll('.niche-link').forEach(link => {
+          link.textContent = langData.niches.viewProjects;
+        });
+        
+        // Update active button state
+        langButtons.forEach(btn => {
+          if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('preferred-language', lang);
+      }
+      
+      // Initialize language from localStorage or current page
+      const savedLang = localStorage.getItem('preferred-language') || html.getAttribute('lang') || 'en';
+      if (savedLang !== html.getAttribute('lang')) {
+        switchLanguage(savedLang);
+      }
+      
+      // Add click handlers to language buttons
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const lang = this.getAttribute('data-lang');
+          const dir = this.getAttribute('data-dir');
+          switchLanguage(lang);
+        });
+      });
+    })();
+  </script>
+  
 </body>
 </html>
