@@ -17,7 +17,7 @@ enableEmoji = true
   [languages.en]
     languageName = "English"
     weight = 1
-    title = "Professional Hugo Developer | 48-Hour Delivery"
+    title = "48-Hour website Delivery"
     
     [languages.en.params]
       description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support."
