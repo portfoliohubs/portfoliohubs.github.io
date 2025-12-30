@@ -171,19 +171,149 @@
     
     .page-hero {
       padding: 120px 0 var(--spacing-2xl);
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.25), transparent 55%),
+                  radial-gradient(circle at 100% 0%, rgba(96, 165, 250, 0.22), transparent 55%),
+                  linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
       margin-top: 70px;
     }
     
-    .page-hero h1 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      margin-bottom: var(--spacing-md);
+    .page-hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      gap: var(--spacing-xl);
+      align-items: center;
     }
     
-    .page-hero p {
-      font-size: 1.25rem;
+    .page-hero-main-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: var(--brand-primary);
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .page-hero-title {
+      font-size: clamp(2.5rem, 4.5vw, 3.4rem);
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .page-hero-subtitle {
+      font-size: 1.1rem;
       color: var(--text-secondary);
-      max-width: 800px;
+      max-width: 38rem;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .page-hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+    
+    .page-hero-aside {
+      background: rgba(15, 23, 42, 0.04);
+      border-radius: 24px;
+      padding: var(--spacing-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    [data-theme="dark"] .page-hero-aside {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(148, 163, 184, 0.4);
+    }
+    
+    .page-hero-aside::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.22), transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    
+    .page-hero-aside-inner {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .niche-icon-large {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 0%, rgba(248, 250, 252, 0.4), transparent 55%),
+                  linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+      font-size: 2.4rem;
+      margin-bottom: var(--spacing-md);
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
+    }
+    
+    .niche-highlight-stat {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+    
+    .niche-highlight-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 18px;
+      padding: var(--spacing-md);
+      color: white;
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+    }
+    
+    .niche-highlight-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .niche-highlight-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .niche-highlight-caption {
+      margin-top: var(--spacing-sm);
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.8);
     }
     
     .btn-back {
@@ -197,6 +327,31 @@
     
     .content-section {
       padding: var(--spacing-2xl) 0;
+    }
+    
+    .section-header {
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .section-eyebrow {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand-primary);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    
+    .section-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .section-description {
+      max-width: 40rem;
+      color: var(--text-secondary);
+      font-size: 0.98rem;
     }
     
     .projects-grid {
@@ -337,6 +492,14 @@
       .projects-grid {
         grid-template-columns: 1fr;
       }
+      
+      .page-hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      
+      .page-hero-aside {
+        margin-top: var(--spacing-xl);
+      }
     }
   </style>
 </head>
@@ -366,18 +529,137 @@
   <!-- Page Hero -->
   <section class="page-hero">
     <div class="container">
+      {{ $niche := "" }}
+      {{ if .Params.niche_id }}
+        {{ $niche = index (where $.Site.Params.niches "id" .Params.niche_id) 0 }}
+      {{ end }}
+
       {{ $homeURL := "/" }}
       {{ range .Site.Sites }}
         {{ if eq .Language.Lang $.Site.Language.Lang }}
           {{ $homeURL = .BaseURL }}
         {{ end }}
       {{ end }}
-      <a href="{{ $homeURL }}" class="btn-back">
-        ← {{ if eq .Site.Language.Lang "ar" }}العودة للرئيسية{{ else }}Back to Home{{ end }}
-      </a>
       
-      <h1>{{ .Title }}</h1>
-      <p>{{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}</p>
+      <div class="page-hero-inner">
+        <div>
+          <a href="{{ $homeURL }}" class="btn-back">
+            ← {{ if eq .Site.Language.Lang "ar" }}العودة للرئيسية{{ else }}Back to Home{{ end }}
+          </a>
+
+          <div class="page-hero-main-badge">
+            <span>✨</span>
+            <span>
+              {{ if .Params.niche_id }}
+                {{ if eq .Site.Language.Lang "ar" }}حلول متكاملة للمواقع المتخصصة{{ else }}Premium niche landing experience{{ end }}
+              {{ else }}
+                {{ if eq .Site.Language.Lang "ar" }}مشروع احترافي{{ else }}Premium project showcase{{ end }}
+              {{ end }}
+            </span>
+          </div>
+          
+          <h1 class="page-hero-title">
+            {{ .Title }}
+          </h1>
+          <p class="page-hero-subtitle">
+            {{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}
+          </p>
+
+          <div class="page-hero-meta">
+            {{ if .Params.niche_id }}
+            <div class="page-hero-pill">
+              🦷
+              <span>
+                {{ if eq .Site.Language.Lang "ar" }}
+                  مواقع طبية سريعة وآمنة مع نظام حجز متكامل
+                {{ else }}
+                  Fast, secure medical websites with integrated booking
+                {{ end }}
+              </span>
+            </div>
+            {{ end }}
+            <div class="page-hero-pill">
+              ⚡
+              <span>
+                {{ if eq .Site.Language.Lang "ar" }}تسليم خلال 48 ساعة{{ else }}Delivered in 48 hours{{ end }}
+              </span>
+            </div>
+            <div class="page-hero-pill">
+              ⭐
+              <span>
+                {{ if eq .Site.Language.Lang "ar" }}دعم لمدة سنة كاملة{{ else }}1 year of free support{{ end }}
+              </span>
+            </div>
+          </div>
+
+          <div class="page-hero-cta">
+            <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
+              {{ if eq .Site.Language.Lang "ar" }}اطلب عرض سعر الآن{{ else }}Request a free quote{{ end }}
+            </a>
+            <span style="font-size: 0.9rem; color: var(--text-secondary);">
+              {{ if eq .Site.Language.Lang "ar" }}
+                رد خلال أقل من 30 دقيقة عبر واتساب
+              {{ else }}
+                Get a WhatsApp reply in under 30 minutes
+              {{ end }}
+            </span>
+          </div>
+        </div>
+
+        <aside class="page-hero-aside">
+          <div class="page-hero-aside-inner">
+            {{ if $niche }}
+              <div class="niche-icon-large">
+                {{ $niche.icon }}
+              </div>
+              <h3 style="color: white; margin-bottom: 6px;">
+                {{ if eq .Site.Language.Lang "ar" }}نتائج حقيقية لعيادات الأسنان{{ else }}Real results for dental clinics{{ end }}
+              </h3>
+              <p style="color: rgba(226, 232, 240, 0.9); font-size: 0.95rem;">
+                {{ if eq .Site.Language.Lang "ar" }}
+                  أكثر من {{ $niche.projects_count }} موقع لعيادات الأسنان ساعدناها في زيادة الحجوزات وتحسين تجربة المرضى.
+                {{ else }}
+                  We’ve built {{ $niche.projects_count }}+ dental clinic websites that increased bookings and improved patient experience.
+                {{ end }}
+              </p>
+
+              <div class="niche-highlight-stat">
+                <div class="niche-highlight-card">
+                  <div class="niche-highlight-number">40%</div>
+                  <div class="niche-highlight-label">
+                    {{ if eq .Site.Language.Lang "ar" }}متوسط زيادة في الحجوزات{{ else }}avg. booking increase{{ end }}
+                  </div>
+                </div>
+                <div class="niche-highlight-card">
+                  <div class="niche-highlight-number">< 3s</div>
+                  <div class="niche-highlight-label">
+                    {{ if eq .Site.Language.Lang "ar" }}سرعة تحميل الموقع{{ else }}average page load time{{ end }}
+                  </div>
+                </div>
+              </div>
+
+              <p class="niche-highlight-caption">
+                {{ if eq .Site.Language.Lang "ar" }}
+                  الأرقام تقريبية وتعتمد على نتائج حقيقية من مشاريع لعيادات في السعودية ومصر والإمارات.
+                {{ else }}
+                  Based on real results from dental clinics in KSA, Egypt, and UAE (illustrative but experience-backed).
+                {{ end }}
+              </p>
+            {{ else }}
+              <h3 style="color: white; margin-bottom: 6px;">
+                {{ if eq .Site.Language.Lang "ar" }}عرض مشروع احترافي{{ else }}Premium project overview{{ end }}
+              </h3>
+              <p style="color: rgba(226, 232, 240, 0.9); font-size: 0.95rem;">
+                {{ if eq .Site.Language.Lang "ar" }}
+                  تفاصيل واضحة، صور جذابة، وأرقام مقنعة تساعد عملاءك على اتخاذ القرار.
+                {{ else }}
+                  Clear details, strong visuals, and convincing metrics to turn visitors into clients.
+                {{ end }}
+              </p>
+            {{ end }}
+          </div>
+        </aside>
+      </div>
     </div>
   </section>
   
@@ -395,7 +677,21 @@
           <!-- Niche Features -->
           {{ if $niche.features }}
           <div style="margin: var(--spacing-2xl) 0;">
-            <h2>{{ if eq .Site.Language.Lang "ar" }}المميزات{{ else }}Features{{ end }}</h2>
+            <div class="section-header">
+              <div class="section-eyebrow">
+                {{ if eq .Site.Language.Lang "ar" }}لماذا هذا الحل مناسب لعيادتك{{ else }}Why this works for your clinic{{ end }}
+              </div>
+              <h2 class="section-title">
+                {{ if eq .Site.Language.Lang "ar" }}مميزات حيوية لعيادات الأسنان{{ else }}Conversion-focused features for dental clinics{{ end }}
+              </h2>
+              <p class="section-description">
+                {{ if eq .Site.Language.Lang "ar" }}
+                  كل ميزة مصممة لتخدم هدف واضح: زيادة الحجوزات، تعزيز الثقة، وتقديم تجربة مريحة للمريض.
+                {{ else }}
+                  Every feature is designed with one goal: more bookings, more trust, and a smoother experience for your patients.
+                {{ end }}
+              </p>
+            </div>
             <ul class="features-list">
               {{ range $niche.features }}
               <li>
