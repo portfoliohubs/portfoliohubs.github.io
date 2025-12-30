@@ -1,11 +1,10 @@
 # ============================================
 # SITE CONFIGURATION - 3v3 Blue Architecture
 # ============================================
-baseURL = "https://yourusername.github.io/"
+baseURL = "https://portfoliohubs.github.io/"
 languageCode = "en"
 defaultContentLanguage = "en"
 title = "Professional Hugo Developer | 48-Hour Delivery"
-theme = ""
 hasCJKLanguage = false
 enableRobotsTXT = true
 enableGitInfo = false
@@ -19,14 +18,18 @@ enableEmoji = true
     languageName = "English"
     weight = 1
     title = "Professional Hugo Developer | 48-Hour Delivery"
-    description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support."
+    
+    [languages.en.params]
+      description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support."
     
   [languages.ar]
     languageName = "العربية"
     weight = 2
     languageDirection = "rtl"
     title = "مطور مواقع محترف | تسليم خلال 48 ساعة"
-    description = "مطور مواقع ثابتة محترف. تسليم خلال 48 ساعة، حماية SSL، دعم لمدة سنة."
+    
+    [languages.ar.params]
+      description = "مطور مواقع ثابتة محترف. تسليم خلال 48 ساعة، حماية SSL، دعم لمدة سنة."
 
 # ============================================
 # AUTHOR & SOCIAL
