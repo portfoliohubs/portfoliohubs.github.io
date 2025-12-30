@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" dir="{{ if eq .Site.Language.LanguageDirection "rtl" }}rtl{{ else }}ltr{{ end }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>{{ .Title }} | {{ .Site.Title }}</title>
+  <meta name="description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
+  <meta name="keywords" content="{{ if .Params.seo_keywords }}{{ .Params.seo_keywords }}{{ else }}{{ .Site.Params.seo.keywords }}{{ end }}">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
+  <meta property="og:image" content="{{ .Site.BaseURL }}{{ if .Params.image }}{{ .Params.image }}{{ else }}{{ .Site.Params.seo.og_image }}{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics -->
+  {{ if .Site.Params.seo.google_analytics_id }}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.seo.google_analytics_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ .Site.Params.seo.google_analytics_id }}');
+  </script>
+  {{ end }}
+  
+  <!-- Critical CSS (Reuse from index.html) -->
+  <style>
+    /* Import all CSS from index.html - simplified version */
+    :root {
+      --bg-primary: {{ .Site.Params.style.bg_primary_light }};
+      --bg-secondary: {{ .Site.Params.style.bg_secondary_light }};
+      --bg-surface: {{ .Site.Params.style.bg_surface_light }};
+      --text-primary: {{ .Site.Params.style.text_primary_light }};
+      --text-secondary: {{ .Site.Params.style.text_secondary_light }};
+      --text-muted: {{ .Site.Params.style.text_muted_light }};
+      --border: {{ .Site.Params.style.border_light }};
+      --brand-primary: {{ .Site.Params.style.brand_primary }};
+      --brand-secondary: {{ .Site.Params.style.brand_secondary }};
+      --brand-accent: {{ .Site.Params.style.brand_accent }};
+      --font-primary: {{ .Site.Params.style.font_primary }};
+      --font-arabic: {{ .Site.Params.style.font_arabic }};
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+      --spacing-2xl: 4rem;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    [data-theme="dark"] {
+      --bg-primary: {{ .Site.Params.style.bg_primary_dark }};
+      --bg-secondary: {{ .Site.Params.style.bg_secondary_dark }};
+      --bg-surface: {{ .Site.Params.style.bg_surface_dark }};
+      --text-primary: {{ .Site.Params.style.text_primary_dark }};
+      --text-secondary: {{ .Site.Params.style.text_secondary_dark }};
+      --text-muted: {{ .Site.Params.style.text_muted_dark }};
+      --border: {{ .Site.Params.style.border_dark }};
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    [lang="ar"] {
+      font-family: var(--font-arabic);
+    }
+    
+    [lang="ar"] h1,
+    [lang="ar"] h2,
+    [lang="ar"] h3 {
+      line-height: 1.7;
+    }
+    
+    [dir="rtl"] {
+      direction: rtl;
+      text-align: right;
+    }
+    
+    [dir="rtl"] .whatsapp-float {
+      left: auto;
+      right: 24px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+    
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+    }
+    
+    [data-theme="dark"] .navbar {
+      background: rgba(2, 6, 23, 0.8);
+    }
+    
+    .navbar-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-sm) var(--spacing-md);
+      height: 70px;
+    }
+    
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+    }
+    
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .page-hero {
+      padding: 120px 0 var(--spacing-2xl);
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      margin-top: 70px;
+    }
+    
+    .page-hero h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .page-hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+    }
+    
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-lg);
+      color: var(--brand-primary);
+      font-weight: 600;
+    }
+    
+    .content-section {
+      padding: var(--spacing-2xl) 0;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+    }
+    
+    .project-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--brand-primary);
+    }
+    
+    .project-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    }
+    
+    .project-content {
+      padding: var(--spacing-md);
+    }
+    
+    .project-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .project-meta {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .features-list {
+      list-style: none;
+      margin: var(--spacing-lg) 0;
+    }
+    
+    .features-list li {
+      padding: var(--spacing-sm) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .features-list li::before {
+      content: "✓";
+      color: var(--brand-primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+      color: white;
+      padding: var(--spacing-2xl) 0;
+      text-align: center;
+      margin-top: var(--spacing-2xl);
+    }
+    
+    .cta-section h2 {
+      color: white;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background: white;
+      color: var(--brand-primary);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .footer {
+      background: var(--bg-surface);
+      padding: var(--spacing-xl) 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+    }
+    
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      width: 60px;
+      height: 60px;
+      background: #25D366;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      z-index: 999;
+      font-size: 1.5rem;
+      text-decoration: none;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      }
+      50% {
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.6);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      {{ $homeURL := "/" }}
+      {{ range .Site.Sites }}
+        {{ if eq .Language.Lang $.Site.Language.Lang }}
+          {{ $homeURL = .BaseURL }}
+        {{ end }}
+      {{ end }}
+      <a href="{{ $homeURL }}" class="nav-logo">
+        {{ .Site.Title }}
+      </a>
+      
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      {{ $homeURL := "/" }}
+      {{ range .Site.Sites }}
+        {{ if eq .Language.Lang $.Site.Language.Lang }}
+          {{ $homeURL = .BaseURL }}
+        {{ end }}
+      {{ end }}
+      <a href="{{ $homeURL }}" class="btn-back">
+        ← {{ if eq .Site.Language.Lang "ar" }}العودة للرئيسية{{ else }}Back to Home{{ end }}
+      </a>
+      
+      <h1>{{ .Title }}</h1>
+      <p>{{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}</p>
+    </div>
+  </section>
+  
+  <!-- Content Section -->
+  <section class="content-section">
+    <div class="container">
+      {{ .Content }}
+      
+      <!-- If this is a niche page: show features + projects -->
+      {{ if .Params.niche_id }}
+        {{ $nicheID := .Params.niche_id }}
+        {{ $niche := index (where $.Site.Params.niches "id" $nicheID) 0 }}
+        
+        {{ if $niche }}
+          <!-- Niche Features -->
+          {{ if $niche.features }}
+          <div style="margin: var(--spacing-2xl) 0;">
+            <h2>{{ if eq .Site.Language.Lang "ar" }}المميزات{{ else }}Features{{ end }}</h2>
+            <ul class="features-list">
+              {{ range $niche.features }}
+              <li>
+                <span style="font-size: 1.5rem; margin-left: var(--spacing-xs);">{{ .icon }}</span>
+                <div>
+                  <strong>{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</strong>
+                  {{ if .description }}
+                  <p style="margin-top: 4px; color: var(--text-secondary); font-size: 0.875rem;">
+                    {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+                  </p>
+                  {{ end }}
+                </div>
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+          {{ end }}
+          
+          <!-- Projects for this niche -->
+          {{ $nicheProjects := where $.Site.Params.projects "niche" $nicheID }}
+          {{ if $nicheProjects }}
+          <div style="margin-top: var(--spacing-2xl);">
+            <h2>{{ if eq .Site.Language.Lang "ar" }}مشاريعنا{{ else }}Our Projects{{ end }}</h2>
+            <div class="projects-grid">
+              {{ range $nicheProjects | first 10 }}
+              <div class="project-card">
+                {{ if .image }}
+                <img src="{{ .image }}" alt="{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}" class="project-image" loading="lazy">
+                {{ else }}
+                <div class="project-image" style="display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                  {{ $niche.icon }}
+                </div>
+                {{ end }}
+                <div class="project-content">
+                  <h3 class="project-title">{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</h3>
+                  <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">
+                    {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+                  </p>
+                  <div class="project-meta">
+                    ⏱️ {{ .completion_time }} | 📍 {{ if eq $.Site.Language.Lang "ar" }}{{ .client_location_ar }}{{ else }}{{ .client_location_en }}{{ end }}
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+            </div>
+          </div>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      
+      <!-- If this is a project page: show project details -->
+      {{ if .Params.project_id }}
+        {{ $projectID := .Params.project_id }}
+        {{ $project := index (where $.Site.Params.projects "id" $projectID) 0 }}
+        
+        {{ if $project }}
+          <!-- Project Overview -->
+          <div style="margin: var(--spacing-xl) 0;">
+            <h2>{{ if eq .Site.Language.Lang "ar" }}نظرة عامة{{ else }}Overview{{ end }}</h2>
+            <p style="font-size: 1.125rem; color: var(--text-secondary);">
+              {{ if eq .Site.Language.Lang "ar" }}{{ $project.description_ar }}{{ else }}{{ $project.description_en }}{{ end }}
+            </p>
+          </div>
+          
+          <!-- Project Details -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md); margin: var(--spacing-xl) 0;">
+            <div style="background: var(--bg-secondary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+              <strong>⏱️ {{ if eq .Site.Language.Lang "ar" }}وقت الإنجاز{{ else }}Completion Time{{ end }}</strong>
+              <p>{{ $project.completion_time }}</p>
+            </div>
+            <div style="background: var(--bg-secondary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+              <strong>📍 {{ if eq .Site.Language.Lang "ar" }}الموقع{{ else }}Location{{ end }}</strong>
+              <p>{{ if eq .Site.Language.Lang "ar" }}{{ $project.client_location_ar }}{{ else }}{{ $project.client_location_en }}{{ end }}</p>
+            </div>
+          </div>
+          
+          <!-- Project Features -->
+          {{ if $project.features }}
+          <div style="margin: var(--spacing-xl) 0;">
+            <h2>{{ if eq .Site.Language.Lang "ar" }}المميزات{{ else }}Features{{ end }}</h2>
+            <ul class="features-list">
+              {{ range $project.features }}
+              <li>
+                <div>
+                  <strong>{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</strong>
+                  {{ if .description }}
+                  <p style="margin-top: 4px; color: var(--text-secondary); font-size: 0.875rem;">
+                    {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
+                  </p>
+                  {{ end }}
+                </div>
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+          {{ end }}
+          
+          <!-- Project Tags -->
+          {{ if $project.tags }}
+          <div style="margin: var(--spacing-xl) 0;">
+            <h3>{{ if eq .Site.Language.Lang "ar" }}العلامات{{ else }}Tags{{ end }}</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs);">
+              {{ range $project.tags }}
+              <span style="background: var(--bg-surface); padding: 6px 12px; border-radius: var(--radius-md); font-size: 0.875rem; color: var(--text-secondary);">
+                {{ if eq $.Site.Language.Lang "ar" }}{{ .name_ar }}{{ else }}{{ .name_en }}{{ end }}
+              </span>
+              {{ end }}
+            </div>
+          </div>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>{{ if eq .Site.Language.Lang "ar" }}جاهز للبدء؟{{ else }}Ready to Get Started?{{ end }}</h2>
+      <p style="margin-bottom: var(--spacing-lg); color: rgba(255, 255, 255, 0.9);">
+        {{ if eq .Site.Language.Lang "ar" }}اتصل بنا الآن واحصل على موقعك الاحترافي{{ else }}Contact us now and get your professional website{{ end }}
+      </p>
+      <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
+        📱 {{ if eq .Site.Language.Lang "ar" }}واتساب{{ else }}WhatsApp{{ end }}
+      </a>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>{{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.footer.copyright_ar }}{{ else }}{{ .Site.Params.footer.copyright_en }}{{ end }}</p>
+    </div>
+  </footer>
+  
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+    📱
+  </a>
+  
+  <!-- Schema Markup for Service/Product -->
+  {{ if .Params.niche_id }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "{{ .Title }}",
+    "description": "{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}",
+    "provider": {
+      "@type": "Person",
+      "name": "{{ .Site.Params.author }}"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": ["Saudi Arabia", "Egypt", "UAE", "Kuwait"]
+    }
+  }
+  </script>
+  {{ end }}
+  
+  <!-- JavaScript -->
+  <script>
+    // Dark Mode Toggle
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const html = document.documentElement;
+      
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', savedTheme);
+      themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+      
+      themeToggle.addEventListener('click', function() {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      });
+    })();
+  </script>
+  
+</body>
+</html>
+
