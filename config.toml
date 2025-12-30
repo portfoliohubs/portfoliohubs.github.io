@@ -94,8 +94,8 @@ enableEmoji = true
   facebook_pixel_id = ""
   og_image = "/assets/og-image.jpg"
   twitter_handle = "@yourhandle"
-  favicon = "https://github.com/user-attachments/assets/c54e13f5-805f-4976-9609-58d48ba74488"  # Add your favicon URL here
-  favicon_apple = "https://your-favicon-url.com/apple-touch-icon.png"  # Optional: Apple touch icon
+  favicon = "https://github.com/user-attachments/assets/4d36e4d2-e6e4-446c-8fb9-4390d0738a36"  # Add your favicon URL here
+  favicon_apple = "https://github.com/user-attachments/assets/4d36e4d2-e6e4-446c-8fb9-4390d0738a36"  # Optional: Apple touch icon
 
 # ============================================
 # CONTACT INFORMATION
