@@ -88,7 +88,7 @@ enableEmoji = true
 # ============================================
 [params.seo]
   description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support. Specialized in dental clinics, restaurants, and law firms."
-  keywords = "Hugo developer, static sites, GitHub Pages, fast websites, professional web design, dental clinic website, restaurant website, law firm website"
+  keywords = "Hugo developer, static sites, fast websites, professional web design, dental clinic website, restaurant website, law firm website"
   google_analytics_id = ""
   google_search_console_verify = ""
   facebook_pixel_id = ""
@@ -111,7 +111,7 @@ enableEmoji = true
 [params.home.hero]
   title_en = "Your Professional Website Ready in 48 Hours"
   title_ar = "موقعك الاحترافي جاهز خلال 48 ساعة"
-  subtitle_en = "Fast, secure, and beautiful static websites using Hugo & GitHub Pages. Rank on Google, convert visitors to clients."
+  subtitle_en = "Fast, secure, and beautiful static websites using Hugo . Rank on Google, convert visitors to clients."
   subtitle_ar = "مواقع سريعة وآمنة وجميلة باستخدام أحدث التقنيات. احتل المراكز الأولى في جوجل وحول الزوار إلى عملاء."
   cta_primary_en = "Get Free Quote"
   cta_primary_ar = "احصل على عرض مجاني"
@@ -250,8 +250,8 @@ icon = "🚀"
     number = "02"
     title_en = "Design & Development"
     title_ar = "التصميم والتطوير"
-    description_en = "We build your site using Hugo and deploy to GitHub Pages"
-    description_ar = "نبني موقعك باستخدام Hugo وننشره على GitHub Pages"
+    description_en = "We build your site using Hugo"
+    description_ar = "نبني موقعك باستخدام Hugo"
     
   [[params.home.process.steps]]
     number = "03"
