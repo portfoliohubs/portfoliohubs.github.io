@@ -847,8 +847,8 @@ projects_count = 10
 # FOOTER
 # ============================================
 [params.footer]
-  copyright_en = "© 2024 All Rights Reserved"
-  copyright_ar = "© 2024 جميع الحقوق محفوظة"
+  copyright_en = "© 2026 All Rights Reserved"
+  copyright_ar = "© 2026 جميع الحقوق محفوظة"
   tagline_en = "Building websites that deliver results"
   tagline_ar = "نصمم مواقع تحقق نتائج حقيقية"
   
