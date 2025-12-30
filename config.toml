@@ -10,6 +10,12 @@ enableRobotsTXT = true
 enableGitInfo = false
 enableEmoji = true
 
+# Sitemap Configuration
+[sitemap]
+  changefreq = "monthly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
 # ============================================
 # LANGUAGE SETTINGS
 # ============================================
