@@ -90,7 +90,7 @@ enableEmoji = true
   description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support. Specialized in dental clinics, restaurants, and law firms."
   keywords = "Hugo developer, static sites, fast websites, professional web design, dental clinic website, restaurant website, law firm website"
   google_analytics_id = ""
-  google_search_console_verify = ""
+  google_search_console_verify = "<meta name="google-site-verification" content="6VtKNI5qnSYsfjCTBMfnm9PuZjjR7aYh6crmofpS8yw" />"
   facebook_pixel_id = ""
   og_image = "/assets/og-image.jpg"
   twitter_handle = "@yourhandle"
