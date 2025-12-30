@@ -731,12 +731,92 @@
     }
     
     .footer-links a {
-      color: var(--text-secondary);
+      color: var(--text-primary);
       transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
     }
     
     .footer-links a:hover {
       color: var(--brand-primary);
+    }
+    
+    .footer-links li {
+      color: var(--text-primary);
+    }
+    
+    /* Fix contrast for light mode */
+    [data-theme="light"] .footer-links a,
+    [data-theme="light"] .footer-links li {
+      color: var(--text-primary);
+    }
+    
+    [data-theme="light"] .stat-label {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .testimonial-content {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .testimonial-role {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="light"] .project-meta {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="light"] .niche-description {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .feature-desc {
+      color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .process-desc {
+      color: var(--text-secondary);
+    }
+    
+    /* Icon styles */
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .icon-md {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .icon-lg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .icon-xl {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .social-link svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
     }
     
     .footer-social {
@@ -807,12 +887,260 @@
     }
     
     /* ============================================
-       MOBILE RESPONSIVE
+       MOBILE-FIRST RESPONSIVE DESIGN
        ============================================ */
-    @media (max-width: 768px) {
+    /* Base styles are mobile-first */
+    .nav-menu {
+      display: none;
+    }
+    
+    .mobile-menu-btn {
+      display: block;
+    }
+    
+    .hero-features {
+      grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+    }
+    
+    .niches-grid,
+    .features-grid,
+    .process-grid,
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+    
+    .section-title {
+      font-size: 1.75rem;
+    }
+    
+    .section-subtitle {
+      font-size: 1rem;
+    }
+    
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    
+    .container {
+      padding: 0 var(--spacing-sm);
+    }
+    
+    section {
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .hero {
+      padding-top: 80px;
+      min-height: auto;
+    }
+    
+    .hero-content {
+      padding: var(--spacing-lg) var(--spacing-sm);
+    }
+    
+    .hero-cta {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+    .hero-cta .btn {
+      width: 100%;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+    }
+    
+    .navbar-container {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      height: 60px;
+    }
+    
+    .nav-logo {
+      font-size: 1.25rem;
+    }
+    
+    .lang-switcher {
+      gap: 2px;
+      padding: 2px;
+    }
+    
+    .lang-btn {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+    }
+    
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
+    }
+    
+    .whatsapp-float {
+      width: 56px;
+      height: 56px;
+      bottom: 16px;
+      left: 16px;
+      font-size: 1.25rem;
+    }
+    
+    [dir="rtl"] .whatsapp-float {
+      left: auto;
+      right: 16px;
+    }
+    
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+    }
+    
+    .final-cta {
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .final-cta h2 {
+      font-size: 1.5rem;
+    }
+    
+    .final-cta p {
+      font-size: 1rem;
+    }
+    
+    /* Tablet and up */
+    @media (min-width: 640px) {
+      .hero-features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.125rem;
+      }
+      
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+    }
+    
+    /* Desktop */
+    @media (min-width: 768px) {
+      .nav-menu {
+        display: flex;
+      }
+      
+      .mobile-menu-btn {
+        display: none;
+      }
+      
+      .hero-features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .niches-grid,
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .hero-title {
+        font-size: 3rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.25rem;
+      }
+      
+      .section-title {
+        font-size: 2.25rem;
+      }
+      
+      .section-subtitle {
+        font-size: 1.125rem;
+      }
+      
+      h1 { font-size: 3rem; }
+      h2 { font-size: 2.25rem; }
+      h3 { font-size: 1.875rem; }
+      
+      .hero-cta {
+        flex-direction: row;
+      }
+      
+      .hero-cta .btn {
+        width: auto;
+      }
+      
+      .navbar-container {
+        height: 70px;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    /* Large Desktop */
+    @media (min-width: 1024px) {
+      .hero-features {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .niches-grid,
+      .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .process-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+      }
+      
+      .section-title {
+        font-size: clamp(2rem, 4vw, 3rem);
+      }
+    }
+    
+    /* Mobile menu active state */
+    @media (max-width: 767px) {
       .nav-menu {
         position: fixed;
-        top: 70px;
+        top: 60px;
         left: 0;
         right: 0;
         background: var(--bg-primary);
@@ -822,36 +1150,19 @@
         transform: translateX(-100%);
         transition: transform 0.3s ease;
         z-index: 999;
+        box-shadow: var(--shadow-lg);
       }
       
       .nav-menu.active {
         transform: translateX(0);
       }
       
-      .mobile-menu-btn {
-        display: block;
+      [dir="rtl"] .nav-menu {
+        transform: translateX(100%);
       }
       
-      .hero-title {
-        font-size: 2.5rem;
-      }
-      
-      .hero-cta {
-        flex-direction: column;
-      }
-      
-      .hero-cta .btn {
-        width: 100%;
-      }
-      
-      h1 { font-size: 2rem; }
-      h2 { font-size: 1.75rem; }
-      h3 { font-size: 1.5rem; }
-      
-      .niches-grid,
-      .features-grid,
-      .process-grid {
-        grid-template-columns: 1fr;
+      [dir="rtl"] .nav-menu.active {
+        transform: translateX(0);
       }
     }
     
@@ -914,10 +1225,14 @@
           {{ end }}
         </div>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-          <span id="themeIcon">🌙</span>
+          <span id="themeIcon" class="icon icon-md">
+            {{ partial "icons.html" (dict "icon" "moon" "size" "20") }}
+          </span>
         </button>
         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-          ☰
+          <span class="icon icon-lg">
+            {{ partial "icons.html" (dict "icon" "menu" "size" "24") }}
+          </span>
         </button>
       </div>
     </div>
@@ -935,6 +1250,9 @@
       
       <div class="hero-cta fade-in">
         <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
+          <span class="icon icon-md" style="margin-right: 8px;">
+            {{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}
+          </span>
           {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.home.hero.cta_primary_ar }}{{ else }}{{ .Site.Params.home.hero.cta_primary_en }}{{ end }}
         </a>
         <a href="#niches" class="btn btn-secondary">
@@ -1070,10 +1388,12 @@
       <p class="fade-in">{{ if eq .Site.Language.Lang "ar" }}اتصل بنا الآن واحصل على موقعك الاحترافي خلال 48 ساعة{{ else }}Contact us now and get your professional website in 48 hours{{ end }}</p>
       <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
         <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn" target="_blank" style="background: white; color: var(--brand-primary);">
-          📱 {{ if eq .Site.Language.Lang "ar" }}واتساب{{ else }}WhatsApp{{ end }}
+          <span class="icon icon-md" style="margin-right: 8px;">{{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}</span>
+          {{ if eq .Site.Language.Lang "ar" }}واتساب{{ else }}WhatsApp{{ end }}
         </a>
         <a href="mailto:{{ .Site.Params.contact.email }}" class="btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid white;">
-          ✉️ {{ if eq .Site.Language.Lang "ar" }}البريد الإلكتروني{{ else }}Email{{ end }}
+          <span class="icon icon-md" style="margin-right: 8px;">{{ partial "icons.html" (dict "icon" "email" "size" "20") }}</span>
+          {{ if eq .Site.Language.Lang "ar" }}البريد الإلكتروني{{ else }}Email{{ end }}
         </a>
       </div>
     </div>
@@ -1091,9 +1411,18 @@
         <div class="footer-section">
           <h3>{{ if eq .Site.Language.Lang "ar" }}اتصل بنا{{ else }}Contact{{ end }}</h3>
           <ul class="footer-links">
-            <li><a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" target="_blank">📱 {{ .Site.Params.contact.whatsapp }}</a></li>
-            <li><a href="mailto:{{ .Site.Params.contact.email }}">✉️ {{ .Site.Params.contact.email }}</a></li>
-            <li>📍 {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.contact.location_ar }}{{ else }}{{ .Site.Params.contact.location_en }}{{ end }}</li>
+            <li><a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" target="_blank">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "whatsapp" "size" "16") }}</span>
+              {{ .Site.Params.contact.whatsapp }}
+            </a></li>
+            <li><a href="mailto:{{ .Site.Params.contact.email }}">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "email" "size" "16") }}</span>
+              {{ .Site.Params.contact.email }}
+            </a></li>
+            <li style="display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+              <span class="icon icon-sm">{{ partial "icons.html" (dict "icon" "location" "size" "16") }}</span>
+              {{ if eq .Site.Language.Lang "ar" }}{{ .Site.Params.contact.location_ar }}{{ else }}{{ .Site.Params.contact.location_en }}{{ end }}
+            </li>
           </ul>
         </div>
         
@@ -1102,7 +1431,17 @@
           <div class="footer-social">
             {{ range .Site.Params.footer.social }}
             <a href="{{ .url }}" class="social-link" target="_blank" aria-label="{{ .platform }}">
-              {{ .icon }}
+              {{ if eq .platform "whatsapp" }}
+                {{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}
+              {{ else if eq .platform "instagram" }}
+                {{ partial "icons.html" (dict "icon" "instagram" "size" "20") }}
+              {{ else if eq .platform "twitter" }}
+                {{ partial "icons.html" (dict "icon" "twitter" "size" "20") }}
+              {{ else if eq .platform "linkedin" }}
+                {{ partial "icons.html" (dict "icon" "linkedin" "size" "20") }}
+              {{ else }}
+                {{ .icon }}
+              {{ end }}
             </a>
             {{ end }}
           </div>
@@ -1117,7 +1456,7 @@
   
   <!-- WhatsApp Floating Button -->
   <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
-    📱
+    {{ partial "icons.html" (dict "icon" "whatsapp" "size" "28" "class" "icon") }}
   </a>
   
   <!-- JSON-LD Schema -->
@@ -1168,7 +1507,10 @@
       });
       
       function updateThemeIcon(theme) {
-        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        const iconHTML = theme === 'dark' 
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        themeIcon.innerHTML = iconHTML;
       }
     })();
     
