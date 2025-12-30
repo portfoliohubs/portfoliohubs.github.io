@@ -99,8 +99,8 @@ enableEmoji = true
 # CONTACT INFORMATION
 # ============================================
 [params.contact]
-  whatsapp = "01271476215"
-  phone = "01271476215"
+  whatsapp = "+201271476215"
+  phone = "+201271476215"
   email = "info@yourdomain.com"
   location_en = "Egypt"
   location_ar = "مصر"
@@ -854,7 +854,7 @@ projects_count = 10
   
   [[params.footer.social]]
     platform = "whatsapp"
-    url = "https://wa.me/01271476215"
+    url = "https://wa.me/+201271476215"
     icon = "📱"
     label_en = "WhatsApp"
     label_ar = "واتساب"
