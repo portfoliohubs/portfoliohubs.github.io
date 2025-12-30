@@ -20,7 +20,7 @@ enableEmoji = true
     title = "48-Hour website Delivery"
     
     [languages.en.params]
-      description = "Professional Hugo static site developer. 48-hour delivery, SSL security, 1-year support."
+      description = "Professional static site developer. 48-hour delivery, SSL security, 1-year support."
     
   [languages.ar]
     languageName = "العربية"
@@ -41,7 +41,7 @@ enableEmoji = true
   avatar = "/assets/avatar.jpg"
   
   [params.social]
-    linkedin = "https://linkedin.com/in/yourprofile"
+    linkedin = "https://www.linkedin.com/in/michael-nabil-dev/"
     github = "https://github.com/yourusername"
     twitter = "https://twitter.com/yourhandle"
 
@@ -99,11 +99,11 @@ enableEmoji = true
 # CONTACT INFORMATION
 # ============================================
 [params.contact]
-  whatsapp = "+966XXXXXXXXX"
-  phone = "+966XXXXXXXXX"
+  whatsapp = "01271476215"
+  phone = "01271476215"
   email = "info@yourdomain.com"
-  location_en = "Zagazig, Egypt"
-  location_ar = "الزقازيق، مصر"
+  location_en = "Egypt"
+  location_ar = "مصر"
 
 # ============================================
 # HOMEPAGE - HERO SECTION
@@ -854,7 +854,7 @@ projects_count = 10
   
   [[params.footer.social]]
     platform = "whatsapp"
-    url = "https://wa.me/966XXXXXXXXX"
+    url = "https://wa.me/01271476215"
     icon = "📱"
     label_en = "WhatsApp"
     label_ar = "واتساب"
@@ -868,7 +868,7 @@ projects_count = 10
     
   [[params.footer.social]]
     platform = "linkedin"
-    url = "https://linkedin.com/in/yourprofile"
+    url = "https://www.linkedin.com/in/michael-nabil-dev/"
     icon = "💼"
     label_en = "LinkedIn"
     label_ar = "لينكد إن"
