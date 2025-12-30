@@ -4,7 +4,7 @@
 baseURL = "https://portfoliohubs.github.io/"
 languageCode = "en"
 defaultContentLanguage = "en"
-title = "SwiftSite"
+title = "portfoliohubs"
 hasCJKLanguage = false
 enableRobotsTXT = true
 enableGitInfo = false
@@ -17,7 +17,7 @@ enableEmoji = true
   [languages.en]
     languageName = "English"
     weight = 1
-    title = "SwiftSite"
+    title = "portfoliohubs"
     
     [languages.en.params]
       description = "Professional static site developer. 48-hour delivery, SSL security, 1-year support."
