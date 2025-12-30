@@ -31,7 +31,20 @@
   {{ end }}
   
   <!-- Favicon -->
+  {{ if .Site.Params.seo.favicon }}
+  <link rel="icon" href="{{ .Site.Params.seo.favicon }}" type="image/x-icon">
+  <link rel="shortcut icon" href="{{ .Site.Params.seo.favicon }}" type="image/x-icon">
+  {{ else }}
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  {{ end }}
+  {{ if .Site.Params.seo.favicon_apple }}
+  <link rel="apple-touch-icon" href="{{ .Site.Params.seo.favicon_apple }}">
+  {{ end }}
+  <!-- Additional favicon sizes for better browser support -->
+  {{ if .Site.Params.seo.favicon }}
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ .Site.Params.seo.favicon }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ .Site.Params.seo.favicon }}">
+  {{ end }}
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
