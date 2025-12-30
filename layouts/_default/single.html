@@ -19,6 +19,11 @@
   <meta name="twitter:title" content="{{ .Title }}">
   <meta name="twitter:description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
   
+  <!-- Google Search Console -->
+  {{ if .Site.Params.seo.google_search_console_verify }}
+  <meta name="google-site-verification" content="{{ .Site.Params.seo.google_search_console_verify }}">
+  {{ end }}
+  
   <!-- Favicon -->
   {{ if .Site.Params.seo.favicon }}
   <link rel="icon" href="{{ .Site.Params.seo.favicon }}" type="image/x-icon">
