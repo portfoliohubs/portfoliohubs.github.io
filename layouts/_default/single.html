@@ -19,6 +19,22 @@
   <meta name="twitter:title" content="{{ .Title }}">
   <meta name="twitter:description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
   
+  <!-- Favicon -->
+  {{ if .Site.Params.seo.favicon }}
+  <link rel="icon" href="{{ .Site.Params.seo.favicon }}" type="image/x-icon">
+  <link rel="shortcut icon" href="{{ .Site.Params.seo.favicon }}" type="image/x-icon">
+  {{ else }}
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  {{ end }}
+  {{ if .Site.Params.seo.favicon_apple }}
+  <link rel="apple-touch-icon" href="{{ .Site.Params.seo.favicon_apple }}">
+  {{ end }}
+  {{ if .Site.Params.seo.favicon }}
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ .Site.Params.seo.favicon }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ .Site.Params.seo.favicon }}">
+  {{ end }}
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
