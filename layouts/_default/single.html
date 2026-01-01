@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{ .Title }} | {{ .Site.Title }}</title>
+    <title>{{ .Title }} |
+{{ .Site.Title }}</title>
     <meta name="description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
     <meta name="keywords" content="{{ if .Params.seo_keywords }}{{ .Params.seo_keywords }}{{ else }}{{ .Site.Params.seo.keywords }}{{ end }}">
 
@@ -14,7 +15,8 @@
     <meta property="og:url" content="{{ .Permalink }}">
     <meta property="og:type" content="website">
 
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" 
+content="summary_large_image">
     <meta name="twitter:title" content="{{ .Title }}">
     <meta name="twitter:description" content="{{ if .Params.seo_description }}{{ .Params.seo_description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}">
 
@@ -29,7 +31,8 @@
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     {{ end }}
     
-    {{ if .Site.Params.seo.favicon_apple }}
+    {{ 
+if .Site.Params.seo.favicon_apple }}
     <link rel="apple-touch-icon" href="{{ .Site.Params.seo.favicon_apple }}">
     {{ end }}
 
@@ -45,336 +48,416 @@
     {{ if .Site.Params.seo.google_analytics_id }}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.seo.google_analytics_id }}"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
+      window.dataLayer = window.dataLayer ||
+[];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', '{{ .Site.Params.seo.google_analytics_id }}');
-    </script>
+</script>
     {{ end }}
 
     <style>
         :root {
             /* Colors */
             --bg-primary: {{ .Site.Params.style.bg_primary_light }};
-            --bg-secondary: {{ .Site.Params.style.bg_secondary_light }};
+--bg-secondary: {{ .Site.Params.style.bg_secondary_light }};
             --bg-surface: #ffffff;
             --text-primary: {{ .Site.Params.style.text_primary_light }};
             --text-secondary: {{ .Site.Params.style.text_secondary_light }};
             --text-muted: {{ .Site.Params.style.text_muted_light }};
-            --border: {{ .Site.Params.style.border_light }};
+--border: {{ .Site.Params.style.border_light }};
             --brand-primary: {{ .Site.Params.style.brand_primary }};
             --brand-secondary: {{ .Site.Params.style.brand_secondary }};
             --brand-accent: {{ .Site.Params.style.brand_accent }};
             --font-primary: 'Montserrat', sans-serif;
-            --font-arabic: 'Cairo', sans-serif;
+--font-arabic: 'Cairo', sans-serif;
 
             /* Spacing */
             --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
+--spacing-sm: 1rem;
             --spacing-md: 1.5rem;
             --spacing-lg: 2.5rem;
             --spacing-xl: 4rem;
             --spacing-2xl: 6rem;
-
-            /* Shapes */
+/* Shapes */
             --radius-sm: 8px;
             --radius-md: 16px;
             --radius-lg: 24px;
-            --radius-full: 9999px;
+--radius-full: 9999px;
 
             /* Effects */
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
-            --shadow-md: 0 8px 20px rgba(0,0,0,0.04);
+--shadow-md: 0 8px 20px rgba(0,0,0,0.04);
             --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.1);
             --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
-            --header-height: 80px;
+--header-height: 80px;
         }
 
         [data-theme="dark"] {
             --bg-primary: #020617;
-            --bg-secondary: #0f172a;
+--bg-secondary: #0f172a;
             --bg-surface: #1e293b;
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
             --border: rgba(148, 163, 184, 0.1);
-            --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.2);
+--shadow-glow: 0 0 30px rgba(59, 130, 246, 0.2);
         }
 
         /* Global Reset & Base */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        * { margin: 0;
+padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth;
+}
         body {
             font-family: var(--font-primary);
-            background-color: var(--bg-primary);
+background-color: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.7;
             transition: background-color 0.4s ease, color 0.4s ease;
             overflow-x: hidden;
-        }
+}
 
-        [lang="ar"] { font-family: var(--font-arabic); }
-        [lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3 { line-height: 1.5; letter-spacing: -0.01em; }
-        [dir="rtl"] { direction: rtl; text-align: right; }
+        [lang="ar"] { font-family: var(--font-arabic);
+}
+        [lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3 { line-height: 1.5; letter-spacing: -0.01em;
+}
+        [dir="rtl"] { direction: rtl; text-align: right;
+}
 
-        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
-        ul { list-style: none; }
+        a { text-decoration: none; color: inherit; transition: 0.3s ease;
+}
+        ul { list-style: none;
+}
 
         /* Layout */
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 var(--spacing-sm); }
+        .container { max-width: 1280px;
+margin: 0 auto; padding: 0 var(--spacing-sm); }
 
         /* Navbar - Glassmorphism */
         .navbar {
-            position: fixed; top: 0; left: 0; right: 0;
+            position: fixed;
+top: 0; left: 0; right: 0;
             height: var(--header-height);
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+border-bottom: 1px solid var(--border);
             z-index: 1000;
             transition: all 0.3s ease;
-        }
-        [data-theme="dark"] .navbar { background: rgba(2, 6, 23, 0.7); }
-        .navbar-container { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+}
+        [data-theme="dark"] .navbar { background: rgba(2, 6, 23, 0.7);
+}
+        .navbar-container { display: flex; align-items: center; justify-content: space-between; height: 100%;
+}
 
         .nav-logo {
-            font-size: 1.6rem; font-weight: 800;
+            font-size: 1.6rem;
+font-weight: 800;
             background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.03em;
-        }
+}
 
         .theme-toggle {
-            width: 44px; height: 44px;
+            width: 44px;
+height: 44px;
             border-radius: var(--radius-full);
             border: 1px solid var(--border);
             background: transparent; color: var(--text-primary);
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .theme-toggle:hover {
             background: var(--bg-surface);
-            border-color: var(--brand-primary);
+border-color: var(--brand-primary);
             transform: rotate(15deg);
         }
 
         /* Page Hero */
         .page-hero {
             position: relative;
-            padding: calc(var(--header-height) + var(--spacing-xl)) 0 var(--spacing-2xl);
+padding: calc(var(--header-height) + var(--spacing-xl)) 0 var(--spacing-2xl);
             overflow: hidden;
         }
         .page-hero::before {
-            content: ''; position: absolute; top: -20%; left: 50%;
+            content: '';
+position: absolute; top: -20%; left: 50%;
             transform: translateX(-50%); width: 120%; height: 1000px;
-            background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 70%);
+background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 70%);
             pointer-events: none; z-index: -1;
-        }
-        .page-hero-inner { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--spacing-xl); align-items: center; }
+}
+        .page-hero-inner { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--spacing-xl); align-items: center;
+}
 
         /* Hero Animations */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0;
+transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0);
+}
         }
-        .hero-animate-1 { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-        .hero-animate-2 { animation: fadeInUp 0.6s ease-out 0.2s forwards; opacity: 0; }
-        .hero-animate-3 { animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0; }
-        .hero-animate-4 { animation: fadeInUp 0.6s ease-out 0.4s forwards; opacity: 0; }
+        .hero-animate-1 { animation: fadeInUp 0.6s ease-out forwards;
+opacity: 0; }
+        .hero-animate-2 { animation: fadeInUp 0.6s ease-out 0.2s forwards; opacity: 0;
+}
+        .hero-animate-3 { animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0;
+}
+        .hero-animate-4 { animation: fadeInUp 0.6s ease-out 0.4s forwards; opacity: 0;
+}
 
         .btn-back {
-            display: inline-flex; align-items: center; gap: 6px;
+            display: inline-flex;
+align-items: center; gap: 6px;
             font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
             margin-bottom: var(--spacing-md); padding: 6px 12px;
             background: var(--bg-surface); border-radius: var(--radius-full);
-            border: 1px solid var(--border);
+border: 1px solid var(--border);
         }
-        .btn-back:hover { color: var(--brand-primary); border-color: var(--brand-primary); }
+        .btn-back:hover { color: var(--brand-primary); border-color: var(--brand-primary);
+}
 
         .page-hero-main-badge {
-            display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex;
+align-items: center; gap: 8px;
             padding: 6px 16px; border-radius: var(--radius-full);
-            background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.1);
+border: 1px solid rgba(59, 130, 246, 0.2);
             color: var(--brand-primary); font-size: 0.875rem; font-weight: 600;
             margin-bottom: var(--spacing-md);
-        }
+}
 
         .page-hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.1;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+font-weight: 800; line-height: 1.1;
             margin-bottom: var(--spacing-sm); color: var(--text-primary);
             letter-spacing: -0.02em;
-        }
+}
 
         .page-hero-subtitle {
-            font-size: 1.125rem; color: var(--text-secondary);
+            font-size: 1.125rem;
+color: var(--text-secondary);
             max-width: 90%; margin-bottom: var(--spacing-lg); line-height: 1.8;
         }
 
-        .page-hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: var(--spacing-lg); }
+        .page-hero-meta { display: flex;
+flex-wrap: wrap; gap: 10px; margin-bottom: var(--spacing-lg); }
 
         .page-hero-pill {
-            display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex;
+align-items: center; gap: 8px;
             padding: 8px 16px; border-radius: var(--radius-md);
             background: var(--bg-surface); border: 1px solid var(--border);
-            font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);
+            font-size: 0.9rem; font-weight: 500;
+color: var(--text-secondary);
             box-shadow: var(--shadow-sm);
         }
 
-        .page-hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-md); }
+        .page-hero-cta { display: flex; flex-wrap: wrap; align-items: center;
+gap: var(--spacing-md); }
 
         /* Aside/Card Styling */
         .page-hero-aside {
-            background: var(--bg-surface); border-radius: var(--radius-lg);
+            background: var(--bg-surface);
+border-radius: var(--radius-lg);
             padding: var(--spacing-lg); border: 1px solid var(--border);
             box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
-            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.5);
+backdrop-filter: blur(10px);
         }
         [data-theme="dark"] .page-hero-aside {
-            background: rgba(30, 41, 59, 0.6); border-color: rgba(255,255,255,0.05);
+            background: rgba(30, 41, 59, 0.6);
+border-color: rgba(255,255,255,0.05);
         }
 
         .niche-icon-large {
-            width: 70px; height: 70px; border-radius: 20px;
+            width: 70px;
+height: 70px; border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
             color: white; font-size: 2.5rem; margin-bottom: var(--spacing-md);
-            box-shadow: var(--shadow-glow);
+box-shadow: var(--shadow-glow);
         }
 
         /* Stats Grid */
-        .niche-highlight-stat { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: var(--spacing-md); }
+        .niche-highlight-stat { display: grid;
+grid-template-columns: 1fr 1fr; gap: 12px; margin-top: var(--spacing-md); }
         .niche-highlight-card {
-            background: var(--bg-primary); border-radius: var(--radius-md);
+            background: var(--bg-primary);
+border-radius: var(--radius-md);
             padding: 16px; border: 1px solid var(--border); text-align: center;
-        }
+}
         .niche-highlight-number {
-            font-size: 1.8rem; font-weight: 800; color: var(--brand-primary);
+            font-size: 1.8rem;
+font-weight: 800; color: var(--brand-primary);
             line-height: 1; margin-bottom: 4px;
         }
         .niche-highlight-label {
-            font-size: 0.8rem; color: var(--text-muted);
+            font-size: 0.8rem;
+color: var(--text-muted);
             font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
         }
 
         /* Buttons */
         .btn {
-            display: inline-flex; align-items: center; justify-content: center;
+            display: inline-flex;
+align-items: center; justify-content: center;
             padding: 16px 32px; border-radius: var(--radius-full);
             font-weight: 600; border: none; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 1rem; position: relative; overflow: hidden; z-index: 1;
-        }
+}
         .btn-primary {
             background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
-            color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
+color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
         .btn-primary:hover {
-            transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
-        .btn:active { transform: translateY(0); }
+        .btn:active { transform: translateY(0);
+}
 
         /* Projects Section */
         .projects-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: var(--spacing-lg); margin-top: var(--spacing-lg);
         }
         .project-card {
-            background: var(--bg-surface); border: 1px solid var(--border);
+            background: var(--bg-surface);
+border: 1px solid var(--border);
             border-radius: var(--radius-lg); overflow: hidden;
             transition: all 0.4s ease; position: relative;
-        }
+}
         .project-card:hover {
-            transform: translateY(-8px); box-shadow: var(--shadow-lg);
+            transform: translateY(-8px);
+box-shadow: var(--shadow-lg);
             border-color: var(--brand-primary);
         }
         
         /* === OPTIMIZED IMAGE CSS === */
         .project-image {
             width: 100%;
-            height: 220px;
+height: 220px;
             object-fit: cover;
             transition: transform 0.5s ease;
             /* Performance & UX Optimizations */
-            background-color: var(--bg-secondary); /* Acts as instant skeleton placeholder */
-            content-visibility: auto; /* Browser optimization for off-screen */
+            background-color: var(--bg-secondary);
+/* Acts as instant skeleton placeholder */
+            content-visibility: auto;
+/* Browser optimization for off-screen */
             display: block;
-        }
+}
         
-        .project-card:hover .project-image { transform: scale(1.05); }
-        .project-content { padding: var(--spacing-md); }
-        .project-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+        .project-card:hover .project-image { transform: scale(1.05);
+}
+        .project-content { padding: var(--spacing-md);
+}
+        .project-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px;
+}
 
         /* Features List */
-        .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-md); }
+        .features-list { display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-md); }
         .features-list li {
-            display: flex; gap: 16px; padding: 20px;
+            display: flex;
+gap: 16px; padding: 20px;
             background: var(--bg-surface); border: 1px solid var(--border);
             border-radius: var(--radius-md); transition: transform 0.3s ease;
-        }
-        .features-list li:hover { transform: translateY(-4px); border-color: var(--brand-primary); }
+}
+        .features-list li:hover { transform: translateY(-4px); border-color: var(--brand-primary);
+}
 
         /* CTA Section */
         .cta-section {
-            margin-top: var(--spacing-2xl); padding: var(--spacing-2xl) var(--spacing-sm);
+            margin-top: var(--spacing-2xl);
+padding: var(--spacing-2xl) var(--spacing-sm);
             text-align: center;
             background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
             color: white; border-radius: var(--radius-lg); position: relative; overflow: hidden;
-        }
+}
         .cta-section::after {
-            content: ""; position: absolute; inset: 0;
+            content: "";
+position: absolute; inset: 0;
             background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
             background-size: 20px 20px; opacity: 0.3;
-        }
-        .cta-section > * { position: relative; z-index: 2; }
-        .cta-section h2 { font-size: 2.5rem; margin-bottom: var(--spacing-sm); }
-        .cta-section .btn-primary { background: white; color: var(--brand-primary); }
+}
+        .cta-section > * { position: relative; z-index: 2;
+}
+        .cta-section h2 { font-size: 2.5rem; margin-bottom: var(--spacing-sm);
+}
+        .cta-section .btn-primary { background: white; color: var(--brand-primary);
+}
 
         /* Footer */
         .footer {
-            padding: var(--spacing-xl) 0; margin-top: var(--spacing-xl);
+            padding: var(--spacing-xl) 0;
+margin-top: var(--spacing-xl);
             border-top: 1px solid var(--border); text-align: center;
             color: var(--text-muted); font-size: 0.9rem;
-        }
+}
 
         /* WhatsApp Float */
         .whatsapp-float {
-            position: fixed; bottom: 30px; left: 30px; width: 64px; height: 64px;
+            position: fixed;
+bottom: 30px; left: 30px; width: 64px; height: 64px;
             background: #25D366; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            display: flex; align-items: center; justify-content: center;
+display: flex; align-items: center; justify-content: center;
             box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
             z-index: 999; color: white;
-            animation: floatMorph 6s ease-in-out infinite;
+animation: floatMorph 6s ease-in-out infinite;
             transition: transform 0.3s ease;
         }
-        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg); }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg);
+}
         @keyframes floatMorph {
-            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translateY(0); }
-            50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; transform: translateY(-10px); }
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+transform: translateY(0); }
+            50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+transform: translateY(-10px); }
         }
-        [dir="rtl"] .whatsapp-float { left: auto; right: 30px; }
+        [dir="rtl"] .whatsapp-float { left: auto;
+right: 30px; }
 
         /* Responsive */
         @media (max-width: 991px) {
-            .page-hero-inner { grid-template-columns: 1fr; text-align: center; gap: var(--spacing-lg); }
-            .page-hero-main-badge, .btn-back { margin-left: auto; margin-right: auto; }
-            .page-hero-subtitle { margin-left: auto; margin-right: auto; }
-            .page-hero-meta { justify-content: center; }
-            .page-hero-cta { justify-content: center; flex-direction: column; align-items: stretch; }
-            .page-hero-cta .btn { width: 100%; }
-            .niche-highlight-stat { margin-top: 24px; }
+            .page-hero-inner { grid-template-columns: 1fr;
+text-align: center; gap: var(--spacing-lg); }
+            .page-hero-main-badge, .btn-back { margin-left: auto;
+margin-right: auto; }
+            .page-hero-subtitle { margin-left: auto; margin-right: auto;
+}
+            .page-hero-meta { justify-content: center;
+}
+            .page-hero-cta { justify-content: center; flex-direction: column; align-items: stretch;
+}
+            .page-hero-cta .btn { width: 100%;
+}
+            .niche-highlight-stat { margin-top: 24px;
+}
         }
         @media (max-width: 767px) {
-            :root { --spacing-md: 1rem; --spacing-lg: 2rem; --spacing-xl: 3rem; --header-height: 70px; }
-            .container { padding: 0 20px; }
-            .navbar-container { padding: 0 20px; }
-            .page-hero-title { font-size: 2.2rem; }
-            .niche-icon-large { margin: 0 auto 1rem auto; }
-            .project-card { border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
-            .features-list { grid-template-columns: 1fr; }
-            .cta-section { border-radius: 0; margin-left: -20px; margin-right: -20px; padding: var(--spacing-xl) 20px; }
-            .cta-section h2 { font-size: 1.8rem; }
+            :root { --spacing-md: 1rem;
+--spacing-lg: 2rem; --spacing-xl: 3rem; --header-height: 70px; }
+            .container { padding: 0 20px;
+}
+            .navbar-container { padding: 0 20px;
+}
+            .page-hero-title { font-size: 2.2rem;
+}
+            .niche-icon-large { margin: 0 auto 1rem auto;
+}
+            .project-card { border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+}
+            .features-list { grid-template-columns: 1fr;
+}
+            .cta-section { border-radius: 0; margin-left: -20px; margin-right: -20px;
+padding: var(--spacing-xl) 20px; }
+            .cta-section h2 { font-size: 1.8rem;
+}
         }
     </style>
 </head>
@@ -387,14 +470,16 @@
             {{ if eq .Language.Lang $.Site.Language.Lang }}
                 {{ $homeURL = .BaseURL }}
             {{ end }}
-        {{ end }}
+       
+ {{ end }}
         <a href="{{ $homeURL }}" class="nav-logo">
             {{ .Site.Title }}
         </a>
         <div class="nav-actions">
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                 <span id="themeIcon">
-                   {{ partial "icons.html" (dict "icon" "moon" "size" "20") }}
+                   {{ 
+partial "icons.html" (dict "icon" "moon" "size" "20") }}
                 </span>
             </button>
         </div>
@@ -406,7 +491,8 @@
         {{ $niche := "" }}
         {{ if .Params.niche_id }}
             {{ $niche = index (where $.Site.Params.niches "id" .Params.niche_id) 0 }}
-        {{ end }}
+   
+     {{ end }}
         
         {{ $homeURL := "/" }}
         {{ range .Site.Sites }}
@@ -415,95 +501,121 @@
             {{ end }}
         {{ end }}
 
-        <div class="page-hero-inner">
+ 
+       <div class="page-hero-inner">
             <div>
                 <div class="hero-animate-1">
                     <a href="{{ $homeURL }}" class="btn-back">
                         {{ if eq .Site.Language.Lang "ar" }}← العودة للرئيسية{{ else }}← Back to Home{{ end }}
-                    </a>
+ 
+                   </a>
                     <br>
                     <div class="page-hero-main-badge">
                         <span>✨</span>
-                        <span>
+                
+        <span>
                             {{ if .Params.niche_id }}
                                 {{ if eq .Site.Language.Lang "ar" }}حلول متكاملة للمواقع المتخصصة{{ else }}Premium niche landing experience{{ end }}
-                            {{ else }}
+              
+              {{ else }}
                                 {{ if eq .Site.Language.Lang "ar" }}مشروع احترافي{{ else }}Premium project showcase{{ end }}
                             {{ end }}
-                        </span>
+          
+              </span>
                     </div>
                 </div>
                 <h1 class="page-hero-title hero-animate-2">
                     {{ .Title }}
-                </h1>
+          
+      </h1>
                 <p class="page-hero-subtitle hero-animate-3">
                     {{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.seo.description }}{{ end }}
                 </p>
                 <div class="page-hero-meta hero-animate-3">
-                    {{ if .Params.niche_id }}
+           
+         {{ if .Params.niche_id }}
                     <div class="page-hero-pill">
                         🦷 <span> {{ if eq .Site.Language.Lang "ar" }} مواقع طبية سريعة {{ else }} Fast medical websites {{ end }} </span>
                     </div>
-                    {{ end }}
+   
+                 {{ end }}
                     <div class="page-hero-pill">
                         ⚡ <span> {{ if eq .Site.Language.Lang "ar" }}تسليم سريع{{ else }}48h Delivery{{ end }} </span>
                     </div>
-                </div>
+  
+              </div>
                 <div class="page-hero-cta hero-animate-4">
                     <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
                         {{ if eq .Site.Language.Lang "ar" }}اطلب عرض سعر الآن{{ else }}Request a free quote{{ end }}
-                    </a>
-                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+   
+                 </a>
+                    <span style="font-size: 0.85rem;
+color: var(--text-muted); font-weight: 500;">
                         {{ if eq .Site.Language.Lang "ar" }}
-                            <span style="color:#25D366; font-size: 1.1em; vertical-align:middle;">●</span> متواجدون الآن للرد
+                            <span style="color:#25D366;
+font-size: 1.1em; vertical-align:middle;">●</span> متواجدون الآن للرد
                         {{ else }}
-                            <span style="color:#25D366; font-size: 1.1em; vertical-align:middle;">●</span> Online now
+                            <span style="color:#25D366;
+font-size: 1.1em; vertical-align:middle;">●</span> Online now
                         {{ end }}
                     </span>
                 </div>
             </div>
 
             <aside class="page-hero-aside hero-animate-3">
-                <div class="page-hero-aside-inner">
+        
+        <div class="page-hero-aside-inner">
                     {{ if $niche }}
                         <div class="niche-icon-large">
                             {{ $niche.icon }}
-                        </div>
-                        <h3 style="margin-bottom: 8px; font-size: 1.5rem;">
+             
+           </div>
+                        <h3 style="margin-bottom: 8px;
+font-size: 1.5rem;">
                             {{ if eq .Site.Language.Lang "ar" }}نتائج حقيقية{{ else }}Real Results{{ end }}
                         </h3>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                            {{ if eq .Site.Language.Lang "ar" }}
-                                أكثر من {{ $niche.projects_count }} موقع لعيادات الأسنان ساعدناها في زيادة الحجوزات وتحسين تجربة المرضى.
-                            {{ else }}
+                        <p style="color: var(--text-secondary);
+font-size: 0.95rem; line-height: 1.6;">
+                            {{ if eq .Site.Language.Lang "ar" }}أكثر من {{ $niche.projects_count }} موقع لعيادات الأسنان ساعدناها في زيادة الحجوزات وتحسين تجربة المرضى.
+                  
+          {{ else }}
                                 We’ve built {{ $niche.projects_count }}+ dental clinic websites that increased bookings and improved patient experience.
                             {{ end }}
-                        </p>
+            
+            </p>
                         <div class="niche-highlight-stat">
                             <div class="niche-highlight-card">
                                 <div class="niche-highlight-number">40%</div>
-                                <div class="niche-highlight-label">
+ 
+                               <div class="niche-highlight-label">
                                     {{ if eq .Site.Language.Lang "ar" }}زيادة الحجوزات{{ else }}Booking Increase{{ end }}
-                                </div>
+                     
+           </div>
                             </div>
                             <div class="niche-highlight-card">
-                                <div class="niche-highlight-number">0.5s</div>
+                                
+<div class="niche-highlight-number">0.5s</div>
                                 <div class="niche-highlight-label">
                                     {{ if eq .Site.Language.Lang "ar" }}سرعة التحميل{{ else }}Load Time{{ end }}
-                                </div>
+                   
+             </div>
                             </div>
                         </div>
                     {{ else }}
-                        <h3 style="margin-bottom: 6px;">
+             
+           <h3 style="margin-bottom: 6px;">
                             {{ if eq .Site.Language.Lang "ar" }}عرض مشروع احترافي{{ else }}Premium project overview{{ end }}
                         </h3>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                      
+  <p style="color: var(--text-secondary); font-size: 0.95rem;">
                             {{ if eq .Site.Language.Lang "ar" }}
                                 تفاصيل واضحة، صور جذابة، وأرقام مقنعة تساعد عملاءك على اتخاذ القرار.
-                            {{ else }}
+                   
+         {{ else }}
                                 Clear details, strong visuals, and convincing metrics to turn visitors into clients.
                             {{ end }}
-                        </p>
+                
+        </p>
                     {{ end }}
                 </div>
             </aside>
@@ -515,82 +627,112 @@
     <div class="container">
         {{ .Content }}
         
-        {{ if .Params.niche_id }}
+      
+  {{ if .Params.niche_id }}
             {{ $nicheID := .Params.niche_id }}
             {{ $niche := index (where $.Site.Params.niches "id" $nicheID) 0 }}
 
             {{ if $niche }}
                 {{ if $niche.features }}
                 <div style="margin: var(--spacing-2xl) 0;">
-                    <div class="section-header" style="text-align: center; margin-bottom: var(--spacing-xl);">
-                        <div style="font-size: 0.9rem; color: var(--brand-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+     
+               <div class="section-header" style="text-align: center;
+margin-bottom: var(--spacing-xl);">
+                        <div style="font-size: 0.9rem;
+color: var(--brand-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                             {{ if eq .Site.Language.Lang "ar" }}لماذا نحن؟{{ else }}Why Choose Us{{ end }}
                         </div>
-                        <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 12px;">
+                        <h2 style="font-size: 2.2rem;
+font-weight: 800; margin-bottom: 12px;">
                             {{ if eq .Site.Language.Lang "ar" }}مميزات حيوية لعيادتك{{ else }}Features that drive growth{{ end }}
                         </h2>
                     </div>
-                    <ul class="features-list">
+           
+         <ul class="features-list">
                         {{ range $niche.features }}
                         <li>
-                            <span style="font-size: 2rem; color: var(--brand-primary);">{{ .icon }}</span>
+                            <span style="font-size: 2rem;
+color: var(--brand-primary);">{{ .icon }}</span>
                             <div>
-                                <strong style="display: block; font-size: 1.1rem; margin-bottom: 4px;">{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</strong>
+                                <strong style="display: block;
+font-size: 1.1rem; margin-bottom: 4px;">{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</strong>
                                 {{ if .description }}
-                                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
+                                <p style="color: var(--text-secondary);
+font-size: 0.9rem; line-height: 1.5;">
                                     {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
                                 </p>
-                                {{ end }}
+                
+                {{ end }}
                             </div>
                         </li>
                         {{ end }}
-                    </ul>
+    
+                </ul>
                 </div>
                 {{ end }}
 
                 {{ $nicheProjects := where $.Site.Params.projects "niche" $nicheID }}
                 {{ if $nicheProjects }}
-                <div style="margin-top: var(--spacing-2xl);">
-                    <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: var(--spacing-md);">{{ if eq .Site.Language.Lang "ar" }}أحدث المشاريع{{ else }}Latest Projects{{ end }}</h2>
+        
+        <div style="margin-top: var(--spacing-2xl);">
+                    <h2 style="font-size: 2rem;
+font-weight: 800; margin-bottom: var(--spacing-md);">{{ if eq .Site.Language.Lang "ar" }}أحدث المشاريع{{ else }}Latest Projects{{ end }}</h2>
                     <div class="projects-grid">
                         {{ range $nicheProjects | first 10 }}
                         <div class="project-card">
-                            {{ if .image }}
+          
+                  {{ if .image }}
                             <img 
                                 src="{{ .image }}" 
-                                alt="{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}" 
+               
+                 alt="{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}" 
                                 class="project-image" 
                                 loading="lazy" 
-                                decoding="async"
+   
+                             decoding="async"
                                 fetchpriority="low"
                                 width="640" 
-                                height="360"
+      
+                          height="360"
                             >
                             {{ else }}
-                            <div class="project-image" style="display: flex; align-items: center; justify-content: center; font-size: 3rem; background: var(--bg-secondary);">
+                
+            <div class="project-image" style="display: flex; align-items: center; justify-content: center;
+font-size: 3rem; background: var(--bg-secondary);">
                                 {{ $niche.icon }}
                             </div>
                             {{ end }}
-                            <div class="project-content">
+     
+                       <div class="project-content">
                                 <h3 class="project-title">{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</h3>
-                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-sm); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                              
+  <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-sm); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+overflow: hidden;">
                                     {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
                                 </p>
-                                <div class="project-meta" style="display: flex; gap: 12px; font-size: 0.8rem; color: var(--text-muted);">
-                                    <span style="display: flex; align-items: center; gap: 4px;">
+                  
+              <div class="project-meta" style="display: flex; gap: 12px;
+font-size: 0.8rem; color: var(--text-muted);">
+                                    <span style="display: flex;
+align-items: center; gap: 4px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                        {{ .completion_time }}
+                                       
+ {{ .completion_time }}
                                     </span>
-                                    <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="display: flex;
+align-items: center; gap: 4px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                        {{ if eq $.Site.Language.Lang "ar" }}{{ .client_location_ar }}{{ else }}{{ .client_location_en }}{{ end }}
+                                  
+      {{ if eq $.Site.Language.Lang "ar" }}{{ .client_location_ar }}{{ else }}{{ .client_location_en }}{{ end }}
                                     </span>
                                 </div>
-                            </div>
+             
+               </div>
                         </div>
                         {{ end }}
                     </div>
-                </div>
+               
+ </div>
                 {{ end }}
             {{ end }}
         {{ end }}
@@ -599,42 +741,57 @@
             {{ $projectID := .Params.project_id }}
             {{ $project := index (where $.Site.Params.projects "id" $projectID) 0 }}
 
-            {{ if $project }}
+         
+   {{ if $project }}
                 <div style="margin: var(--spacing-xl) 0;">
                     <h2>{{ if eq .Site.Language.Lang "ar" }}نظرة عامة{{ else }}Overview{{ end }}</h2>
-                    <p style="font-size: 1.125rem; color: var(--text-secondary); margin-top: 1rem;">
+                    <p style="font-size: 1.125rem;
+color: var(--text-secondary); margin-top: 1rem;">
                         {{ if eq .Site.Language.Lang "ar" }}{{ $project.description_ar }}{{ else }}{{ $project.description_en }}{{ end }}
                     </p>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md); margin: var(--spacing-xl) 0;">
-                    <div style="background: var(--bg-surface); padding: var(--spacing-md); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                        <strong style="color: var(--brand-primary); display:block; margin-bottom: 4px;">⏱️ {{ if eq .Site.Language.Lang "ar" }}وقت الإنجاز{{ else }}Completion Time{{ end }}</strong>
-                        <p style="font-size: 1.2rem; font-weight: 600;">{{ $project.completion_time }}</p>
+                <div style="display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md); margin: var(--spacing-xl) 0;">
+                    <div style="background: var(--bg-surface);
+padding: var(--spacing-md); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <strong style="color: var(--brand-primary);
+display:block; margin-bottom: 4px;">⏱️ {{ if eq .Site.Language.Lang "ar" }}وقت الإنجاز{{ else }}Completion Time{{ end }}</strong>
+                        <p style="font-size: 1.2rem;
+font-weight: 600;">{{ $project.completion_time }}</p>
                     </div>
-                    <div style="background: var(--bg-surface); padding: var(--spacing-md); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                        <strong style="color: var(--brand-primary); display:block; margin-bottom: 4px;">📍 {{ if eq .Site.Language.Lang "ar" }}الموقع{{ else }}Location{{ end }}</strong>
-                        <p style="font-size: 1.2rem; font-weight: 600;">{{ if eq .Site.Language.Lang "ar" }}{{ $project.client_location_ar }}{{ else }}{{ $project.client_location_en }}{{ end }}</p>
+                    <div style="background: var(--bg-surface);
+padding: var(--spacing-md); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <strong style="color: var(--brand-primary);
+display:block; margin-bottom: 4px;">📍 {{ if eq .Site.Language.Lang "ar" }}الموقع{{ else }}Location{{ end }}</strong>
+                        <p style="font-size: 1.2rem;
+font-weight: 600;">{{ if eq .Site.Language.Lang "ar" }}{{ $project.client_location_ar }}{{ else }}{{ $project.client_location_en }}{{ end }}</p>
                     </div>
                 </div>
 
                 {{ if $project.features }}
                 <div style="margin: var(--spacing-xl) 0;">
-                    <h2>{{ if eq .Site.Language.Lang "ar" }}المميزات{{ else }}Features{{ end }}</h2>
+            
+        <h2>{{ if eq .Site.Language.Lang "ar" }}المميزات{{ else }}Features{{ end }}</h2>
                     <ul class="features-list" style="margin-top: 1rem;">
                         {{ range $project.features }}
                         <li>
-                            <div>
+         
+                   <div>
                                 <strong>{{ if eq $.Site.Language.Lang "ar" }}{{ .title_ar }}{{ else }}{{ .title_en }}{{ end }}</strong>
                                 {{ if .description }}
-                                <p style="margin-top: 4px; color: var(--text-secondary); font-size: 0.9rem;">
+ 
+                               <p style="margin-top: 4px;
+color: var(--text-secondary); font-size: 0.9rem;">
                                     {{ if eq $.Site.Language.Lang "ar" }}{{ .description_ar }}{{ else }}{{ .description_en }}{{ end }}
                                 </p>
-                                {{ end }}
+                
+                {{ end }}
                             </div>
                         </li>
                         {{ end }}
-                    </ul>
+    
+                </ul>
                 </div>
                 {{ end }}
             {{ end }}
@@ -644,13 +801,17 @@
 
 <section class="container">
     <div class="cta-section">
-        <h2>{{ if eq .Site.Language.Lang "ar" }}جاهز للبدء؟{{ else }}Ready to Get Started?{{ end }}</h2>
-        <p style="margin-bottom: var(--spacing-lg); color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h2>{{ if eq .Site.Language.Lang "ar" }}جاهز للبدء؟{{ else 
+}}Ready to Get Started?{{ end }}</h2>
+        <p style="margin-bottom: var(--spacing-lg);
+color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; max-width: 600px; margin-left: auto;
+margin-right: auto;">
             {{ if eq .Site.Language.Lang "ar" }}اتصل بنا الآن واحصل على موقعك الاحترافي الذي يستحقه عملك{{ else }}Transform your business presence today with a professional website.{{ end }}
         </p>
         <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="btn btn-primary" target="_blank">
             <span class="icon icon-md" style="margin-right: 8px;">{{ partial "icons.html" (dict "icon" "whatsapp" "size" "20") }}</span>
-            {{ if eq .Site.Language.Lang "ar" }}تواصل عبر واتساب{{ else }}Chat on WhatsApp{{ end }}
+            {{ if eq 
+.Site.Language.Lang "ar" }}تواصل عبر واتساب{{ else }}Chat on WhatsApp{{ end }}
         </a>
     </div>
 </section>
@@ -664,6 +825,36 @@
 <a href="https://wa.me/{{ .Site.Params.contact.whatsapp }}" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
     {{ partial "icons.html" (dict "icon" "whatsapp" "size" "32") }}
 </a>
+
+<script>
+    (function() {
+        // 1. Select the toggle button and the root HTML element
+        var themeToggle = document.getElementById('themeToggle');
+        var htmlElement = document.documentElement;
+        
+        // 2. Check for saved preference or system preference
+        var savedTheme = localStorage.getItem('theme');
+        var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Apply saved theme if it exists, otherwise use system preference
+        if (savedTheme) {
+            htmlElement.setAttribute('data-theme', savedTheme);
+        } else if (systemPrefersDark) {
+            htmlElement.setAttribute('data-theme', 'dark');
+        }
+
+        // 3. Add click event listener to the toggle button
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                var currentTheme = htmlElement.getAttribute('data-theme');
+                var newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+    })();
+</script>
 
 </body>
 </html>
