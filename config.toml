@@ -95,7 +95,7 @@ enableEmoji = true
 [params.seo]
   title = "portfoliohubs"
   description = "Specialized website builder for Dentists. Clinics, Labs, Stores, and Courses. 48-hour delivery, SSL security."
-  keywords = "portfoliohubs, dentalhubs, dental website, dentist website, dental clinic website, dental marketing, dental SEO, تصميم مواقع عيادات الأسنان, تسويق عيادة أسنان, سيو عيادات الأسنان, مصر, السعودية, الإمارات, الكويت, قطر"
+  keywords = "portfoliohubs, dentalhubs, dental website, dentist website, dental clinic website, dental marketing, dental SEO, dental portfolio, dentist portfolio, dental case showcase, dental portfolio design, professional dental website, تصميم مواقع عيادات الأسنان, تسويق عيادة أسنان, سيو عيادات الأسنان, بورتفوليو طبيب أسنان, معرض أعمال طبيب أسنان, مصر, السعودية, الإمارات, الكويت, قطر"
   keywords_list = [
     "portfoliohubs",
     "dentalhubs",
@@ -202,7 +202,76 @@ enableEmoji = true
     "الخليج العربي",
     "الشرق الأوسط",
     "منطقة الشرق الأوسط وشمال أفريقيا",
-    "MENA region"
+    "MENA region",
+    
+    # Dental Portfolio Focus Keywords (Primary)
+    "dental portfolio website",
+    "dentist portfolio design",
+    "dental case showcase",
+    "cosmetic dentistry portfolio",
+    "dental work portfolio",
+    "dentist CV website",
+    "dental professional portfolio",
+    "dental case gallery",
+    "before after dental portfolio",
+    "dental treatment portfolio",
+    
+    # AI Chat Discovery Keywords (GEO)
+    "find dentist portfolio near me",
+    "best dental portfolio websites",
+    "show me dentist work examples",
+    "dental portfolio examples",
+    "who makes dental portfolios",
+    "AI find dental website designer",
+    "chat find dental portfolio",
+    "dental portfolio AI search",
+    
+    # Enhanced Service Keywords
+    "dental portfolio builder",
+    "custom dental portfolio",
+    "professional dental website",
+    "dentist online portfolio",
+    "digital dental portfolio",
+    "dental portfolio hosting",
+    "dental portfolio SEO",
+    
+    # Trust & Credibility Keywords
+    "trusted dental portfolio",
+    "professional dentist website",
+    "certified dental web designer",
+    "dental portfolio expert",
+    "reliable dental website",
+    
+    # Geographic + Portfolio Combinations
+    "dental portfolio Egypt",
+    "dentist portfolio Dubai",
+    "dental website portfolio Riyadh",
+    "dental case portfolio Cairo",
+    "professional dental portfolio KSA",
+    "dental portfolio Jeddah",
+    "dentist portfolio Abu Dhabi",
+    "dental portfolio Kuwait",
+    "dental case portfolio Doha",
+    
+    # Arabic Portfolio Keywords
+    "بورتفوليو طبيب أسنان",
+    "معرض أعمال طبيب أسنان",
+    "عرض حالات أسنان",
+    "موقع بورتفوليو أسنان",
+    "تصميم بورتفوليو أطباء",
+    "بورتفوليو طب الأسنان",
+    "معرض حالات الأسنان",
+    "بورتفوليو تجميل الأسنان",
+    "موقع أعمال طبيب أسنان",
+    "عرض أعمال الأسنان",
+    
+    # Question-based Keywords for Voice/AI Search
+    "who builds dental portfolios",
+    "how to create dental portfolio",
+    "best dental portfolio designer",
+    "where to find dental websites",
+    "AI recommend dental portfolio",
+    "chat find dentist website"
   ]
   brand_alternate_names = ["portfoliohubs", "dentalhubs", "Dental Hubs"]
   robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
