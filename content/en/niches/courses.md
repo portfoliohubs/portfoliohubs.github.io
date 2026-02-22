@@ -2,7 +2,7 @@
 title: "Courses / Workshops"
 niche_id: "courses"
 description: "مواقع للكورسات وورش العمل الخاصة بطب الأسنان"
-seo_title: "مواقع كورسات طب الأسنان | بيع ورش عمل | DentalHubs"
+seo_title: "مواقع كورسات طب الأسنان | بيع ورش عمل | portfoliohubs"
 seo_description: "منصة لعرض وبيع كورسات وورش عمل طب الأسنان. تسجيل الطلاب، جدول المحاضرات، والدفع الإلكتروني."
 seo_keywords: "كورسات أسنان, dental courses website, ورش عمل أسنان, تعليم طبي مستمر"
 ---

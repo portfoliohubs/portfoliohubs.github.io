@@ -1,10 +1,10 @@
 # ============================================
-# SITE CONFIGURATION - DentalHubs
+# SITE CONFIGURATION - portfoliohubs
 # ============================================
 baseURL = "https://dentalhubs.github.io/"
 languageCode = "en"
 defaultContentLanguage = "en"
-title = "DentalHubs"
+title = "portfoliohubs"
 hasCJKLanguage = false
 enableRobotsTXT = true
 enableGitInfo = false
@@ -23,7 +23,7 @@ enableEmoji = true
   [languages.en]
     languageName = "English"
     weight = 1
-    title = "DentalHubs"
+    title = "portfoliohubs"
     
     [languages.en.params]
       description = "Specialized Web Solutions for Dental Professionals. Clinics, Labs, Stores, and Portfolios."
@@ -41,7 +41,7 @@ enableEmoji = true
 # AUTHOR & SOCIAL
 # ============================================
 [params]
-  author = "DentalHubs Team"
+  author = "portfoliohubs Team"
   job_title_en = "Dental Web Specialists"
   job_title_ar = "متخصصون في الويب الطبي"
   avatar = "/assets/avatar.jpg"
@@ -93,11 +93,11 @@ enableEmoji = true
 # SEO & TRACKING
 # ============================================
 [params.seo]
-  title = "DentalHubs"
+  title = "portfoliohubs"
   description = "Specialized website builder for Dentists. Clinics, Labs, Stores, and Courses. 48-hour delivery, SSL security."
-  keywords = "DentalHubs, dentalhubs, dental website, dentist website, dental clinic website, dental marketing, dental SEO, تصميم مواقع عيادات الأسنان, تسويق عيادة أسنان, سيو عيادات الأسنان, مصر, السعودية, الإمارات, الكويت, قطر"
+  keywords = "portfoliohubs, dentalhubs, dental website, dentist website, dental clinic website, dental marketing, dental SEO, تصميم مواقع عيادات الأسنان, تسويق عيادة أسنان, سيو عيادات الأسنان, مصر, السعودية, الإمارات, الكويت, قطر"
   keywords_list = [
-    "DentalHubs",
+    "portfoliohubs",
     "dentalhubs",
     "Dental Hubs",
     "Dental website",
@@ -204,7 +204,7 @@ enableEmoji = true
     "منطقة الشرق الأوسط وشمال أفريقيا",
     "MENA region"
   ]
-  brand_alternate_names = ["DentalHubs", "dentalhubs", "Dental Hubs"]
+  brand_alternate_names = ["portfoliohubs", "dentalhubs", "Dental Hubs"]
   robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
   google_analytics_id = ""
   google_search_console_verify = "6VtKNI5qnSYsfjCTBMfnm9PuZjjR7aYh6crmofpS8yw"
@@ -223,7 +223,7 @@ enableEmoji = true
 [params.contact]
   whatsapp = "+201271476215"
   phone = "+201271476215"
-  email = "DentalHubs.contact@gmail.com"
+  email = "michaelnabilofficial1@gmail.com"
   location_en = "Egypt"
   location_ar = "مصر"
 

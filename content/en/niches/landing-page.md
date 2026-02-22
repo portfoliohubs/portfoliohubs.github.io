@@ -2,7 +2,7 @@
 title: "Landing Page"
 niche_id: "landing-page"
 description: "صفحات هبوط لترويج عرض معين أو خدمة محددة"
-seo_title: "تصميم صفحة هبوط طبية | زيادة المبيعات | DentalHubs"
+seo_title: "تصميم صفحة هبوط طبية | زيادة المبيعات | portfoliohubs"
 seo_description: "صفحة هبوط (Landing Page) مصممة خصيصاً للحملات الإعلانية لعروض الأسنان (زراعة، تقويم، تبييض) لضمان أعلى معدل تحويل."
 seo_keywords: "صفحة هبوط عيادة, landing page dental, تسويق عرض أسنان, حملات إعلانية طبية"
 ---

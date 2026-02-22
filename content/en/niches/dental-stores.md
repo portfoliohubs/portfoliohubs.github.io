@@ -2,7 +2,7 @@
 title: "Dental Stores"
 niche_id: "dental-stores"
 description: "متاجر إلكترونية لبيع مستلزمات وأجهزة طب الأسنان"
-seo_title: "تصميم متجر مستلزمات أسنان | بيع أونلاين | DentalHubs"
+seo_title: "تصميم متجر مستلزمات أسنان | بيع أونلاين | portfoliohubs"
 seo_description: "متجر إلكتروني متخصص لبيع مستلزمات طب الأسنان. عرض المنتجات، سلة تسوق، ودفع إلكتروني آمن."
 seo_keywords: "متجر أسنان, dental store, بيع أدوات أسنان, dental supplies website, متجر إلكتروني طبي"
 ---
