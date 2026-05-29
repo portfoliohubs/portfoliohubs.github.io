@@ -193,7 +193,7 @@ const CONFIG = {
     addMilestone:    "Add Milestone",
     removeMilestone: "Remove",
     downloadToml:    "Download TOML File",
-    sendWhatsApp:    "Send via WhatsApp",
+    sendWhatsApp:    "Send via WhatsApp (it is a MUST)",
     downloadPdf:     "Download CV as PDF",
     backHome:        "Back to Home",
     resetForm:       "Start New",
