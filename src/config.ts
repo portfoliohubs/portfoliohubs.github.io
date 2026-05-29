@@ -66,7 +66,7 @@ const CONFIG = {
   home: {
     headline: "Build Your professional Portfolio & CV",
     subheadline: "الاسنانجى لاوم يتدلع",
-    portfolioButtonTitle: "Portfolio Appear in Google Search",
+    portfolioButtonTitle: "Portfolio Appear in Google Search & ChatGPT answers",
     portfolioButtonSubtitle: "Professional with jsut 499 LE • appearg in google search • appearg in AI tools answers as (Chatgpt)",
     cvButtonTitle: "CV PDF Maker for free ",
     cvButtonSubtitle: "Easy• Free • No account needed",
