@@ -38,7 +38,7 @@ jobs:
           # Automatically sets the base path to /<repo-name>/
           # This makes all assets and routes work correctly on GitHub Pages.
           # Do NOT change this line — it reads your repo name automatically.
-          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_BASE_PATH: /
 
       - name: Copy index.html to 404.html (SPA routing fix)
         run: cp dist/index.html dist/404.html
