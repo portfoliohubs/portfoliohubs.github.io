@@ -36,7 +36,16 @@ function applyColor(doc: jsPDF, method: 'fill' | 'draw' | 'text', hex: string) {
   else doc.setTextColor(r, g, b);
 }
 
-export function generateCvPdf(data: CvData): void {
+async function getImageDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = dataUrl;
+  });
+}
+
+export async function generateCvPdf(data: CvData): Promise<void> {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = 210, H = 297, ML = 18, MR = 18, CW = W - ML - MR;
   const FOOTER_Y = H - 6;
@@ -47,11 +56,20 @@ export function generateCvPdf(data: CvData): void {
   let y = 0;
 
   // ── PAGE 1: COVER ────────────────────────────────────────────────────────────
-  // Profile photo — centered circle at top
+  // Profile photo — centered, aspect ratio preserved, max 42mm
   if (data.profilePhoto?.startsWith('data:image')) {
-    const sz = 42, px = W / 2 - sz / 2, py = 28;
-    try { doc.addImage(data.profilePhoto, 'WEBP', px, py, sz, sz, undefined, 'FAST'); } catch {}
-    y = py + sz + 12;
+    try {
+      const dims = await getImageDimensions(data.profilePhoto);
+      const maxSize = 42;
+      const aspect = dims.width / dims.height;
+      let pw = maxSize, ph = maxSize;
+      if (aspect > 1) { ph = maxSize / aspect; } else { pw = maxSize * aspect; }
+      const px = W / 2 - pw / 2, py = 28;
+      doc.addImage(data.profilePhoto, 'WEBP', px, py, pw, ph, undefined, 'FAST');
+      y = py + ph + 12;
+    } catch {
+      y = 84;
+    }
   } else {
     y = 84;
   }
@@ -172,7 +190,7 @@ export function generateCvPdf(data: CvData): void {
     drawSectionTitle('CLINICAL CASES PORTFOLIO', H / 2);
 
     // One full page per case
-    data.cases.forEach(c => {
+    for (const c of data.cases) {
       doc.addPage(); y = 20;
 
       // Category
@@ -194,13 +212,22 @@ export function generateCvPdf(data: CvData): void {
         doc.text(c.subtitle, W / 2, y, { align: 'center' }); y += 8;
       }
 
-      // Photo fills the remaining page (above footer)
+      // Photo — centered, aspect ratio preserved, fits within available page area
       if (c.photo?.startsWith('data:image')) {
         const photoTop = y + 3;
-        const photoH   = FOOTER_Y - photoTop - 10;
-        try { doc.addImage(c.photo, 'WEBP', ML, photoTop, CW, photoH, undefined, 'FAST'); } catch {}
+        const maxH     = FOOTER_Y - photoTop - 10;
+        const maxW     = CW;
+        try {
+          const dims = await getImageDimensions(c.photo);
+          const aspect = dims.width / dims.height;
+          let pw = maxW, ph = maxH;
+          if (aspect > maxW / maxH) { ph = maxW / aspect; }
+          else { pw = maxH * aspect; }
+          const px = W / 2 - pw / 2;
+          doc.addImage(c.photo, 'WEBP', px, photoTop, pw, ph, undefined, 'FAST');
+        } catch {}
       }
-    });
+    }
   }
 
   // ── COMPLETE PORTFOLIO ────────────────────────────────────────────────────────

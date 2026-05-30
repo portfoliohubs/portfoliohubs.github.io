@@ -144,8 +144,8 @@ export default function CVWizard() {
     e.target.value = '';
   };
 
-  const handleDownloadPdf = () => {
-    generateCvPdf({
+  const handleDownloadPdf = async () => {
+    await generateCvPdf({
       fullName: form.fullName, title: form.title,
       graduationYear: form.graduationYear, university: form.university,
       phone: form.phone, whatsapp: form.whatsapp,
