@@ -18,10 +18,10 @@ export interface CvData {
 
 const PRIMARY = CONFIG.pdf.primaryColor;
 
-const DARK_BACKGROUND = '#164e63';
-const DARK_TEXT       = '#E0E0E0';
-const DARK_MUTED      = '#A0A0A0';
-const DARK_LINE       = '#2C2C2C';
+const DARK_BACKGROUND = CONFIG.pdf.backgroundColor;
+const DARK_TEXT       = CONFIG.pdf.textColor;
+const DARK_MUTED      = CONFIG.pdf.mutedColor;
+const DARK_LINE       = CONFIG.pdf.lineColor;
 
 const TEXT    = DARK_TEXT;
 const MUTED   = DARK_MUTED;
