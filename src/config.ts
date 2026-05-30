@@ -65,9 +65,9 @@ const CONFIG = {
   // ─── HOME PAGE TEXT ───────────────────────────────────────────────────────────
   home: {
     headline: "Build Your professional Portfolio & CV",
-    subheadline: "الاسنانجى لاوم يتدلع",
+    subheadline: "الاسنانجى لازم يتدلع",
     portfolioButtonTitle: "Portfolio Appear in Google Search & ChatGPT answers",
-    portfolioButtonSubtitle: "Professional with jsut 499 LE • appearg in google search • appearg in AI tools answers as (Chatgpt)",
+    portfolioButtonSubtitle: "Professional with jsut 499 LE • appearing in google search • appearing in AI tools answers as (Chatgpt)",
     cvButtonTitle: "CV PDF Maker for free ",
     cvButtonSubtitle: "Easy• Free • No account needed",
     features: [
