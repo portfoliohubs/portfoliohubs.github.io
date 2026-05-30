@@ -50,17 +50,21 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   const W = 210, H = 297, ML = 18, MR = 18, CW = W - ML - MR;
   const FOOTER_Y = H - 6;
 
-  applyColor(doc, 'fill', DARK_BACKGROUND);
-  doc.rect(0, 0, W, H, 'F');
+  function fillPageBackground() {
+    applyColor(doc, 'fill', DARK_BACKGROUND);
+    doc.rect(0, 0, W, H, 'F');
+  }
+
+  fillPageBackground();
 
   let y = 0;
 
   // ── PAGE 1: COVER ────────────────────────────────────────────────────────────
-  // Profile photo — centered, aspect ratio preserved, max 42mm
+  // Profile photo — centered, aspect ratio preserved, max 80mm
   if (data.profilePhoto?.startsWith('data:image')) {
     try {
       const dims = await getImageDimensions(data.profilePhoto);
-      const maxSize = 42;
+      const maxSize = 80;
       const aspect = dims.width / dims.height;
       let pw = maxSize, ph = maxSize;
       if (aspect > 1) { ph = maxSize / aspect; } else { pw = maxSize * aspect; }
@@ -139,7 +143,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   ].filter(g => g.items.length > 0);
 
   if (skillGroups.length > 0) {
-    doc.addPage(); y = 18;
+    doc.addPage(); fillPageBackground(); y = 18;
     drawSectionTitle('PROFESSIONAL SKILLS', y); y += 14;
 
     skillGroups.forEach(g => {
@@ -160,7 +164,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   // ── PAGE 3: EDUCATION & CAREER ────────────────────────────────────────────────
   const hasEdu = data.university || data.graduationYear || data.timeline.length > 0;
   if (hasEdu) {
-    doc.addPage(); y = 18;
+    doc.addPage(); fillPageBackground(); y = 18;
     drawSectionTitle('EDUCATION & CAREER', y); y += 14;
 
     if (data.university) {
@@ -186,12 +190,12 @@ export async function generateCvPdf(data: CvData): Promise<void> {
   // ── CLINICAL CASES ────────────────────────────────────────────────────────────
   if (CONFIG.pdf.showCasesInPdf && data.cases.length > 0) {
     // Cases section cover page
-    doc.addPage();
+    doc.addPage(); fillPageBackground();
     drawSectionTitle('CLINICAL CASES PORTFOLIO', H / 2);
 
     // One full page per case
     for (const c of data.cases) {
-      doc.addPage(); y = 20;
+      doc.addPage(); fillPageBackground(); y = 20;
 
       // Category
       doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
@@ -232,7 +236,7 @@ export async function generateCvPdf(data: CvData): Promise<void> {
 
   // ── COMPLETE PORTFOLIO ────────────────────────────────────────────────────────
   if (data.website) {
-    doc.addPage(); y = H / 2 - 20;
+    doc.addPage(); fillPageBackground(); y = H / 2 - 20;
     drawSectionTitle('COMPLETE PORTFOLIO', y); y += 16;
 
     doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
