@@ -3,6 +3,7 @@ import { FileText, Search, CheckCircle, ArrowRight } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import Header from '../components/Header';
 import CONFIG from '../config';
+import { gtagEvent } from '../lib/gtag';
 
 export default function HomePage() {
   const hasSocial =
@@ -31,7 +32,10 @@ export default function HomePage() {
         <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {/* Portfolio */}
           <Link href="/portfolio">
-            <button className="group w-full text-left rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/15 dark:from-primary/10 dark:to-primary/20 p-6 hover:shadow-lg hover:border-primary/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            <button
+              onClick={() => gtagEvent('portfolio_start', { source: 'homepage' })}
+              className="group w-full text-left rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/15 dark:from-primary/10 dark:to-primary/20 p-6 hover:shadow-lg hover:border-primary/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md">
                   <Search className="h-6 w-6 text-white" />
@@ -49,7 +53,10 @@ export default function HomePage() {
 
           {/* CV PDF */}
           <Link href="/cv">
-            <button className="group w-full text-left rounded-2xl border-2 border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all duration-200 p-6 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            <button
+              onClick={() => gtagEvent('cv_start', { source: 'homepage' })}
+              className="group w-full text-left rounded-2xl border-2 border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all duration-200 p-6 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/90 flex items-center justify-center shadow-md">
                   <FileText className="h-6 w-6 text-white" />
@@ -108,6 +115,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="text-muted-foreground hover:text-blue-600 transition-colors"
+                onClick={() => gtagEvent('social_click', { platform: 'facebook', source: 'homepage' })}
               >
                 <FaFacebook size={20} />
               </a>
@@ -119,6 +127,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="text-muted-foreground hover:text-pink-500 transition-colors"
+                onClick={() => gtagEvent('social_click', { platform: 'instagram', source: 'homepage' })}
               >
                 <FaInstagram size={20} />
               </a>
@@ -130,6 +139,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 className="text-muted-foreground hover:text-green-500 transition-colors"
+                onClick={() => gtagEvent('social_click', { platform: 'whatsapp', source: 'homepage' })}
               >
                 <FaWhatsapp size={20} />
               </a>

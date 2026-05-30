@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import CONFIG from '../config';
 import { generateCvPdf } from '../lib/pdfGenerator';
 import { processImageToBase64, processMultipleImages } from '../lib/imageProcessor';
+import { gtagEvent } from '../lib/gtag';
 
 type Step = 'personal' | 'contact' | 'photo' | 'skills' | 'timeline' | 'cases' | 'preview';
 
@@ -418,7 +419,10 @@ export default function CVWizard() {
               </div>
 
               <button
-                onClick={handleDownloadPdf}
+                onClick={() => {
+                  gtagEvent('download_pdf', { pathway: 'cv' });
+                  handleDownloadPdf();
+                }}
                 className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors shadow-md"
               >
                 <FileDown className="h-5 w-5" />
@@ -428,7 +432,10 @@ export default function CVWizard() {
               {/* Pay What You Want button */}
               {CONFIG.payWhatYouWant.enabled === 'on' && (
                 <button
-                  onClick={handlePayWhatYouWant}
+                  onClick={() => {
+                    gtagEvent('pay_what_you_want', { pathway: 'cv', source: 'wizard' });
+                    handlePayWhatYouWant();
+                  }}
                   className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-green-600 text-white font-semibold text-sm hover:bg-green-700 transition-colors"
                 >
                   <MessageCircle className="h-4 w-4" />
@@ -448,14 +455,20 @@ export default function CVWizard() {
         {currentStep !== 'preview' && (
           <div className="flex justify-between mt-8 pt-4 border-t border-border/50">
             <button
-              onClick={() => setStep(s => Math.max(0, s - 1))}
+              onClick={() => {
+                gtagEvent('cv_step', { step: STEPS[step], action: 'previous' });
+                setStep(s => Math.max(0, s - 1));
+              }}
               disabled={step === 0}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> {CONFIG.buttons.previous}
             </button>
             <button
-              onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))}
+              onClick={() => {
+                gtagEvent('cv_step', { step: STEPS[step], action: 'next' });
+                setStep(s => Math.min(STEPS.length - 1, s + 1));
+              }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
             >
               {CONFIG.buttons.next} <ArrowRight className="h-4 w-4" />

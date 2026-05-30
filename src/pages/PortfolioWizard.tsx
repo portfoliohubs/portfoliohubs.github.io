@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import CONFIG from '../config';
 import { generateToml, downloadToml } from '../lib/tomlGenerator';
 import { processImageToBase64, processMultipleImages } from '../lib/imageProcessor';
+import { gtagEvent } from '../lib/gtag';
 
 type Step = 'intro' | 'personal' | 'contact' | 'photo' | 'skills' | 'timeline' | 'cases' | 'preview';
 
@@ -188,6 +189,7 @@ export default function PortfolioWizard() {
 
   const handleSendWhatsApp = () => {
     downloadToml(tomlOutput);
+    gtagEvent('send_whatsapp', { pathway: 'portfolio', source: 'wizard' });
     const phone = CONFIG.whatsapp.destinationNumber;
     const msg = encodeURIComponent(CONFIG.whatsapp.message);
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
@@ -243,7 +245,10 @@ export default function PortfolioWizard() {
                 ))}
               </div>
               <button
-                onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))}
+                onClick={() => {
+                  gtagEvent('portfolio_step', { step: 'intro', action: 'next' });
+                  setStep(s => Math.min(STEPS.length - 1, s + 1));
+                }}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:bg-primary/90 transition-colors"
               >
                 {CONFIG.buttons.next} <ArrowRight className="h-5 w-5" />
@@ -519,7 +524,10 @@ export default function PortfolioWizard() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
-                      onClick={() => downloadToml(tomlOutput)}
+                      onClick={() => {
+                        gtagEvent('download_toml', { pathway: 'portfolio' });
+                        downloadToml(tomlOutput);
+                      }}
                       className="flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
                     >
                       <Download className="h-4 w-4" />
@@ -548,14 +556,20 @@ export default function PortfolioWizard() {
         {currentStep !== 'preview' && currentStep !== 'intro' && (
           <div className="flex justify-between mt-8 pt-4 border-t border-border/50">
             <button
-              onClick={() => setStep(s => Math.max(0, s - 1))}
+              onClick={() => {
+                gtagEvent('portfolio_step', { step: STEPS[step], action: 'previous' });
+                setStep(s => Math.max(0, s - 1));
+              }}
               disabled={step === 0}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> {CONFIG.buttons.previous}
             </button>
             <button
-              onClick={() => setStep(s => Math.min(STEPS.length - 1, s + 1))}
+              onClick={() => {
+                gtagEvent('portfolio_step', { step: STEPS[step], action: 'next' });
+                setStep(s => Math.min(STEPS.length - 1, s + 1));
+              }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
             >
               {CONFIG.buttons.next} <ArrowRight className="h-4 w-4" />
