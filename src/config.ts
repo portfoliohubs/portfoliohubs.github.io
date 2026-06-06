@@ -78,7 +78,7 @@ const CONFIG = {
     ],
     // ── USER COUNTER ─────────────────────────────────────────────────────────
     // Change this number manually. It is displayed as-is (no live tracking).
-    usersCount: "1007",
+    usersCount: "1917",
     usersCountLabel: "users till now (updated daily)",
   },
 
