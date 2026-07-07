@@ -79,7 +79,7 @@ const CONFIG = {
     // ── USER COUNTER ─────────────────────────────────────────────────────────
     // Change this number manually. It is displayed as-is (no live tracking).
     usersCount: "17816",
-    usersCountLabel: "users till now (updated daily)",
+    usersCountLabel: "users till now (updated weekly)",
   },
 
   // ─── PORTFOLIO PATHWAY — INTRO STEP ──────────────────────────────────────────
