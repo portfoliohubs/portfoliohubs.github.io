@@ -244,6 +244,46 @@ export default function PortfolioWizard() {
                   <p key={i} className="text-sm text-foreground leading-relaxed">{line}</p>
                 ))}
               </div>
+
+              {/* ── LIVE EXAMPLES ────────────────────────────────────────────── */}
+              {CONFIG.portfolioIntro.liveExamples.filter(ex => ex.name.trim() !== '').length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-base font-bold text-foreground text-center">
+                    Live Examples, Click and see live
+                  </h3>
+                  <div className="flex flex-wrap justify-center gap-6">
+                    {CONFIG.portfolioIntro.liveExamples
+                      .filter(ex => ex.name.trim() !== '')
+                      .map((ex, i) => (
+                        <a
+                          key={i}
+                          href={ex.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex flex-col items-center gap-2 group w-20"
+                        >
+                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-colors bg-muted flex items-center justify-center shrink-0">
+                            {ex.photo ? (
+                              <img
+                                src={ex.photo}
+                                alt={ex.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-2xl font-bold text-primary/40">
+                                {ex.name.charAt(0).toUpperCase()}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs font-medium text-foreground text-center leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                            {ex.name}
+                          </span>
+                        </a>
+                      ))}
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={() => {
                   gtagEvent('portfolio_step', { step: 'intro', action: 'next' });

@@ -98,6 +98,24 @@ const CONFIG = {
       "4. professional",
       "5. creative permanent marketing ",
     ],
+    // ── LIVE EXAMPLES ────────────────────────────────────────────────────────
+    // Fill in photo (image URL), name, and link for each example.
+    // Leave name as "" to hide that slot — only filled entries are shown.
+    // You can have up to 12 examples total.
+    liveExamples: [
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+      { photo: "", name: "", link: "" },
+    ],
   },
 
   // ─── PAY WHAT YOU WANT ───────────────────────────────────────────────────────
