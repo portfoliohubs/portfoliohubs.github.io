@@ -103,7 +103,7 @@ const CONFIG = {
     // Leave name as "" to hide that slot — only filled entries are shown.
     // You can have up to 12 examples total.
     liveExamples: [
-      { photo: "", name: "", link: "" },
+      { photo: "https://github.com/user-attachments/assets/97ba84f2-8190-4ea6-b396-c6beb0bb3572", name: "Michael Nabil", link: "https://portfoliohubs.github.io/drmichaelnabil/" },
       { photo: "", name: "", link: "" },
       { photo: "", name: "", link: "" },
       { photo: "", name: "", link: "" },
