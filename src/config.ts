@@ -104,7 +104,7 @@ const CONFIG = {
     // You can have up to 12 examples total.
     liveExamples: [
       { photo: "https://github.com/user-attachments/assets/97ba84f2-8190-4ea6-b396-c6beb0bb3572", name: "Dr.Michael Nabil", link: "https://portfoliohubs.github.io/drmichaelnabil/" },
-      { photo: "https://github.com/user-attachments/assets/1c669ac9-2b53-4c18-b396-821409c6ada4", name: "Dr. Hanan Sakr", link: "https://portfoliohubs.github.io/Hanansakr/" },
+      { photo: "https://github.com/user-attachments/assets/1c669ac9-2b53-4c18-b396-821409c6ada4", name: "Dr. Hanan Sakr", link: "https://portfoliohubs.github.io/drhanansakr/" },
       { photo: "https://github.com/user-attachments/assets/1fd807ab-3d10-41ee-9d63-57f097d1eab6", name: "Dr. Roaa Adel", link: "https://portfoliohubs.github.io/drroaaadel/" },
       { photo: "https://github.com/user-attachments/assets/57302af1-dbce-4a6c-8773-f74fc6d9669f", name: "Dr. Hossam Lotfy", link: "https://portfoliohubs.github.io/drhossamlotfy/" },
       { photo: "https://github.com/user-attachments/assets/b9c66a94-55d2-4fbd-9500-e7acdc01a9d3", name: "Dr. Rawan Mahmoud", link: "https://portfoliohubs.github.io/drrawanmahmoud/" },
