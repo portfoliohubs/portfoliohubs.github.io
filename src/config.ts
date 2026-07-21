@@ -223,8 +223,8 @@ const CONFIG = {
     primaryColor:        "#BB86FC",
     accentColor:         "#164e63",
     backgroundColor:     "#011017",
-    textColor:           "#0f0f0f",
-    mutedColor:          "#164e63",
+    textColor:           "#ffffff",
+    mutedColor:          "#a8c7d8",
     lineColor:           "#0ab4fc",
     showCasesInPdf:      true,
     maxCasePhotosPerRow: 1,   // kept for compatibility; new design uses 1 case per page
