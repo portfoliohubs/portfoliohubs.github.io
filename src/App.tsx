@@ -73,7 +73,7 @@ function AppRoutes() {
 
 export default function App() {
   useFavicon(config.brand.favicon);
-  const rawBase = import.meta.env.BASE_URL;
+  const rawBase = (typeof import.meta !== 'undefined' && import.meta && import.meta.env) ? import.meta.env.BASE_URL : '/';
   const routerBase = rawBase && rawBase !== '/' ? rawBase.replace(/\/$/, '') : undefined;
 
   return (
