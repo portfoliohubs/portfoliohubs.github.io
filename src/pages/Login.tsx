@@ -118,6 +118,32 @@ export default function Login() {
   };
 
 
+  const formatAuthError = (e: any) => {
+    const code = e?.code || '';
+    const msg = e?.message || '';
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'this domain';
+
+    if (code === 'auth/unauthorized-domain' || msg.includes('auth/unauthorized-domain')) {
+      return `Domain authorization required: "${currentHost}" is not yet added to your Firebase Authorized Domains. In Firebase Console -> Authentication -> Settings -> Authorized domains, click "Add domain" and enter "${currentHost}".`;
+    }
+    if (code === 'auth/popup-closed-by-user') {
+      return 'The sign-in popup was closed before completing authentication. Please try again.';
+    }
+    if (code === 'auth/popup-blocked') {
+      return 'Popup was blocked by your browser. Please allow popups for this site or use email & password.';
+    }
+    if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+      return 'Invalid email address or password. Please verify and try again.';
+    }
+    if (code === 'auth/email-already-in-use') {
+      return 'An account already exists with this email address. Please switch to Sign In.';
+    }
+    if (code === 'auth/weak-password') {
+      return 'Password should be at least 6 characters long.';
+    }
+    return msg || 'Authentication failed. Please check your credentials.';
+  };
+
   const handleGoogle = async () => {
     setError('');
     setLoading(true);
@@ -126,7 +152,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider);
       await handlePostAuth(result.user, mode === 'signup');
     } catch (e: any) {
-      setError(e.message || 'Failed to authenticate with Google');
+      setError(formatAuthError(e));
     } finally {
       setLoading(false);
     }
@@ -150,7 +176,7 @@ export default function Login() {
       }
       await handlePostAuth(user, mode === 'signup');
     } catch (e: any) {
-      setError(e.message || 'Authentication failed');
+      setError(formatAuthError(e));
     } finally {
       setLoading(false);
     }
