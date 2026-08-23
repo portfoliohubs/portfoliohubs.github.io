@@ -37,6 +37,7 @@ import {
   Zap
 } from 'lucide-react';
 import { auth, db } from '../lib/firebase';
+import { cleanFirestoreData } from '../lib/firestoreUtils';
 import Header from '../components/Header';
 import CONFIG from '../config';
 import { processImageToBase64, processMultipleImages } from '../lib/imageProcessor';
@@ -329,29 +330,41 @@ export default function Dashboard() {
       );
 
       // 3. Resolve final profile photo URL
-      const profileUrl = uploadResults[profileKey] || form.profilePhoto || null;
+      const profileUrl = uploadResults[profileKey] || form.profilePhoto || '';
 
-      // 4. Resolve final case photo URLs
+      // 4. Resolve final case photo URLs with clean values
       const processedCases: ClinicalCase[] = form.cases.map((c, idx) => {
-        const finalUrl = uploadResults[`case_${idx}`] || c.photo;
-        return {
-          category: c.category || 'implants',
+        const finalUrl = uploadResults[`case_${idx}`] || c.photo || '';
+        const item: ClinicalCase = {
+          category: c.category || 'General',
           categoryAr: c.categoryAr || '',
           customCategory: c.customCategory || '',
           title: c.title || '',
           titleAr: c.titleAr || '',
           photo: finalUrl,
-          preview: finalUrl,
-          originalSizeKb: c.originalSizeKb,
-          compressedSizeKb: c.compressedSizeKb
+          preview: finalUrl
         };
+        if (typeof c.originalSizeKb === 'number') {
+          item.originalSizeKb = c.originalSizeKb;
+        }
+        if (typeof c.compressedSizeKb === 'number') {
+          item.compressedSizeKb = c.compressedSizeKb;
+        }
+        return item;
       });
+
+      // 4b. Sanitize timeline items
+      const sanitizedTimeline: Milestone[] = (form.timeline || []).map(t => ({
+        year: t.year || '',
+        event: t.event || '',
+        eventAr: t.eventAr || ''
+      }));
 
       setSaveProgressText('Updating portfolio in database...');
 
       // 5. Prepare full payload ensuring security rules match existing document fields
       const isPublished = portfolio?.status === 'published';
-      const updatedPayload: Partial<PortfolioData> = {
+      const rawPayload = {
         fullName: form.fullName || '',
         fullNameAr: form.fullNameAr || '',
         title: form.title || '',
@@ -379,7 +392,7 @@ export default function Dashboard() {
         clinicalSkillsAr: form.clinicalSkillsAr || [],
         digitalSkillsAr: form.digitalSkillsAr || [],
         softSkillsAr: form.softSkillsAr || [],
-        timeline: form.timeline || [],
+        timeline: sanitizedTimeline,
         cases: processedCases,
         status: portfolio?.status || 'pending_review',
         paymentConfirmed: portfolio?.paymentConfirmed ?? false,
@@ -389,6 +402,8 @@ export default function Dashboard() {
         // If already published, mark hasUnreviewedChanges
         hasUnreviewedChanges: isPublished ? true : (portfolio?.hasUnreviewedChanges ?? false)
       };
+
+      const updatedPayload = cleanFirestoreData(rawPayload);
 
       // 6. Single atomic write to Firestore
       const docRef = doc(db, 'portfolios', user.uid);

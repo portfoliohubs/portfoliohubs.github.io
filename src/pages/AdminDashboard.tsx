@@ -74,6 +74,7 @@ import { auth, db } from '../lib/firebase';
 import Header from '../components/Header';
 import CONFIG from '../config';
 import { parseHugoToml } from '../lib/tomlParser';
+import { cleanFirestoreData } from '../lib/firestoreUtils';
 import { processImageToBase64 } from '../lib/imageProcessor';
 
 interface PortfolioRecord {
@@ -305,12 +306,14 @@ export default function AdminDashboard() {
         updatedPayload.publishedAt = new Date().toISOString();
       }
 
+      const safePayload = cleanFirestoreData(updatedPayload);
+
       // 1. Update in portfolios collection
-      await updateDoc(doc(db, 'portfolios', selectedDoctor.id), updatedPayload as any);
+      await updateDoc(doc(db, 'portfolios', selectedDoctor.id), safePayload as any);
 
       // 2. If already published or publishing now, update published_portfolios as well
       if (updatedPayload.status === 'published' || selectedDoctor.status === 'published') {
-        await setDoc(doc(db, 'published_portfolios', selectedDoctor.id), updatedPayload, { merge: true });
+        await setDoc(doc(db, 'published_portfolios', selectedDoctor.id), safePayload, { merge: true });
       }
 
       // 3. Update local state
@@ -658,7 +661,7 @@ export default function AdminDashboard() {
       await sendPasswordResetEmail(secondaryAuth, importEmail.trim());
 
       // 4. Save to portfolios and published_portfolios
-      const docPayload = {
+      const docPayload = cleanFirestoreData({
         ...parsed,
         email: importEmail.trim(),
         packageTier: importTier,
@@ -668,7 +671,7 @@ export default function AdminDashboard() {
         active: true,
         hasUnreviewedChanges: false,
         importedAt: new Date().toISOString()
-      };
+      });
 
       await setDoc(doc(db, 'portfolios', newUid), docPayload);
       await setDoc(doc(db, 'published_portfolios', newUid), docPayload);
