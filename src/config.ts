@@ -40,7 +40,7 @@ export const CONFIG = {
       "No Coding Required",
       "Mobile & Tablet Friendly",
     ],
-    usersCount: "21715",
+    usersCount: "23007",
     usersCountLabel: "users till now (updated weekly)",
   },
   portfolioIntro: {
