@@ -1,0 +1,6 @@
+{
+  "name": "PortfolioHubs",
+  "description": "Professional dental portfolio builder and CV maker for dentists and dental students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

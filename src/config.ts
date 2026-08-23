@@ -1,11 +1,16 @@
-/**
- * PortfolioHubs — Master Configuration File
- * This is the SINGLE FILE to edit for all app customization.
- */
+export interface LiveExample {
+  photo: string;
+  name: string;
+  link: string;
+}
 
-const CONFIG = {
+export interface CaseCategory {
+  id: string;
+  en: string;
+  ar: string;
+}
 
-  // ─── BRAND ──────────────────────────────────────────────────────────────────
+export const CONFIG = {
   brand: {
     name: "PortfolioHubs",
     slogan: "الاسنانجى لازم يتدلع",
@@ -13,82 +18,34 @@ const CONFIG = {
     logoUrl: "https://github.com/user-attachments/assets/fef6c67d-5ed0-4459-b41d-4c288ab48163",
     favicon: "https://github.com/user-attachments/assets/fef6c67d-5ed0-4459-b41d-4c288ab48163",
   },
-
-  // ─── SOCIAL LINKS ────────────────────────────────────────────────────────────
-  // Leave empty ("") to hide an icon
   social: {
-    facebook:  "https://www.facebook.com/share/1CRkHCYgen/",   // e.g. "https://facebook.com/yourpage"
-    instagram: "https://www.instagram.com/portfoliohubs?igsh=MTF3d2tzcXU0cm41cw==",   // e.g. "https://instagram.com/yourhandle"
-    whatsapp:  "https://wa.me/201271476215",   // e.g. "https://wa.me/201271476215"
+    facebook: "https://www.facebook.com/share/1CRkHCYgen/",
+    instagram: "https://www.instagram.com/portfoliohubs?igsh=MTF3d2tzcXU0cm41cw==",
+    whatsapp: "https://wa.me/201271476215",
   },
-
-  // ─── WHATSAPP ────────────────────────────────────────────────────────────────
   whatsapp: {
     destinationNumber: "201271476215",
     message: "Hi! Here is my portfolio configuration file from PortfolioHubs.",
   },
-
-  // ─── PEXELS ──────────────────────────────────────────────────────────────────
-  // Get a free API key at https://www.pexels.com/api/
-  pexels: {
-    apiKey: "",  // paste your Pexels API key here
-  },
-
-  // ─── SEO ─────────────────────────────────────────────────────────────────────
-  seo: {
-    googleVerification: "6VtKNI5qnSYsfjCTBMfnm9PuZjjR7aYh6crmofpS8yw",
-    siteUrl: "https://portfoliohubs.github.io/",
-    keywords: "portfoliohubs, cv maker, dental cv, cv pdf maker, dental portfolio, dentist cv, free cv maker",
-  },
-
-  // ─── TOML BASE URL ────────────────────────────────────────────────────────────
-  toml: {
-    baseUrl: "https://portfoliohubs.github.io/",
-    languageCode: "en-us",
-    defaultContentLanguage: "en",
-  },
-
-  // ─── CLINICAL CASE CATEGORIES ─────────────────────────────────────────────────
-  caseCategories: [
-    { id: "cosmetic",             en: "Cosmetic Dentistry",       ar: "تجميل الأسنان" },
-    { id: "operative",            en: "Operative & Esthetics",    ar: "الحشو والتجميل" },
-    { id: "prosthesis_fixed",     en: "Fixed Prosthodontics",     ar: "تركيبات ثابتة" },
-    { id: "prosthesis_removable", en: "Removable Prosthodontics", ar: "تركيبات متحركة" },
-    { id: "endodontics",          en: "Endodontics",              ar: "حشو العصب" },
-    { id: "oral_surgery",         en: "Oral Surgery",             ar: "جراحة الفم" },
-    { id: "periodontics",         en: "Periodontics",             ar: "أمراض اللثة" },
-    { id: "orthodontics",         en: "Orthodontics",             ar: "تقويم الأسنان" },
-    { id: "pediatric",            en: "Pediatric Dentistry",      ar: "طب أسنان الأطفال" },
-    { id: "implant",              en: "Dental Implants",          ar: "زراعة الأسنان" },
-  ],
-
-  // ─── HOME PAGE TEXT ───────────────────────────────────────────────────────────
   home: {
-    headline: "Build Your professional Portfolio & CV",
+    headline: "Build Your Professional Dental Portfolio & CV",
     subheadline: "الاسنانجى لازم يتدلع",
-    portfolioButtonTitle: "Portfolio Appear in Google Search & ChatGPT answers",
-    portfolioButtonSubtitle: "Professional with jsut 499 LE • appearing in google search • appearing in AI tools answers as (Chatgpt)",
-    cvButtonTitle: "CV PDF Maker for free ",
-    cvButtonSubtitle: "Easy• Free • No account needed",
+    portfolioButtonTitle: "Portfolio in Google & AI Search",
+    portfolioButtonSubtitle: "Professional with just 499 LE • appearing in Google search & AI tools answers as ChatGPT",
+    cvButtonTitle: "CV PDF Maker for free",
+    cvButtonSubtitle: "Easy • Free • No account needed",
     features: [
-      "Professional",
-      "No account required",
-      "in just 5 minutes",
-      "Google & AI answers",
+      "100% Free CV Maker",
+      "Google Search & AI Ready",
+      "No Coding Required",
+      "Mobile & Tablet Friendly",
     ],
-    // ── USER COUNTER ─────────────────────────────────────────────────────────
-    // Change this number manually. It is displayed as-is (no live tracking).
     usersCount: "21715",
     usersCountLabel: "users till now (updated weekly)",
   },
-
-  // ─── PORTFOLIO PATHWAY — INTRO STEP ──────────────────────────────────────────
-  // This read-only step appears before "Personal Info" in the Portfolio pathway.
-  // Users read it and click Next to proceed.
   portfolioIntro: {
-    stepLabel: "for who ?",
     title: "For Who is this Portfolio website?",
-    // Each string in this array is one paragraph/line in the intro
+    stepLabel: "for who ?",
     content: [
       "for who this ?",
       "for dentist need :",
@@ -96,12 +53,8 @@ const CONFIG = {
       "2. appear in Chatgpt, Gemini, all other AI tools answers",
       "3. need official website",
       "4. professional",
-      "5. creative permanent marketing ",
+      "5. creative permanent marketing",
     ],
-    // ── LIVE EXAMPLES ────────────────────────────────────────────────────────
-    // Fill in photo (image URL), name, and link for each example.
-    // Leave name as "" to hide that slot — only filled entries are shown.
-    // You can have up to 12 examples total.
     liveExamples: [
       { photo: "https://github.com/user-attachments/assets/97ba84f2-8190-4ea6-b396-c6beb0bb3572", name: "Dr.Michael Nabil", link: "https://portfoliohubs.github.io/drmichaelnabil/" },
       { photo: "https://github.com/user-attachments/assets/1c669ac9-2b53-4c18-b396-821409c6ada4", name: "Dr. Hanan Sakr", link: "https://portfoliohubs.github.io/drhanansakr/" },
@@ -112,23 +65,61 @@ const CONFIG = {
       { photo: "https://github.com/user-attachments/assets/32d363af-0c59-4bae-9ba3-97330259af67", name: "Dr. Abrar Kamal", link: "https://portfoliohubs.github.io/drabrarkamal/" },
       { photo: "https://github.com/user-attachments/assets/9061d11c-6854-4d58-b240-db0314d816eb", name: "Dr. Youstina Elkes Ghabrial", link: "https://portfoliohubs.github.io/dryoustinaelkesghabrial" },
       { photo: "https://github.com/user-attachments/assets/7e5e9e46-5a49-4c65-af7e-e7bb21601bdc", name: "Dr. Eslam Anas Abdelwahab", link: "https://portfoliohubs.github.io/dreslamanas/" },
-      { photo: "", name: "", link: "" },
-      { photo: "", name: "", link: "" },
-      { photo: "", name: "", link: "" },
-    ],
+    ] as LiveExample[],
   },
-
-  // ─── PAY WHAT YOU WANT ───────────────────────────────────────────────────────
-  // Appears at the end of the CV PDF pathway.
-  // Set enabled to "on" to show the button, "off" to hide it.
   payWhatYouWant: {
-    enabled: "off",              // "on" | "off"
+    enabled: "off",
     buttonLabel: "Pay What You Want",
     whatsappNumber: "201271476215",
     whatsappMessage: "i love your support ,i need to pay",
   },
-
-  // ─── FIELD PLACEHOLDERS ──────────────────────────────────────────────────────
+  steps: {
+    personal: "Personal Info",
+    contact:  "Contact Details",
+    photo:    "Profile Photo",
+    skills:   "Professional Skills",
+    timeline: "Career Timeline",
+    cases:    "Clinical Cases",
+    preview:  "Preview & Download",
+  },
+  labels: {
+    fullNameEn:          "Full Name (English)",
+    fullNameAr:          "الاسم بالكامل (عربي)",
+    titleEn:             "Title / Role (English)",
+    titleAr:             "المسمى المهني (عربي)",
+    graduationYear:      "Graduation Year",
+    universityEn:        "University / Faculty (English)",
+    universityAr:        "الجامعة / الكلية (عربي)",
+    phone:               "Phone",
+    whatsapp:            "WhatsApp",
+    email:               "Email",
+    website:             "Your Link (Professional Page — optional)",
+    profilePhoto:        "Profile Photo",
+    profilePhotoHint:    "Upload a clear, front-facing photo. Any size accepted.",
+    clinicalSkills:      "Clinical Skills",
+    digitalSkills:       "Digital Skills",
+    softSkills:          "Soft Skills",
+    skillInputHint:      "Type a skill and click Add",
+    addSkill:            "Add",
+    timeline:            "Career Timeline",
+    timelineHint:        "Add milestones that appear on the Education page",
+    addMilestone:        "Add Milestone",
+    milestoneYear:       "Year",
+    milestoneEn:         "Event (English)",
+    milestoneAr:         "Event (Arabic)",
+    cases:               "Clinical Cases",
+    casesHint:           "Select multiple photos at once — each photo becomes a case entry",
+    casesUnlimitedLabel: "Unlimited Cases",
+    selectPhotos:        "Select Case Photos",
+    category:            "Category",
+    selectCategory:      "Select a category",
+    customCategory:      "Custom category",
+    caseTitleEn:         "Case Title (English)",
+    caseTitleAr:         "Case Title (Arabic)",
+    caseSubtitle:        "Subtitle / Description (optional)",
+    previewTitle:        "Review Your Data",
+    previewSubtitle:     "Check everything before downloading",
+  },
   placeholders: {
     fullNameEn:     "Dr. Mohammed Ahmed",
     fullNameAr:     "د. محمد أحمد",
@@ -151,63 +142,10 @@ const CONFIG = {
     caseTitleAr:    "مثال: حشوة كومبوزيت (غرض اللغه العربيه هنا هو ان يفهم المرضى)",
     caseSubtitle:   "e.g. Treatment with composite",
   },
-
-  // ─── WIZARD STEP LABELS ───────────────────────────────────────────────────────
-  steps: {
-    personal: "Personal Info",
-    contact:  "Contact Details",
-    photo:    "Profile Photo",
-    skills:   "Professional Skills",
-    timeline: "Career Timeline",
-    cases:    "Clinical Cases",
-    preview:  "Preview & Download",
-  },
-
-  // ─── FORM LABELS ─────────────────────────────────────────────────────────────
-  labels: {
-    fullNameEn:          "Full Name (English)",
-    fullNameAr:          "Full Name (Arabic)",
-    titleEn:             "Title / Role (English)",
-    titleAr:             "Title / Role (Arabic)",
-    graduationYear:      "Graduation Year",
-    universityEn:        "University (English)",
-    universityAr:        "University (Arabic)",
-    phone:               "Phone",
-    whatsapp:            "WhatsApp",
-    email:               "Email",
-    website:             "Your Link (Professional Page — optional)",
-    profilePhoto:        "Profile Photo",
-    profilePhotoHint:    "Upload a clear, front-facing photo. Any size accepted.",
-    clinicalSkills:      "Clinical Skills",
-    digitalSkills:       "Digital Skills",
-    softSkills:          "Soft Skills",
-    skillInputHint:      "Type a skill and click Add",
-    addSkill:            "Add",
-    timeline:            "Career Timeline",
-    timelineHint:        "Add milestones that appear on the Education page",
-    addMilestone:        "Add Milestone",
-    milestoneYear:       "Year",
-    milestoneEn:         "Event (English)",
-    milestoneAr:         "Event (Arabic)",
-    cases:               "Clinical Cases",
-    casesHint:           "Select multiple photos at once — each photo becomes a case entry",
-    // "Unlimited Cases" label shown in the CV pathway cases section header
-    casesUnlimitedLabel: "Unlimited Cases",
-    selectPhotos:        "Select Case Photos",
-    category:            "Category",
-    selectCategory:      "Select a category",
-    customCategory:      "Custom category",
-    caseTitleEn:         "Case Title (English)",
-    caseTitleAr:         "Case Title (Arabic)",
-    caseSubtitle:        "Subtitle / Description (optional)",
-    previewTitle:        "Review Your Data",
-    previewSubtitle:     "Check everything before downloading",
-  },
-
-  // ─── BUTTON LABELS ───────────────────────────────────────────────────────────
   buttons: {
     next:            "Next Step",
     previous:        "Previous",
+    back:            "Back",
     addMilestone:    "Add Milestone",
     removeMilestone: "Remove",
     downloadToml:    "Download TOML File",
@@ -215,9 +153,21 @@ const CONFIG = {
     downloadPdf:     "Download CV as PDF",
     backHome:        "Back to Home",
     resetForm:       "Start New",
+    finish:          "Submit Portfolio",
+    submit:          "Submit",
   },
-
-  // ─── CV PDF SETTINGS ──────────────────────────────────────────────────────────
+  caseCategories: [
+    { id: "cosmetic",             en: "Cosmetic Dentistry",       ar: "تجميل الأسنان" },
+    { id: "operative",            en: "Operative & Esthetics",    ar: "الحشو والتجميل" },
+    { id: "prosthesis_fixed",     en: "Fixed Prosthodontics",     ar: "تركيبات ثابتة" },
+    { id: "prosthesis_removable", en: "Removable Prosthodontics", ar: "تركيبات متحركة" },
+    { id: "endodontics",          en: "Endodontics",              ar: "حشو العصب" },
+    { id: "oral_surgery",         en: "Oral Surgery",             ar: "جراحة الفم" },
+    { id: "periodontics",         en: "Periodontics",             ar: "أمراض اللثة" },
+    { id: "orthodontics",         en: "Orthodontics",             ar: "تقويم الأسنان" },
+    { id: "pediatric",            en: "Pediatric Dentistry",      ar: "طب أسنان الأطفال" },
+    { id: "implant",              en: "Dental Implants",          ar: "زراعة الأسنان" },
+  ] as CaseCategory[],
   pdf: {
     footerText:          "© 2026",
     primaryColor:        "#BB86FC",
@@ -227,7 +177,7 @@ const CONFIG = {
     mutedColor:          "#a8c7d8",
     lineColor:           "#0ab4fc",
     showCasesInPdf:      true,
-    maxCasePhotosPerRow: 1,   // kept for compatibility; new design uses 1 case per page
+    maxCasePhotosPerRow: 1,
   },
 };
 

@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'wouter';
 import { ArrowLeft, ArrowRight, Plus, X, Upload, Image as ImageIcon, Check, Download, MessageCircle, RotateCcw, ChevronDown } from 'lucide-react';
 import Header from '../components/Header';
 import CONFIG from '../config';
-import { generateToml, downloadToml } from '../lib/tomlGenerator';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { processImageToBase64, processMultipleImages } from '../lib/imageProcessor';
 import { gtagEvent } from '../lib/gtag';
 
@@ -49,6 +50,7 @@ interface FormData {
   clinicalSkillsAr: string[]; digitalSkillsAr: string[]; softSkillsAr: string[];
   timeline: Milestone[];
   cases: ClinicalCase[];
+  packageTier?: string;
 }
 
 const blankForm = (): FormData => ({
@@ -62,6 +64,7 @@ const blankForm = (): FormData => ({
   clinicalSkills: [], digitalSkills: [], softSkills: [],
   clinicalSkillsAr: [], digitalSkillsAr: [], softSkillsAr: [],
   timeline: [], cases: [],
+  packageTier: '',
 });
 
 function SkillInput({ label, items, onAdd, onRemove, placeholder }: {
@@ -127,6 +130,58 @@ export default function PortfolioWizard() {
   const [generating, setGenerating] = useState(false);
   const profileRef = useRef<HTMLInputElement>(null);
   const casesRef   = useRef<HTMLInputElement>(null);
+  
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftToLoad, setDraftToLoad] = useState<FormData | null>(null);
+  const [packages, setPackages] = useState<{ id: string; tier: string; price: number; caseLimit: number; label: string }[]>([]);
+  const [isLoadingPackages, setIsLoadingPackages] = useState(true);
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch packages
+    const DEFAULT_PACKAGES = [
+      { id: 'Free', tier: 'Free', price: 0, caseLimit: 3, label: 'Basic Free', labelAr: 'الباقة المجانية' },
+      { id: 'Tier2', tier: 'Tier2', price: 499, caseLimit: 10, label: 'Professional', labelAr: 'الباقة الاحترافية' },
+      { id: 'Tier3', tier: 'Tier3', price: 999, caseLimit: 25, label: 'Premium', labelAr: 'الباقة المتميزة' },
+      { id: 'Tier4', tier: 'Tier4', price: 1499, caseLimit: 100, label: 'Unlimited', labelAr: 'الباقة غير المحدودة' }
+    ];
+
+    getDocs(collection(db, 'packages')).then(snap => {
+      if (snap.empty) {
+        setPackages(DEFAULT_PACKAGES);
+      } else {
+        const pkgs = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as any))
+          .filter(p => p.active !== false);
+        setPackages(pkgs.sort((a, b) => (a.price || 0) - (b.price || 0)));
+      }
+      setIsLoadingPackages(false);
+    }).catch(e => {
+      console.error('Failed to fetch packages:', e);
+      setPackages(DEFAULT_PACKAGES);
+      setIsLoadingPackages(false);
+    });
+
+    // Check draft
+    const draft = localStorage.getItem('portfolio_draft');
+    if (draft) {
+      try {
+        const parsed = JSON.parse(draft);
+        if (parsed && (parsed.fullName || parsed.cases?.length > 0)) {
+          setDraftToLoad(parsed);
+          setShowDraftModal(true);
+        }
+      } catch (e) {
+        console.error('Failed to parse draft', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (step > 0 || form.fullName !== '') {
+      localStorage.setItem('portfolio_draft', JSON.stringify(form));
+    }
+  }, [form, step]);
 
   const set = <K extends keyof FormData>(key: K, value: FormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }));
@@ -168,38 +223,43 @@ export default function PortfolioWizard() {
     e.target.value = '';
   };
 
-  const handleGenerate = async () => {
-    setGenerating(true);
-    const processedCases = form.cases.map(c => ({
-      category: c.category === 'custom' ? c.customCategory : (CONFIG.caseCategories.find(cat => cat.id === c.category)?.en || c.category),
-      categoryAr: c.category === 'custom' ? c.customCategory : c.categoryAr,
-      title: c.title, titleAr: c.titleAr, photo: c.photo,
-    }));
-    const toml = generateToml({
-      personalInfo: { fullName: form.fullName, fullNameAr: form.fullNameAr, title: form.title, titleAr: form.titleAr, graduationYear: form.graduationYear, university: form.university, universityAr: form.universityAr, clinicName: form.clinicName, clinicNameAr: form.clinicNameAr },
-      contact: { phone: form.phone, whatsapp: form.whatsapp, email: form.email, instagram: form.instagram, facebook: form.facebook, linkedin: form.linkedin, locationAddress: form.locationAddress, locationAddressAr: form.locationAddressAr, locationLat: form.locationLat, locationLng: form.locationLng },
-      profilePhoto: form.profilePhoto,
-      skills: { clinical: form.clinicalSkills, clinicalAr: form.clinicalSkillsAr.length ? form.clinicalSkillsAr : form.clinicalSkills, digital: form.digitalSkills, digitalAr: form.digitalSkillsAr.length ? form.digitalSkillsAr : form.digitalSkills, soft: form.softSkills, softAr: form.softSkillsAr.length ? form.softSkillsAr : form.softSkills },
-      timeline: form.timeline,
-      cases: processedCases,
-    });
-    setTomlOutput(toml);
-    setGenerating(false);
-  };
-
-  const handleSendWhatsApp = () => {
-    downloadToml(tomlOutput);
-    gtagEvent('send_whatsapp', { pathway: 'portfolio', source: 'wizard' });
-    const phone = CONFIG.whatsapp.destinationNumber;
-    const msg = encodeURIComponent(CONFIG.whatsapp.message);
-    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-  };
-
+  
   const currentStep = STEPS[step];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header showBack />
+
+      {showDraftModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <div className="bg-card border border-border p-6 rounded-2xl max-w-md w-full shadow-lg">
+            <h3 className="text-lg font-bold mb-2">Resume Draft?</h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              We found an unsaved portfolio draft. Would you like to resume where you left off?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  if (draftToLoad) setForm(draftToLoad);
+                  setShowDraftModal(false);
+                }}
+                className="flex-1 bg-primary text-primary-foreground py-2 rounded-xl font-semibold hover:bg-primary/90 transition"
+              >
+                Resume Draft
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('portfolio_draft');
+                  setShowDraftModal(false);
+                }}
+                className="flex-1 border border-border text-foreground py-2 rounded-xl font-semibold hover:bg-muted transition"
+              >
+                Start Fresh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Progress bar */}
       <div className="w-full bg-muted h-1.5">
@@ -516,76 +576,81 @@ export default function PortfolioWizard() {
             </section>
           )}
 
-          {/* ── PREVIEW & SUBMIT ──────────────────────────────────────────────── */}
+          {/* ── PACKAGE SELECTION & SUBMIT ──────────────────────────────────────────────── */}
           {currentStep === 'preview' && (
             <section className="space-y-6">
-              <h2 className="text-xl font-bold text-foreground">{STEP_LABELS.preview}</h2>
-              <p className="text-sm text-muted-foreground">{CONFIG.labels.previewSubtitle}</p>
+              <h2 className="text-xl font-bold text-foreground">Select Your Package</h2>
+              <p className="text-sm text-muted-foreground">Choose a plan that fits your needs to complete your portfolio.</p>
 
-              {!tomlOutput ? (
-                <button
-                  onClick={handleGenerate}
-                  disabled={generating}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:bg-primary/90 disabled:opacity-60 transition-colors"
-                >
-                  {generating ? 'Generating…' : 'Generate Config File'}
-                </button>
-              ) : (
-                <div className="space-y-4">
-                  {/* Summary */}
-                  <div className="rounded-xl border border-border bg-card p-4 space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-                      <Check className="h-4 w-4 text-primary" /> Config file ready
-                    </div>
-                    {[
-                      ['Name', form.fullName], ['Title', form.title],
-                      ['University', form.university], ['Year', form.graduationYear],
-                      ['Phone', form.phone], ['Email', form.email],
-                      ['Clinical Skills', form.clinicalSkills.join(', ')],
-                      ['Timeline entries', `${form.timeline.length} milestones`],
-                      ['Clinical Cases', `${form.cases.length} cases`],
-                    ].map(([k, v]) => v && (
-                      <div key={k} className="flex justify-between text-sm gap-3">
-                        <span className="text-muted-foreground shrink-0">{k}</span>
-                        <span className="text-foreground text-right truncate">{v}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {packages.map(pkg => {
+                  const isOverLimit = form.cases.length > pkg.caseLimit;
+                  return (
+                    <button
+                      key={pkg.id}
+                      onClick={() => !isOverLimit && setSelectedPackage(pkg.id)}
+                      disabled={isOverLimit}
+                      className={`relative flex flex-col p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                        selectedPackage === pkg.id
+                          ? 'border-primary bg-primary/5 shadow-md'
+                          : isOverLimit
+                          ? 'border-border/50 bg-muted/30 opacity-60 cursor-not-allowed'
+                          : 'border-border bg-card hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-bold text-lg mb-0.5">{pkg.label || pkg.tier}</h3>
+                        {selectedPackage === pkg.id && (
+                          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground shrink-0 shadow-xs">
+                            <Check className="h-3.5 w-3.5" />
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                      {(pkg as any).labelAr && (
+                        <p className="text-xs text-muted-foreground mb-2 font-medium" dir="rtl">
+                          {(pkg as any).labelAr}
+                        </p>
+                      )}
+                      <div className="text-2xl font-extrabold mb-1 text-primary">
+                        {pkg.price === 0 ? 'Free (مجاناً)' : `${pkg.price.toLocaleString()} EGP`}
+                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground mb-1">
+                        Up to {pkg.caseLimit} clinical cases • حتى {pkg.caseLimit} حالة سريرية
+                      </p>
+                      {isOverLimit && (
+                        <p className="text-xs text-destructive mt-2 font-medium">
+                          You have {form.cases.length} cases. Please choose a higher tier or remove cases.
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
 
-                  {/* TOML preview */}
-                  <details className="rounded-xl border border-border overflow-hidden">
-                    <summary className="px-4 py-3 bg-muted/50 text-sm font-medium cursor-pointer hover:bg-muted transition-colors">
-                      Preview TOML content
-                    </summary>
-                    <pre className="p-4 text-xs text-foreground overflow-auto max-h-56 font-mono leading-relaxed bg-background">
-                      {tomlOutput}
-                    </pre>
-                  </details>
+              {packages.length === 0 && isLoadingPackages && (
+                <div className="text-center p-6 border rounded-xl">
+                  <p className="text-muted-foreground">Loading packages...</p>
+                </div>
+              )}
+              {packages.length === 0 && !isLoadingPackages && (
+                <div className="text-center p-6 border rounded-xl">
+                  <p className="text-muted-foreground">No packages available at the moment. Please contact support.</p>
+                </div>
+              )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {selectedPackage && (
+                <div className="mt-8">
+                  <Link href="/login?mode=signup">
                     <button
                       onClick={() => {
-                        gtagEvent('download_toml', { pathway: 'portfolio' });
-                        downloadToml(tomlOutput);
+                        gtagEvent('portfolio_checkout', { package: selectedPackage });
+                        set('packageTier', selectedPackage);
                       }}
-                      className="flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
+                      className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
                     >
-                      <Download className="h-4 w-4" />
-                      {CONFIG.buttons.downloadToml}
+                      Register & Complete
                     </button>
-                    <button
-                      onClick={handleSendWhatsApp}
-                      className="flex items-center justify-center gap-2 py-3 rounded-xl bg-green-600 text-white font-semibold text-sm hover:bg-green-700 transition-colors"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                      {CONFIG.buttons.sendWhatsApp}
-                    </button>
-                  </div>
-
-                  <button onClick={() => { setForm(blankForm()); setStep(0); setTomlOutput(''); }}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-medium hover:bg-muted transition-colors">
-                    <RotateCcw className="h-4 w-4" /> {CONFIG.buttons.resetForm}
-                  </button>
+                  </Link>
                 </div>
               )}
             </section>

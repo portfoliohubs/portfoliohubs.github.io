@@ -9,15 +9,15 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.svg",
+      "src": "https://github.com/user-attachments/assets/fef6c67d-5ed0-4459-b41d-4c288ab48163",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.svg",
+      "src": "https://github.com/user-attachments/assets/fef6c67d-5ed0-4459-b41d-4c288ab48163",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

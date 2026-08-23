@@ -1,7 +1,6 @@
 const CACHE_NAME = 'portfoliohubs-v1';
 const STATIC_ASSETS = [
   '/',
-  '/src/main.tsx',
   '/manifest.json'
 ];
 

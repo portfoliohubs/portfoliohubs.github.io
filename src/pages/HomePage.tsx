@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { FileText, Search, CheckCircle, ArrowRight } from 'lucide-react';
+import { FileText, Search, CheckCircle, ArrowRight, UserCheck, PlusCircle } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import Header from '../components/Header';
 import CONFIG from '../config';
 import { gtagEvent } from '../lib/gtag';
 
 export default function HomePage() {
+  const [showPortfolioOptions, setShowPortfolioOptions] = useState(false);
   const hasSocial =
     CONFIG.social.facebook || CONFIG.social.instagram || CONFIG.social.whatsapp;
 
@@ -31,9 +33,12 @@ export default function HomePage() {
         {/* Two big pathway cards */}
         <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {/* Portfolio */}
-          <Link href="/portfolio">
+          {!showPortfolioOptions ? (
             <button
-              onClick={() => gtagEvent('portfolio_start', { source: 'homepage' })}
+              onClick={() => {
+                gtagEvent('portfolio_start', { source: 'homepage' });
+                setShowPortfolioOptions(true);
+              }}
               className="group w-full text-left rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/15 dark:from-primary/10 dark:to-primary/20 p-6 hover:shadow-lg hover:border-primary/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               <div className="flex items-start justify-between mb-4">
@@ -49,7 +54,35 @@ export default function HomePage() {
                 {CONFIG.home.portfolioButtonSubtitle}
               </p>
             </button>
-          </Link>
+          ) : (
+            <div className="w-full rounded-2xl border-2 border-primary bg-card p-4 flex flex-col gap-3 shadow-lg">
+              <h3 className="font-bold text-sm text-foreground px-1">Choose Option</h3>
+              <Link href="/portfolio">
+                <button className="w-full text-left p-3 rounded-xl border border-border bg-background hover:bg-muted transition flex items-center gap-3">
+                  <PlusCircle className="h-5 w-5 text-primary" />
+                  <div>
+                    <div className="font-semibold text-sm">I want to create my portfolio</div>
+                    <div className="text-xs text-muted-foreground">Start the step-by-step wizard</div>
+                  </div>
+                </button>
+              </Link>
+              <Link href="/login?mode=signin">
+                <button className="w-full text-left p-3 rounded-xl border border-border bg-background hover:bg-muted transition flex items-center gap-3">
+                  <UserCheck className="h-5 w-5 text-primary" />
+                  <div>
+                    <div className="font-semibold text-sm">I already have a portfolio</div>
+                    <div className="text-xs text-muted-foreground">Sign in to your dashboard</div>
+                  </div>
+                </button>
+              </Link>
+              <button 
+                onClick={() => setShowPortfolioOptions(false)}
+                className="text-xs text-center text-muted-foreground hover:text-foreground py-1"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
 
           {/* CV PDF */}
           <Link href="/cv">

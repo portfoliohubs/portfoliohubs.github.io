@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { Link } from 'wouter';
 import { ArrowLeft, ArrowRight, Plus, X, Upload, Image as ImageIcon, Check, FileDown, RotateCcw, ChevronDown, MessageCircle } from 'lucide-react';
 import Header from '../components/Header';
 import CONFIG from '../config';
@@ -423,7 +422,7 @@ export default function CVWizard() {
                   gtagEvent('download_pdf', { pathway: 'cv' });
                   handleDownloadPdf();
                 }}
-                className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors shadow-md"
+                className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors shadow-md cursor-pointer"
               >
                 <FileDown className="h-5 w-5" />
                 {CONFIG.buttons.downloadPdf}
@@ -444,7 +443,7 @@ export default function CVWizard() {
               )}
 
               <button onClick={() => { setForm(blankForm()); setStep(0); }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-medium hover:bg-muted transition-colors">
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-medium hover:bg-muted transition-colors cursor-pointer">
                 <RotateCcw className="h-4 w-4" /> {CONFIG.buttons.resetForm}
               </button>
             </section>
@@ -469,7 +468,7 @@ export default function CVWizard() {
                 gtagEvent('cv_step', { step: STEPS[step], action: 'next' });
                 setStep(s => Math.min(STEPS.length - 1, s + 1));
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
             >
               {CONFIG.buttons.next} <ArrowRight className="h-4 w-4" />
             </button>

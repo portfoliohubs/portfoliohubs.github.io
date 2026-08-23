@@ -5,6 +5,9 @@ import { ThemeProvider } from 'next-themes';
 import HomePage from './pages/HomePage';
 import PortfolioWizard from './pages/PortfolioWizard';
 import CVWizard from './pages/CVWizard';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 /**
  * Path-based routing using BASE_URL:
@@ -20,6 +23,9 @@ function AppRoutes() {
       <Route path="/"          component={HomePage} />
       <Route path="/portfolio" component={PortfolioWizard} />
       <Route path="/cv"        component={CVWizard} />
+      <Route path="/login"     component={Login} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/admin"     component={AdminDashboard} />
       <Route>
         <div className="min-h-screen flex items-center justify-center">
           <p className="text-muted-foreground">Page not found</p>
@@ -31,9 +37,13 @@ function AppRoutes() {
 
 export default function App() {
   useFavicon(config.brand.favicon);
+  const routerBase = import.meta.env.BASE_URL && import.meta.env.BASE_URL !== '/' 
+    ? import.meta.env.BASE_URL.replace(/\/$/, '') 
+    : '';
+
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, '') ?? ''}>
+      <WouterRouter base={routerBase}>
         <AppRoutes />
       </WouterRouter>
     </ThemeProvider>

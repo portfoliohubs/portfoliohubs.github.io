@@ -1,0 +1,98 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Server-side check verifying if the authenticated user's email exists
+    // in the private /admins collection. Uses cryptographically verified JWT token.
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // Validates image URL or compressed image size to prevent database bloating
+    function isValidImagePayload() {
+      let data = request.resource.data;
+      return (!('profilePhoto' in data) || data.profilePhoto == null || data.profilePhoto.size() <= 200000) &&
+             (!('profilePreview' in data) || data.profilePreview == null || data.profilePreview.size() <= 200000);
+    }
+
+    match /portfolios/{uid} {
+      // READ: Only the portfolio owner or an admin
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      
+      // CREATE: A new doctor creating their initial document on registration
+      allow create: if request.auth != null && (
+        isAdmin() || 
+        (
+          request.auth.uid == uid &&
+          isValidImagePayload() &&
+          request.resource.data.status == 'pending_review' &&
+          request.resource.data.paymentConfirmed == false &&
+          request.resource.data.hasUnreviewedChanges == false &&
+          request.resource.data.active == true
+        )
+      );
+
+      // UPDATE: Doctor editing their existing draft
+      allow update: if request.auth != null && (
+        isAdmin() || 
+        (
+          request.auth.uid == uid &&
+          isValidImagePayload() &&
+          // Cannot modify admin-controlled fields
+          (!('status' in resource.data) || request.resource.data.status == resource.data.status) &&
+          (!('paymentConfirmed' in resource.data) || request.resource.data.paymentConfirmed == resource.data.paymentConfirmed) &&
+          (!('packageTier' in resource.data) || request.resource.data.packageTier == resource.data.packageTier) &&
+          (!('caseLimit' in resource.data) || request.resource.data.caseLimit == resource.data.caseLimit) &&
+          (!('active' in resource.data) || request.resource.data.active == resource.data.active) &&
+          // If already published, can only set hasUnreviewedChanges to true; cannot clear it
+          (
+            !('hasUnreviewedChanges' in resource.data) ||
+            request.resource.data.hasUnreviewedChanges == resource.data.hasUnreviewedChanges ||
+            (resource.data.status == 'published' && request.resource.data.hasUnreviewedChanges == true)
+          )
+        )
+      );
+
+      // DELETE: Only admins can delete a portfolio document
+      allow delete: if isAdmin();
+    }
+    
+    match /slugs/{slug} {
+      // READ: Publicly accessible or authenticated for duplicate checks
+      allow read: if true;
+      
+      // CREATE: Authenticated users can reserve slugs tied to their own UID
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      
+      // DELETE: Authenticated users can release their own slugs
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    
+    match /published_portfolios/{uid} {
+      // READ: Publicly accessible for Hugo static generator and preview
+      allow read: if true;
+      
+      // WRITE: Strictly admins only (doctors can NEVER write here directly)
+      allow write: if isAdmin();
+    }
+    
+    match /packages/{tier} {
+      // READ: Publicly accessible to display packages in wizard
+      allow read: if true;
+      
+      // WRITE: Strictly admins only
+      allow write: if isAdmin();
+    }
+    
+    match /admins/{email} {
+      // READ: Only admins can read the admin allowlist
+      allow read: if isAdmin();
+      
+      // WRITE: No client write allowed (must be managed directly via Firebase Console)
+      allow write: if false;
+    }
+  }
+}

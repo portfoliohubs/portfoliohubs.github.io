@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /portfolio-images/{uid}/{allImages=**} {
+      // READ: Publicly accessible so images can render on live doctor sites & preview
+      allow read: if true;
+      
+      // WRITE: Only the owning authenticated user (or admin) can write to their folder.
+      // Enforces image content types and a maximum 5MB file size limit.
+      allow write: if request.auth != null 
+                   && request.auth.uid == uid
+                   && request.resource.size < 5242880
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
