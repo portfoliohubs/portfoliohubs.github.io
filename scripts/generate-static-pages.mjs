@@ -870,34 +870,77 @@ async function runStaticGeneration() {
     }
 
     // Step 2: Fetch approved doctors and generate pages + 4 articles
-    console.log('\nStep 2: Fetching approved doctors from Firestore...');
+    console.log('\nStep 2: Fetching approved doctors from Cloudflare D1 & Database...');
     const doctorsList = [];
+    const seenUids = new Set();
+    const workerApiUrl = (process.env.VITE_CLOUDFLARE_API_URL || process.env.VITE_API_BASE_URL || 'https://portfoliohubs-api.portfoliohubs-contact.workers.dev').replace(/\/+$/, '');
+
+    // 2.1 Fetch primary published doctors from Cloudflare D1
+    try {
+      console.log(`🌐 Fetching published websites from Cloudflare Worker (${workerApiUrl}/api/websites)...`);
+      const cfRes = await fetch(`${workerApiUrl}/api/websites`);
+      if (cfRes.ok) {
+        const websites = await cfRes.json();
+        if (Array.isArray(websites) && websites.length > 0) {
+          console.log(`Found ${websites.length} published doctor(s) in Cloudflare D1.`);
+          for (const item of websites) {
+            const slug = item.slug;
+            if (!slug) continue;
+            try {
+              const docRes = await fetch(`${workerApiUrl}/api/website/${encodeURIComponent(slug)}`);
+              if (docRes.ok) {
+                const docEnvelope = await docRes.json();
+                if (docEnvelope?.data) {
+                  const docData = docEnvelope.data;
+                  const docUid = item.uid || docData.id || slug;
+                  seenUids.add(docUid);
+                  doctorsList.push({ uid: docUid, doctor: docData, cases: docData.cases || [] });
+                }
+              }
+            } catch (err) {
+              console.warn(`  ⚠️ Failed fetching D1 doctor details for ${slug}:`, err.message);
+            }
+          }
+        }
+      }
+    } catch (cfErr) {
+      console.warn('⚠️ Cloudflare D1 fetch note:', cfErr.message);
+    }
+
+    // 2.2 Firestore fallback & legacy merge
     try {
       if (backend.mode === 'admin') {
         const usersSnap = await backend.adminDb.collection('users').get();
         for (const docSnap of usersSnap.docs) {
+          if (seenUids.has(docSnap.id)) continue;
           const doctor = docSnap.data();
           const isApproved = doctor.status === 'published' || doctor.status === 'approved';
           const isActive = doctor.active !== false;
           if (isApproved && isActive) {
+            seenUids.add(docSnap.id);
             doctorsList.push({ uid: docSnap.id, doctor });
           }
         }
       } else {
-        // Query approved/published doctors using client SDK (passes firestore security rules seamlessly)
         const q = clientQuery(
           clientCollection(backend.clientDb, 'users'),
           clientWhere('status', 'in', ['approved', 'published'])
         );
         const snap = await clientGetDocs(q);
         for (const docSnap of snap.docs) {
+          if (seenUids.has(docSnap.id)) continue;
           const doctor = docSnap.data();
           if (doctor.active !== false) {
+            seenUids.add(docSnap.id);
             doctorsList.push({ uid: docSnap.id, doctor });
           }
         }
       }
+    } catch (fsErr) {
+      console.warn('⚠️ Firestore fetch note:', fsErr.message);
+    }
 
+    try {
       console.log(`Found ${doctorsList.length} approved/published doctor(s) to generate.`);
 
       for (const { uid, doctor } of doctorsList) {

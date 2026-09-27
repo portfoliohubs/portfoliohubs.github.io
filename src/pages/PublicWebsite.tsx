@@ -1,42 +1,28 @@
-import { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, useRoute } from 'wouter';
-import Header from '../components/Header';
-import { db } from '../lib/firebase';
 import { cloudflareApi } from '../lib/cloudflareApiClient';
+import { buildDoctorStaticHtml } from '../lib/doctorTemplate';
 import CONFIG from '../config';
-import type { PortfolioData } from '../types';
-
-interface PublicWebsiteData extends Omit<Partial<PortfolioData>, 'cases'> {
-  sameAs?: string[];
-  cases?: Array<{
-    id?: string;
-    title?: string;
-    titleAr?: string;
-    category?: string;
-    description?: string;
-    descriptionAr?: string;
-    photos?: Array<{ url?: string; previewUrl?: string; label?: string; labelAr?: string }>;
-    beforePhoto?: { url?: string; previewUrl?: string };
-    afterPhoto?: { url?: string; previewUrl?: string };
-  }>;
-}
 
 export default function PublicWebsite() {
   const [, compactParams] = useRoute('/dr:slug');
   const [, slashParams] = useRoute('/dr/:slug');
   const slug = compactParams?.slug || slashParams?.slug || '';
-  const [website, setWebsite] = useState<PublicWebsiteData | null>(null);
+  const [websiteData, setWebsiteData] = useState<Record<string, any> | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let active = true;
     const loadWebsite = async () => {
       try {
+        setLoading(true);
+        setError('');
         const cleanSlug = slug.trim().toLowerCase().replace(/^\/+|\/+$/g, '');
-        // Check for Dr. Michael Nabil directly
+        
+        // Handle Michael Nabil legacy direct link
         if (cleanSlug === 'drmichaelnabil' || cleanSlug === 'michaelnabil' || cleanSlug === 'michael') {
-          window.location.replace('http://portfoliohubs.github.io/drmichaelnabil');
+          window.location.replace('https://portfoliohubs.github.io/drmichaelnabil');
           return;
         }
 
@@ -49,33 +35,22 @@ export default function PublicWebsite() {
           return;
         }
 
-        // Prefer the Worker public endpoint, while retaining Firestore as a
-        // backwards-compatible fallback for existing published websites.
-        try {
-          const response = await cloudflareApi.getPublishedWebsite(slug);
-          if (active) setWebsite(response.data);
-          return;
-        } catch (apiError) {
-          console.warn('[PublicWebsite] Cloudflare API unavailable; using Firebase fallback.', apiError);
+        // Authoritative source: Cloudflare Worker API & D1 database
+        const response = await cloudflareApi.getPublishedWebsite(cleanSlug);
+        if (active) {
+          if (response?.data) {
+            setWebsiteData(response.data);
+          } else {
+            throw new Error('This doctor website could not be found or is pending publication.');
+          }
         }
-        const slugSnapshot = await getDoc(doc(db, 'slugs', slug));
-        if (!slugSnapshot.exists()) {
-          throw new Error('This website could not be found.');
-        }
-        const uid = slugSnapshot.data().uid;
-        if (typeof uid !== 'string' || !uid) {
-          throw new Error('This website has an invalid owner record.');
-        }
-        const websiteSnapshot = await getDoc(doc(db, 'published_portfolios', uid));
-        if (!websiteSnapshot.exists()) {
-          throw new Error('This website is not published yet.');
-        }
-        if (active) setWebsite(websiteSnapshot.data() as PublicWebsiteData);
       } catch (loadError) {
-        console.warn('[PublicWebsite] Note:', loadError instanceof Error ? loadError.message : 'Unable to load website');
+        console.warn('[PublicWebsite] Error loading published doctor:', loadError);
         if (active) {
           setError(loadError instanceof Error ? loadError.message : 'Unable to load this website.');
         }
+      } finally {
+        if (active) setLoading(false);
       }
     };
 
@@ -85,128 +60,56 @@ export default function PublicWebsite() {
     };
   }, [slug]);
 
-  useEffect(() => {
-    if (!website) return;
-    const displayName = website.fullName || 'Dental professional';
-    document.title = `${displayName} | PortfolioHubs`;
-    const description = website.title || 'Dental professional website powered by PortfolioHubs';
-    let descriptionTag = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    if (!descriptionTag) {
-      descriptionTag = document.createElement('meta');
-      descriptionTag.name = 'description';
-      document.head.appendChild(descriptionTag);
-    }
-    descriptionTag.content = description;
-    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      document.head.appendChild(canonical);
-    }
-    canonical.href = `https://portfoliohubs.pages.dev/dr${slug}`;
-    const existingSchema = document.querySelector<HTMLScriptElement>('script[data-public-website-schema]');
-    const schema = existingSchema || document.createElement('script');
-    schema.type = 'application/ld+json';
-    schema.dataset.publicWebsiteSchema = 'true';
-    schema.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: displayName,
-      jobTitle: website.title || 'Dental professional',
-      url: canonical.href,
-      image: website.profilePhoto || website.profilePreview,
-      sameAs: website.sameAs,
+  // Generate 100% compliant Hugo HTML from authoritative doctor data
+  const renderedHtml = useMemo(() => {
+    if (!websiteData) return '';
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://portfoliohubs.github.io';
+    return buildDoctorStaticHtml({
+      doctor: websiteData,
+      cases: websiteData.cases || [],
+      baseUrl
     });
-    if (!existingSchema) document.head.appendChild(schema);
-  }, [slug, website]);
+  }, [websiteData]);
 
-  if (error) {
+  useEffect(() => {
+    if (!websiteData) return;
+    const name = websiteData.fullName || websiteData.fullNameAr || 'Dr. Dentist';
+    document.title = `${name} | PortfolioHubs`;
+  }, [websiteData]);
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        <Header />
-        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl flex-col items-center justify-center px-6 text-center">
-          <h1 className="mb-3 text-3xl font-bold">Website unavailable</h1>
-          <p className="mb-6 text-muted-foreground">{error}</p>
-          <Link href="/" className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">
+      <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-300 font-medium text-lg">Loading Doctor Portfolio...</p>
+      </div>
+    );
+  }
+
+  if (error || !renderedHtml) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl">
+          <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+            ✕
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Portfolio Unavailable</h1>
+          <p className="text-slate-400 text-sm mb-6">{error || 'This doctor portfolio is not yet published.'}</p>
+          <Link href="/" className="inline-block rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-all shadow-lg shadow-blue-600/30">
             Back to PortfolioHubs
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
 
-  if (!website) {
-    return (
-      <div className="min-h-screen bg-background text-foreground">
-        <Header />
-        <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 text-muted-foreground">
-          Loading website...
-        </main>
-      </div>
-    );
-  }
-
-  const cases = website.cases || [];
-  const displayName = website.fullName || 'Dental professional';
-  const profilePhoto = website.profilePhoto || website.profilePreview;
-
+  // Render the exact Hugo HTML in an isolated seamless viewport
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header />
-      <main>
-        <section className="mx-auto max-w-5xl px-6 py-16 text-center sm:py-24">
-          {profilePhoto && (
-            <img
-              src={profilePhoto}
-              alt={displayName}
-              className="mx-auto mb-6 h-28 w-28 rounded-full object-cover ring-4 ring-primary/10"
-            />
-          )}
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-            {website.title || 'Dental professional'}
-          </p>
-          <h1 className="mb-5 text-4xl font-bold tracking-tight sm:text-6xl">{displayName}</h1>
-          {website.university && <p className="text-lg text-muted-foreground">{website.university}</p>}
-          {website.locationAddress && (
-            <p className="mt-2 text-sm text-muted-foreground">{website.locationAddress}</p>
-          )}
-        </section>
-
-        {cases.length > 0 && (
-          <section className="bg-muted/40 px-6 py-16 sm:py-20" aria-labelledby="cases-heading">
-            <div className="mx-auto max-w-5xl">
-              <h2 id="cases-heading" className="mb-8 text-3xl font-bold">
-                Clinical cases
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {cases.map((item, index) => {
-                  const photo = item.photos?.[0]?.url || item.photos?.[0]?.previewUrl ||
-                    item.afterPhoto?.url || item.beforePhoto?.url;
-                  return (
-                    <article key={item.id || index} className="overflow-hidden rounded-3xl bg-card shadow-sm">
-                      {photo && <img src={photo} alt={item.title || `Clinical case ${index + 1}`} className="aspect-[4/3] w-full object-cover" />}
-                      <div className="p-6">
-                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                          {item.category || 'Clinical case'}
-                        </p>
-                        <h3 className="text-xl font-semibold">{item.title || item.titleAr || 'Clinical case'}</h3>
-                        {(item.description || item.descriptionAr) && (
-                          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            {item.description || item.descriptionAr}
-                          </p>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-      </main>
-      <footer className="border-t border-border px-6 py-8 text-center text-sm text-muted-foreground">
-        PortfolioHubs · {displayName}
-      </footer>
-    </div>
+    <iframe
+      srcDoc={renderedHtml}
+      title="Doctor Portfolio"
+      className="w-full h-screen border-none block m-0 p-0 overflow-auto"
+      style={{ width: '100vw', height: '100vh', border: 'none' }}
+    />
   );
 }

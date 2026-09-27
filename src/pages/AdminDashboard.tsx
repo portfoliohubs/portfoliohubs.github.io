@@ -2,17 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc,
-  collection, 
-  query,
-  runTransaction
-} from 'firebase/firestore';
-import { 
   ShieldCheck, 
   Users, 
   CheckCircle, 
@@ -61,7 +50,7 @@ import {
   Send,
   Tag
 } from 'lucide-react';
-import { auth, db } from '../lib/firebase';
+import { auth } from '../lib/firebase';
 import Header from '../components/Header';
 import { INITIAL_BLOG_ARTICLES, BLOG_CATEGORIES, BlogArticle } from '../data/blogArticlesData';
 import CONFIG from '../config';
@@ -279,26 +268,18 @@ export default function AdminDashboard() {
     if (!isAdmin) return;
     setActionLoading(true);
     try {
-      // Fetch Global Settings
+      // Fetch Global Settings from Cloudflare D1 Worker
       try {
-        const settingsSnap = await getDoc(doc(db, 'settings', 'global'));
-        if (settingsSnap.exists()) {
-          setGlobalSettings(prev => ({ ...prev, ...settingsSnap.data() }));
+        const settingsRes = await cloudflareApi.getSettings('global');
+        if (settingsRes?.data) {
+          setGlobalSettings(prev => ({ ...prev, ...settingsRes.data }));
         }
       } catch (err) {
-        console.log('Settings doc not yet initialized, using defaults');
+        console.log('[AdminDashboard] Settings not yet initialized in Worker, using defaults');
       }
 
       setLoadingPromos(true);
       try {
-        const legacyPromoSnap = await getDocs(collection(db, 'promo_codes'));
-        const existingPromos = await cloudflareApi.getPromoCodes();
-        const existingCodes = new Set(existingPromos.map((item) => String(item.code || '')));
-        for (const promoDoc of legacyPromoSnap.docs) {
-          if (!existingCodes.has(promoDoc.id)) {
-            await cloudflareApi.savePromoCode(promoDoc.id, promoDoc.data());
-          }
-        }
         const promoRows = await cloudflareApi.getPromoCodes();
         setPromoCodes(promoRows.map((row) => {
           const data = row.data && typeof row.data === 'object'
@@ -340,24 +321,24 @@ export default function AdminDashboard() {
       }));
       setLastDataRefresh(new Date());
 
-      // Fetch blog articles overrides from Firestore
+      // Fetch blog articles overrides from Cloudflare Worker API
       try {
-        const blogSnap = await getDocs(collection(db, 'blog_articles'));
-        const blogOverrides: Record<string, { published: boolean; publishedAt?: string }> = {};
-        blogSnap.forEach(d => {
-          const data = d.data();
-          blogOverrides[d.id] = {
+        const blogOverrides = await cloudflareApi.getBlogOverrides();
+        const blogMap: Record<string, { published: boolean; publishedAt?: string }> = {};
+        blogOverrides.forEach(row => {
+          const data = row.data || {};
+          blogMap[row.slug] = {
             published: Boolean(data.published),
-            publishedAt: data.publishedAt || ''
+            publishedAt: (typeof data.publishedAt === 'string' ? data.publishedAt : row.published_at || '') || ''
           };
         });
 
         setBlogArticlesList(prev => prev.map(art => {
-          const ov = blogOverrides[art.slug];
+          const ov = blogMap[art.slug];
           return ov ? { ...art, published: ov.published, publishedAt: ov.publishedAt || '' } : art;
         }));
       } catch (blogErr) {
-        console.warn('Could not load blog_articles overrides:', blogErr);
+        console.warn('[AdminDashboard] Note: using default blog articles:', blogErr);
       }
     } catch (err: any) {
       console.error('Error loading admin data:', err);
@@ -380,15 +361,15 @@ export default function AdminDashboard() {
       const newPublished = !article.published;
       const nowIso = new Date().toISOString();
 
-      // 1. Update Firestore
-      await setDoc(doc(db, 'blog_articles', article.slug), {
+      // 1. Update Cloudflare Worker D1
+      await cloudflareApi.saveBlogArticle(article.slug, {
         slug: article.slug,
         title: article.title,
         category: article.category,
         published: newPublished,
         publishedAt: newPublished ? nowIso : '',
         updatedAt: nowIso
-      }, { merge: true });
+      });
 
       // 2. Update Local State
       setBlogArticlesList(prev => prev.map(a => a.slug === article.slug ? {
@@ -397,20 +378,11 @@ export default function AdminDashboard() {
         publishedAt: newPublished ? nowIso : ''
       } : a));
 
-      // 3. Dispatch GitHub Action
-      if (ghPat.trim()) {
-        await dispatchGitHubAction('generate_pages', {
-          type: 'blog_publish_toggle',
-          slug: article.slug,
-          published: newPublished
-        });
-      }
-
       setStatusMessage({
         type: 'success',
         text: newPublished
-          ? `✅ تم نشر المقالة (${article.title}) بنجاح! جاري إرسال أمر البناء لـ GitHub Actions لتسجيلها في الـ Sitemap والصفحات الثابتة.`
-          : `ℹ️ تم إلغاء نشر المقالة (${article.title}) وسحبها من الـ Sitemap.`
+          ? `✅ تم نشر المقالة (${article.title}) بنجاح!`
+          : `ℹ️ تم إلغاء نشر المقالة (${article.title}).`
       });
     } catch (err: any) {
       console.error('Error toggling article publication:', err);
@@ -542,144 +514,24 @@ export default function AdminDashboard() {
       const baseSlug = doctor.slug || doctor.username || (doctor.fullName ? doctor.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : doctor.id);
       const derivedSlug = baseSlug || doctor.id;
 
-      // Reserve the public slug atomically before publishing any records.
-      // This prevents two administrators from publishing different doctors at
-      // the same public URL.
-      await runTransaction(db, async (transaction) => {
-        const slugRef = doc(db, 'slugs', derivedSlug);
-        const slugSnapshot = await transaction.get(slugRef);
-        if (slugSnapshot.exists() && slugSnapshot.data().uid !== doctor.id) {
-          throw new Error(`The public slug "${derivedSlug}" is already in use.`);
-        }
-        transaction.set(slugRef, {
-          uid: doctor.id,
-          slug: derivedSlug,
-          updatedAt: nowIso,
-        }, { merge: true });
-      });
-
-      // 1. Update Firestore User Document
-      await setDoc(doc(db, 'users', doctor.id), {
-        status: 'published',
-        active: true,
-        slug: derivedSlug,
-        username: derivedSlug,
-        hasUnreviewedChanges: false,
-        publishedAt: nowIso,
-        adminNotes: '',
-        rejectionReason: null,
-        updatedAt: nowIso
-      }, { merge: true });
-
-      // Mirror to portfolios collection
-      try {
-        await setDoc(doc(db, 'portfolios', doctor.id), {
-          status: 'published',
-          active: true,
-          slug: derivedSlug,
-          username: derivedSlug,
-          hasUnreviewedChanges: false,
-          publishedAt: nowIso,
-          updatedAt: nowIso
-        }, { merge: true });
-      } catch (pErr) {
-        console.warn('Mirror portfolios update error:', pErr);
-      }
-
-      await setDoc(doc(db, 'published_portfolios', doctor.id), {
-        ...doctor,
-        uid: doctor.id,
-        status: 'published',
-        active: true,
-        slug: derivedSlug,
-        username: derivedSlug,
-        publishedAt: nowIso,
-        updatedAt: nowIso,
-      }, { merge: true });
-
-      // 2. Update Publication Document
-      await setDoc(doc(db, 'publications', doctor.id), {
-        uid: doctor.id,
-        slug: derivedSlug,
-        status: 'approved',
-        approved: true,
-        approvedAt: nowIso,
-        approvedBy: adminUser?.email || 'admin',
-        updatedAt: nowIso
-      }, { merge: true });
-
-      // 3. Register Slug and update D1 Cloudflare Worker database
-      try {
-        await cloudflareApi.approveAdminDoctor(doctor.id, derivedSlug);
-      } catch (cfErr) {
-        console.warn('[AdminDashboard] Cloudflare approve sync warning:', cfErr);
-      }
+      // Single Atomic Backend Approval in Cloudflare Worker & D1
+      await cloudflareApi.approveAdminDoctor(doctor.id, derivedSlug);
 
       // Update Local State Optimistically
       setDoctors(prev => prev.map(d => d.id === doctor.id ? {
         ...d,
         status: 'published',
         active: true,
+        slug: derivedSlug,
+        username: derivedSlug,
         hasUnreviewedChanges: false,
         publishedAt: nowIso
       } : d));
 
-      // 4. Trigger Real Static HTML Generation on Server
-      let serverGenSuccess = false;
-      try {
-        const idToken = await adminUser?.getIdToken();
-        if (!idToken) throw new Error('Admin session is unavailable.');
-        const genRes = await fetch('/api/admin/generate-doctor-html', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${idToken}`,
-          },
-          body: JSON.stringify({
-            doctor: { ...doctor, slug: derivedSlug, username: derivedSlug },
-            cases: doctor.cases || []
-          })
-        });
-        if (genRes.ok) {
-          const genData = await genRes.json();
-          serverGenSuccess = genData.ok;
-          console.log('✅ Real static HTML generation result:', genData);
-        }
-      } catch (genErr) {
-        console.warn('Backend static generator call skipped or unavailable:', genErr);
-      }
-
-      // 5. Dispatch GitHub Action if PAT is provided
-      let ghResult: { ok: boolean; status?: number; error?: string } = { ok: true };
-      if (ghPat.trim()) {
-        ghResult = await dispatchGitHubAction('admin_approved', {
-          doctor_uid: doctor.id,
-          username: derivedSlug,
-          doctor_name: doctor.fullName || doctor.fullNameAr
-        });
-      }
-
-      if (serverGenSuccess) {
-        setStatusMessage({
-          type: 'success',
-          text: `🎉 تم اعتماد وتوليد صفحة HTML الحقيقية الثابتة بنجاح في /dr/${derivedSlug} وتحديث Sitemap وIndexNow فوراً! الرابط متاح ومفهرس الآن.`
-        });
-      } else if (!ghPat.trim()) {
-        setStatusMessage({
-          type: 'success',
-          text: `✅ تم اعتماد بورتفوليو د. ${doctor.fullName || doctor.fullNameAr} بنجاح في قاعدة البيانات وجاري حفظ الصفحات الثابتة.`
-        });
-      } else if (!ghResult.ok) {
-        setStatusMessage({
-          type: 'info',
-          text: `✅ تم اعتماد البورتفوليو في قاعدة البيانات بنجاح!\n⚠️ تنبيه GitHub: ${ghResult.status === 401 ? 'رمز GitHub PAT غير صالح أو منتهي (401 Bad credentials) - يرجى تجديده في تبويب GitHub Actions.' : `فشل استدعاء GitHub (${ghResult.error})`}`
-        });
-      } else {
-        setStatusMessage({
-          type: 'success',
-          text: `✅ تم اعتماد بورتفوليو د. ${doctor.fullName || doctor.fullNameAr} بنجاح! تم بناء الصفحة الثابتة والمقالات الأربع التلقائية.`
-        });
-      }
+      setStatusMessage({
+        type: 'success',
+        text: `🎉 تم اعتماد وتفعيل بورتفوليو د. ${doctor.fullName || doctor.fullNameAr} بنجاح! الرابط منشور ومتاح فوراً في /dr/${derivedSlug}.`
+      });
 
       setPreviewDoctor(null);
     } catch (err: any) {
@@ -733,15 +585,15 @@ export default function AdminDashboard() {
   const handleSaveGlobalSettings = async () => {
     setSavingSettings(true);
     try {
-      await setDoc(doc(db, 'settings', 'global'), {
+      await cloudflareApi.saveSettings('global', {
         ...globalSettings,
         updatedAt: new Date().toISOString(),
         updatedBy: adminUser?.email || 'admin'
-      }, { merge: true });
+      });
 
       setStatusMessage({
         type: 'success',
-        text: 'تم حفظ وتحديث الإعدادات والحدود العامة بنجاح، وتسري فوراً على جميع المستخدمين.'
+        text: 'تم حفظ وتحديث الإعدادات والحدود العامة بنجاح عبر الخادم السحابي وتسري فوراً.'
       });
     } catch (err: any) {
       setStatusMessage({ type: 'error', text: 'فشل حفظ الإعدادات: ' + err.message });

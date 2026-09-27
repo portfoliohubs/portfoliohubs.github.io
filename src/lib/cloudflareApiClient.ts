@@ -58,6 +58,17 @@ export const cloudflareApi = {
   getBlogOverrides() {
     return request<BlogOverride[]>('/api/blog');
   },
+  saveBlogArticle(slug: string, data: Record<string, unknown>) {
+    return request<{ ok: true; slug: string }>(`/api/blog/${encodeURIComponent(slug)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }, true);
+  },
+  deleteBlogArticle(slug: string) {
+    return request<{ ok: true }>(`/api/blog/${encodeURIComponent(slug)}`, {
+      method: 'DELETE',
+    }, true);
+  },
   getProfile(uid?: string) {
     return request<CloudflareEnvelope<PortfolioData>>(`/api/profile${uid ? `?uid=${encodeURIComponent(uid)}` : ''}`, {}, true);
   },

@@ -29,7 +29,8 @@ import {
   Check,
   Loader2,
   Sparkles,
-  Zap
+  Zap,
+  RefreshCw
 } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { cleanFirestoreData } from '../lib/firestoreUtils';
@@ -66,6 +67,7 @@ export default function Dashboard() {
   
   // Clinical Cases Subcollection State
   const [subcollectionCases, setSubcollectionCases] = useState<ClinicalCase[]>([]);
+  const [casesError, setCasesError] = useState<string | null>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isCasesActionLoading, setIsCasesActionLoading] = useState(false);
 
@@ -121,8 +123,10 @@ export default function Dashboard() {
         try {
           const cases = await fetchUserCases(currentUser.uid);
           setSubcollectionCases(cases);
-        } catch (casesErr) {
-          console.warn('Subcollection cases fetch note:', casesErr);
+          setCasesError(null);
+        } catch (casesErr: any) {
+          console.error('[Dashboard] Subcollection cases fetch error:', casesErr);
+          setCasesError(casesErr?.message || 'تعذر تحميل الحالات السريرية. يرجى التحقق من الاتصال وإعادة المحاولة.');
           setSubcollectionCases([]);
         }
 
@@ -1009,6 +1013,36 @@ export default function Dashboard() {
                   >
                     <MessageCircle className="h-3.5 w-3.5" />
                     <span>ترقية الباقة عبر واتساب</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Cases Loading Error Banner */}
+              {casesError && (
+                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-between text-xs font-medium">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{casesError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!user) return;
+                      setIsCasesActionLoading(true);
+                      try {
+                        const cases = await fetchUserCases(user.uid);
+                        setSubcollectionCases(cases);
+                        setCasesError(null);
+                      } catch (e: any) {
+                        setCasesError(e.message || 'فشلت إعادة محاولة تحميل الحالات.');
+                      } finally {
+                        setIsCasesActionLoading(false);
+                      }
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 transition flex items-center gap-1 shrink-0"
+                  >
+                    <RefreshCw className={`h-3 w-3 ${isCasesActionLoading ? 'animate-spin' : ''}`} />
+                    <span>إعادة المحاولة</span>
                   </button>
                 </div>
               )}

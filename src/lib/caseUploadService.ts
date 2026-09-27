@@ -70,14 +70,9 @@ export async function deleteClinicalCaseComplete(uid: string, caseId: string): P
 }
 
 export async function fetchUserCases(uid: string): Promise<ClinicalCase[]> {
-  try {
-    const rows = await cloudflareApi.getCases(uid);
-    return rows.map((row) => ('data' in row ? { ...(row.data as ClinicalCase), id: row.data.id || (row as any).id } : row as ClinicalCase))
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-  } catch (error) {
-    console.error('[fetchUserCases] Could not fetch cases:', error);
-    return [];
-  }
+  const rows = await cloudflareApi.getCases(uid);
+  return rows.map((row) => ('data' in row ? { ...(row.data as ClinicalCase), id: row.data.id || (row as any).id } : row as ClinicalCase))
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 }
 
 export async function reorderCasesInSubcollection(uid: string, orderedCases: ClinicalCase[]): Promise<void> {
