@@ -39,6 +39,9 @@ export default function PublicWebsite() {
         const response = await cloudflareApi.getPublishedWebsite(cleanSlug);
         if (active) {
           if (response?.data) {
+            if (response.data.active === false || response.data.status === 'suspended') {
+              throw new Error('This doctor website is currently inactive or suspended.');
+            }
             setWebsiteData(response.data);
           } else {
             throw new Error('This doctor website could not be found or is pending publication.');

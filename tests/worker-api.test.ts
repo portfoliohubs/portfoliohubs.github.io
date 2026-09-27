@@ -222,3 +222,54 @@ test('Worker promo redemption grants once per user and enforces the global limit
   assert.equal(JSON.parse(String(localDatabase.prepare('SELECT data_json FROM users WHERE uid = ?').get('promo-bob')?.data_json)).caseLimit, 3);
   assert.equal(localDatabase.prepare('SELECT COUNT(*) AS total FROM promo_redemptions WHERE code = ?').get('ONCE')?.total, 1);
 });
+
+test('GET /api/profile returns synthesized default schema (never 404) for newly registered doctor', async () => {
+  const newUserToken = await issueToken('brandnewdr@example.test', 'new-dr-123');
+  const response = await request('/api/profile', newUserToken);
+  assert.equal(response.status, 200);
+  const body = await response.json() as { uid: string; data: { email: string; title: string; caseLimit: number; status: string } };
+  assert.equal(body.uid, 'new-dr-123');
+  assert.equal(body.data.email, 'brandnewdr@example.test');
+  assert.equal(body.data.title, 'Dental Surgeon');
+  assert.equal(body.data.caseLimit, 3);
+  assert.equal(body.data.status, 'pending_review');
+});
+
+test('Cases CRUD and reordering operate atomically with sort_order and limit enforcement', async () => {
+  const drToken = await issueToken('casedr@example.test', 'case-dr-456');
+  
+  // 1. Add 3 cases
+  for (let i = 1; i <= 3; i++) {
+    const res = await request('/api/cases', drToken, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: `c-${i}`, title: `Case ${i}`, sortOrder: i - 1 }),
+    });
+    assert.equal(res.status, 200);
+  }
+
+  // 2. 4th case should be rejected by case limit (limit is 3 by default)
+  const fourthRes = await request('/api/cases', drToken, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: 'c-4', title: 'Case 4' }),
+  });
+  assert.equal(fourthRes.status, 403);
+
+  // 3. Reorder cases
+  const reorderRes = await request('/api/cases/reorder', drToken, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids: ['c-3', 'c-1', 'c-2'] }),
+  });
+  assert.equal(reorderRes.status, 200);
+
+  // 4. Retrieve ordered cases
+  const getCasesRes = await request('/api/cases', drToken);
+  assert.equal(getCasesRes.status, 200);
+  const cases = await getCasesRes.json() as Array<{ id: string; sort_order: number }>;
+  assert.equal(cases.length, 3);
+  assert.equal(cases[0].id, 'c-3');
+  assert.equal(cases[1].id, 'c-1');
+  assert.equal(cases[2].id, 'c-2');
+});

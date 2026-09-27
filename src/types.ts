@@ -129,7 +129,7 @@ export interface PortfolioData {
   certifications?: CertificationItem[];
 
   // Status & Settings
-  status: 'draft' | 'pending_review' | 'published' | 'approved' | 'rejected';
+  status: 'draft' | 'pending_review' | 'published' | 'approved' | 'rejected' | 'suspended';
   packageTier?: string;
   promoCode?: string;
   caseLimit?: number;

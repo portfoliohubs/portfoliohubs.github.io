@@ -81,10 +81,10 @@ export const cloudflareApi = {
       body: JSON.stringify(data),
     }, true);
   },
-  approveAdminDoctor(uid: string, slug: string) {
+  approveAdminDoctor(uid: string, slug: string, doctorData?: Record<string, unknown>) {
     return request<{ ok: true; uid: string; slug: string; publishedAt: string; doctor: PublishedWebsite }>(
       `/api/admin/doctors/${encodeURIComponent(uid)}/approve`,
-      { method: 'POST', body: JSON.stringify({ slug }) },
+      { method: 'POST', body: JSON.stringify({ slug, doctorData }) },
       true,
     );
   },

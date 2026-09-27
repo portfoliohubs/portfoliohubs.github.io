@@ -72,7 +72,7 @@ interface PortfolioRecord {
   packageTier?: string;
   caseLimit?: number;
   caseCount?: number;
-  status: 'draft' | 'pending_review' | 'published' | 'approved' | 'rejected';
+  status: 'draft' | 'pending_review' | 'published' | 'approved' | 'rejected' | 'suspended';
   active?: boolean;
   hasUnreviewedChanges?: boolean;
   adminNotes?: string;
@@ -511,13 +511,19 @@ export default function AdminDashboard() {
 
     try {
       const nowIso = new Date().toISOString();
-      const baseSlug = doctor.slug || doctor.username || (doctor.fullName ? doctor.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : doctor.id);
-      const derivedSlug = baseSlug || doctor.id;
+      const rawCandidate = doctor.slug || doctor.username || doctor.fullName || doctor.fullNameAr || doctor.id || 'doctor';
+      const cleanSlug = rawCandidate
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 60);
+      const derivedSlug = cleanSlug || `dr-${doctor.id.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 16) || 'portfolio'}`;
 
       // Single Atomic Backend Approval in Cloudflare Worker & D1
-      await cloudflareApi.approveAdminDoctor(doctor.id, derivedSlug);
+      await cloudflareApi.approveAdminDoctor(doctor.id, derivedSlug, doctor as unknown as Record<string, unknown>);
 
-      // Update Local State Optimistically
+      // Update Local State Optimistically & Refetch in background for 100% consistency
       setDoctors(prev => prev.map(d => d.id === doctor.id ? {
         ...d,
         status: 'published',
@@ -534,6 +540,8 @@ export default function AdminDashboard() {
       });
 
       setPreviewDoctor(null);
+      // Ensure backend data synchronization
+      fetchData().catch(err => console.warn('[AdminDashboard] Post-approval sync warning:', err));
     } catch (err: any) {
       console.error('Error approving doctor:', err);
       const isPerm = err?.message?.includes('permission') || err?.code === 'permission-denied';

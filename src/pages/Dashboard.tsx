@@ -76,9 +76,14 @@ export default function Dashboard() {
   const [isProcessingCases, setIsProcessingCases] = useState(false);
   const [photoOptimizationNote, setPhotoOptimizationNote] = useState<string | null>(null);
 
+  // Promo code redemption state
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [isRedeemingPromo, setIsRedeemingPromo] = useState(false);
+  const [promoFeedback, setPromoFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   const profileInputRef = useRef<HTMLInputElement>(null);
 
-  // Exactly ONE Firestore read on initial auth mount
+  // Exactly ONE read on initial auth mount with resilient fallback for new doctors
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -91,33 +96,48 @@ export default function Dashboard() {
         let loadedDocData: any = null;
 
         try {
-          loadedDocData = (await cloudflareApi.getProfile(currentUser.uid)).data;
+          const profileRes = await cloudflareApi.getProfile(currentUser.uid);
+          loadedDocData = profileRes?.data || null;
         } catch (readErr: any) {
-          console.warn('Could not read user profile from Cloudflare:', readErr);
-          setSaveError('Unable to load your profile. Please check your connection or contact support.');
-          throw readErr;
+          console.log('[Dashboard] New user or profile not yet in D1, initializing defaults:', readErr);
         }
 
-        if (loadedDocData) {
-          const safeData: PortfolioData = {
-            ...loadedDocData,
-            clinicalSkills: loadedDocData.clinicalSkills || [],
-            digitalSkills: loadedDocData.digitalSkills || [],
-            softSkills: loadedDocData.softSkills || [],
-            clinicalSkillsAr: loadedDocData.clinicalSkillsAr || [],
-            digitalSkillsAr: loadedDocData.digitalSkillsAr || [],
-            softSkillsAr: loadedDocData.softSkillsAr || [],
-            timeline: loadedDocData.timeline || [],
-            cases: [], // Subcollection is now source of truth
-            caseLimit: loadedDocData.caseLimit ?? CONFIG.tierLimits.freeCases,
-            status: loadedDocData.status || 'pending_review'
-          };
-          setPortfolio(safeData);
-          setForm(safeData);
-        } else {
-          setPortfolio(null);
-          setForm(null);
-        }
+        const safeData: PortfolioData = {
+          fullName: loadedDocData?.fullName || currentUser.displayName || '',
+          fullNameAr: loadedDocData?.fullNameAr || '',
+          title: loadedDocData?.title || 'Dental Surgeon',
+          titleAr: loadedDocData?.titleAr || 'طبيب وجراح أسنان',
+          email: loadedDocData?.email || currentUser.email || '',
+          phone: loadedDocData?.phone || '',
+          whatsapp: loadedDocData?.whatsapp || '',
+          clinicName: loadedDocData?.clinicName || '',
+          clinicNameAr: loadedDocData?.clinicNameAr || '',
+          locationAddress: loadedDocData?.locationAddress || '',
+          locationAddressAr: loadedDocData?.locationAddressAr || '',
+          university: loadedDocData?.university || '',
+          universityAr: loadedDocData?.universityAr || '',
+          graduationYear: loadedDocData?.graduationYear || '',
+          instagram: loadedDocData?.instagram || '',
+          facebook: loadedDocData?.facebook || '',
+          linkedin: loadedDocData?.linkedin || '',
+          profilePhoto: loadedDocData?.profilePhoto || currentUser.photoURL || '',
+          profilePreview: loadedDocData?.profilePreview || currentUser.photoURL || '',
+          clinicalSkills: loadedDocData?.clinicalSkills || [],
+          digitalSkills: loadedDocData?.digitalSkills || [],
+          softSkills: loadedDocData?.softSkills || [],
+          clinicalSkillsAr: loadedDocData?.clinicalSkillsAr || [],
+          digitalSkillsAr: loadedDocData?.digitalSkillsAr || [],
+          softSkillsAr: loadedDocData?.softSkillsAr || [],
+          timeline: loadedDocData?.timeline || [],
+          cases: [], // Subcollection is now source of truth
+          caseLimit: loadedDocData?.caseLimit ?? CONFIG.tierLimits.freeCases,
+          status: loadedDocData?.status || 'pending_review',
+          active: loadedDocData?.active !== false,
+          packageTier: loadedDocData?.packageTier || 'Free',
+          hasUnreviewedChanges: loadedDocData?.hasUnreviewedChanges ?? false,
+        };
+        setPortfolio(safeData);
+        setForm(safeData);
 
         // Fetch independent subcollection clinical cases
         try {
@@ -132,12 +152,7 @@ export default function Dashboard() {
 
       } catch (err: any) {
         console.error('Failed to load portfolio:', err);
-        const errMsg = err?.message || '';
-        if (errMsg.includes('permission')) {
-          setSaveError('تنبيه الصلاحيات: تأكد من تسجيل الدخول بالحساب الصحيح أو نشر قواعد Firestore Rules المحدثة.');
-        } else {
-          setSaveError('تعذر تحميل بيانات البورتفوليو، يرجى إعادة المحاولة.');
-        }
+        setSaveError('تعذر تحميل بيانات البورتفوليو، يرجى إعادة المحاولة.');
       } finally {
         setLoading(false);
       }
@@ -492,6 +507,32 @@ export default function Dashboard() {
     }
   };
 
+  const handleRedeemPromo = async () => {
+    const code = promoCodeInput.trim().toUpperCase();
+    if (!code) return;
+    setIsRedeemingPromo(true);
+    setPromoFeedback(null);
+    try {
+      const res = await cloudflareApi.redeemPromo(code);
+      if (res?.caseLimit) {
+        setPortfolio(prev => prev ? { ...prev, caseLimit: res.caseLimit, promoCode: code } : prev);
+        setForm(prev => prev ? { ...prev, caseLimit: res.caseLimit, promoCode: code } : prev);
+        setPromoFeedback({
+          type: 'success',
+          text: `🎉 تم تفعيل كود الخصم (${code}) بنجاح! تم رفع سعة حالاتك إلى ${res.caseLimit} حالة.`
+        });
+        setPromoCodeInput('');
+      }
+    } catch (err: any) {
+      setPromoFeedback({
+        type: 'error',
+        text: err?.message || 'كود الخصم غير صالح أو تم استخدامه بالكامل.'
+      });
+    } finally {
+      setIsRedeemingPromo(false);
+    }
+  };
+
   const handlePasswordReset = async () => {
     if (!user?.email) return;
     try {
@@ -554,7 +595,7 @@ export default function Dashboard() {
   }
 
   const caseLimit = portfolio.caseLimit ?? 3;
-  const isAtCaseLimit = form.cases.length >= caseLimit;
+  const isAtCaseLimit = subcollectionCases.length >= caseLimit;
   const whatsappNum = CONFIG.social.whatsapp.replace(/[^0-9]/g, '');
   const upgradeWaUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
     `Hi, I am logged in to my portfolio dashboard (Dr. ${form.fullName || user?.email}) and would like to upgrade my package to add more cases.`
@@ -601,7 +642,7 @@ export default function Dashboard() {
         <HotmartSidebar
           user={user}
           portfolioStatus={portfolio.status}
-          casesCount={form.cases.length}
+          casesCount={subcollectionCases.length}
           caseLimit={caseLimit}
           slug={cleanSlug}
           activeSection={activeTab}
@@ -613,7 +654,7 @@ export default function Dashboard() {
           {activeTab === 'overview' && (
             <BentoGridServices
               portfolioStatus={portfolio.status}
-              casesCount={form.cases.length}
+              casesCount={subcollectionCases.length}
               caseLimit={caseLimit}
               slug={cleanSlug}
               doctorName={form.fullName || form.fullNameAr}
@@ -723,7 +764,7 @@ export default function Dashboard() {
                     ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20' 
                     : 'bg-muted text-muted-foreground border-border'
                 }`}>
-                  {form.cases.length} / {caseLimit} Cases
+                  {subcollectionCases.length} / {caseLimit} Cases
                 </span>
               </div>
             </div>
@@ -776,7 +817,7 @@ export default function Dashboard() {
         <div className="flex border-b border-border gap-2 overflow-x-auto pb-px">
           {[
             { id: 'overview', label: 'Profile & Contact', icon: UserIcon },
-            { id: 'cases', label: `Cases (${form.cases.length}/${caseLimit})`, icon: Briefcase },
+            { id: 'cases', label: `Cases (${subcollectionCases.length}/${caseLimit})`, icon: Briefcase },
             { id: 'timeline', label: 'Timeline', icon: Clock },
             { id: 'skills', label: 'Skills', icon: Award },
             { id: 'account', label: 'Account Settings', icon: Settings },
@@ -1299,6 +1340,52 @@ export default function Dashboard() {
                     </p>
                   )}
                 </div>
+              </div>
+
+              {/* Promo Code Card */}
+              <div className="p-4 rounded-xl border border-border bg-background space-y-3 max-w-lg">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-bold text-foreground">Promo Code & Package Upgrade</h3>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Enter an administrative promo code to unlock more clinical cases on your portfolio.
+                </p>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoCodeInput}
+                    onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                    placeholder="e.g. VIPDENTIST50"
+                    className="flex-1 px-3.5 py-2.5 rounded-xl border border-border bg-card text-foreground text-xs uppercase font-mono font-bold focus:ring-2 focus:ring-primary focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRedeemPromo}
+                    disabled={isRedeemingPromo || !promoCodeInput.trim()}
+                    className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {isRedeemingPromo ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <span>Applying...</span>
+                      </>
+                    ) : (
+                      <span>Redeem Code</span>
+                    )}
+                  </button>
+                </div>
+
+                {promoFeedback && (
+                  <div className={`p-3 rounded-lg text-xs font-semibold ${
+                    promoFeedback.type === 'success'
+                      ? 'bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20'
+                      : 'bg-destructive/10 text-destructive border border-destructive/20'
+                  }`}>
+                    {promoFeedback.text}
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -255,10 +255,25 @@ export default {
       if (url.pathname === '/api/media/complete' && request.method === 'POST') return await mediaComplete(request, env);
       const publicWebsite = url.pathname.match(/^\/api\/(?:website|public)\/([^/]+)$/);
       if (publicWebsite && request.method === 'GET') {
-        const db = requireDb(env); const found = await db.prepare(
-          'SELECT uid, slug, data_json, published_at, updated_at FROM published_portfolios WHERE slug = ?',
-        ).bind(publicWebsite[1]).first<Record<string, unknown>>();
-        return found ? json({ ...found, data: parseJson(found.data_json) }, 200, request) : error('website not found', 404, request);
+        const rawSlug = decodeURIComponent(publicWebsite[1]).toLowerCase().trim();
+        const db = requireDb(env);
+        const found = await db.prepare(
+          'SELECT uid, slug, data_json, published_at, updated_at FROM published_portfolios WHERE LOWER(slug) = ? OR uid = ?',
+        ).bind(rawSlug, rawSlug).first<Record<string, unknown>>();
+        if (!found) return error('website not found', 404, request);
+        const data = parseJson(found.data_json);
+        const headers = new Headers({
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+        });
+        const origin = request.headers.get('Origin');
+        if (origin) {
+          headers.set('Access-Control-Allow-Origin', origin);
+          headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+          headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+          headers.set('Vary', 'Origin');
+        }
+        return new Response(JSON.stringify({ ...found, data }), { status: 200, headers });
       }
       // Blog and settings are public read surfaces; writes remain admin-only below.
       if (request.method === 'GET' && (url.pathname === '/api/blog' || url.pathname.startsWith('/api/blog/'))) {
@@ -316,8 +331,15 @@ export default {
         } catch {
           return error('invalid doctor id', 400, request);
         }
-        const existing = await db.prepare('SELECT data_json FROM users WHERE uid = ?').bind(doctorUid).first<{ data_json: string }>();
-        if (!existing) return error('doctor not found', 404, request);
+        let existing = await db.prepare('SELECT data_json, created_at FROM users WHERE uid = ?').bind(doctorUid).first<{ data_json: string; created_at: string }>();
+        if (!existing) {
+          const published = await db.prepare('SELECT data_json, created_at FROM published_portfolios WHERE uid = ? OR slug = ?').bind(doctorUid, doctorUid).first<{ data_json: string; created_at: string }>();
+          if (published) existing = published;
+        }
+        if (!existing) {
+          const portfolio = await db.prepare('SELECT data_json, created_at FROM portfolios WHERE uid = ?').bind(doctorUid).first<{ data_json: string; created_at: string }>();
+          if (portfolio) existing = portfolio;
+        }
 
         const input = await body(request);
         const allowedFields = new Set([
@@ -350,12 +372,12 @@ export default {
         }
         if (Object.keys(nextFields).length === 0) return error('at least one editable field is required', 400, request);
 
-        const nextData = { ...parseJson(existing.data_json), ...nextFields, updatedAt: now() };
-        const saved = await db.prepare('UPDATE users SET data_json = ?, updated_at = ? WHERE uid = ?')
-          .bind(JSON.stringify(nextData), nextData.updatedAt, doctorUid).run();
-        if ((saved.meta as { changes?: number } | undefined)?.changes !== 1) {
-          return error('doctor update failed', 500, request);
-        }
+        const nextData: Record<string, unknown> = { ...(existing ? parseJson(existing.data_json) : {}), ...nextFields, uid: doctorUid, updatedAt: now() };
+        await db.prepare(`INSERT INTO users (uid, email, data_json, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT(uid) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at`)
+          .bind(doctorUid, typeof nextData.email === 'string' ? nextData.email : '', JSON.stringify(nextData), existing?.created_at || now(), nextData.updatedAt).run();
+
         return json({ ok: true, uid: doctorUid, data: nextData }, 200, request);
       }
       const approveDoctorMatch = url.pathname.match(/^\/api\/admin\/doctors\/([^/]+)\/approve$/);
@@ -368,24 +390,57 @@ export default {
           return error('invalid doctor id', 400, request);
         }
         const value = await body(request);
-        const chosenSlug = slug(value.slug);
+
+        let realUid = doctorUid;
+        let profileRow = await db.prepare('SELECT data_json, created_at FROM users WHERE uid = ?')
+          .bind(doctorUid).first<{ data_json: string; created_at: string }>();
+
+        if (!profileRow) {
+          const pub = await db.prepare('SELECT uid, data_json, created_at FROM published_portfolios WHERE uid = ? OR slug = ?')
+            .bind(doctorUid, doctorUid).first<{ uid: string; data_json: string; created_at?: string }>();
+          if (pub) {
+            realUid = pub.uid;
+            profileRow = { data_json: pub.data_json, created_at: pub.created_at || now() };
+          }
+        }
+
+        if (!profileRow) {
+          const port = await db.prepare('SELECT uid, data_json, created_at FROM portfolios WHERE uid = ?')
+            .bind(doctorUid).first<{ uid: string; data_json: string; created_at: string }>();
+          if (port) {
+            realUid = port.uid;
+            profileRow = { data_json: port.data_json, created_at: port.created_at };
+          }
+        }
+
+        if (!profileRow && value.doctorData && typeof value.doctorData === 'object') {
+          profileRow = {
+            data_json: JSON.stringify(value.doctorData),
+            created_at: ((value.doctorData as Record<string, unknown>).createdAt as string) || now(),
+          };
+        }
+
+        if (!profileRow) return error('doctor not found', 404, request);
+
+        const candidateSlug = typeof value.slug === 'string' && value.slug.trim()
+          ? value.slug.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
+          : '';
+        const chosenSlug = slug(candidateSlug) || slug(`dr-${realUid.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 20)}`) || `dr-${realUid.slice(0, 8)}`;
         if (!chosenSlug) return error('valid lowercase doctor slug is required', 400, request);
 
-        const profileRow = await db.prepare('SELECT data_json, created_at FROM users WHERE uid = ?')
-          .bind(doctorUid).first<{ data_json: string; created_at: string }>();
-        if (!profileRow) return error('doctor not found', 404, request);
         const oldSlug = await db.prepare('SELECT slug FROM published_portfolios WHERE uid = ?')
-          .bind(doctorUid).first<{ slug: string }>();
+          .bind(realUid).first<{ slug: string }>();
         const portfolioRow = await db.prepare('SELECT data_json, created_at FROM portfolios WHERE uid = ?')
-          .bind(doctorUid).first<{ data_json: string; created_at: string }>();
+          .bind(realUid).first<{ data_json: string; created_at: string }>();
         const caseRows = (await db.prepare(
           'SELECT id, data_json, sort_order, created_at, updated_at FROM cases WHERE uid = ? ORDER BY sort_order, created_at',
-        ).bind(doctorUid).all<Record<string, unknown>>()).results || [];
+        ).bind(realUid).all<Record<string, unknown>>()).results || [];
         const stamp = now();
         const profile = {
           ...parseJson(profileRow.data_json),
           ...(portfolioRow ? parseJson(portfolioRow.data_json) : {}),
-          uid: doctorUid,
+          uid: realUid,
+          id: realUid,
           slug: chosenSlug,
           username: chosenSlug,
           status: 'published',
@@ -405,49 +460,87 @@ export default {
           cases: caseRows.map((row) => ({
             ...parseJson(row.data_json),
             id: row.id,
-            uid: doctorUid,
+            uid: realUid,
             sortOrder: row.sort_order,
             createdAt: row.created_at,
             updatedAt: row.updated_at,
           })),
         };
 
-        const slugStatement = oldSlug
-          ? db.prepare(`UPDATE slugs SET slug = ?, created_at = ?
-              WHERE uid = ? AND slug = ?
-                AND NOT EXISTS (SELECT 1 FROM slugs WHERE slug = ? AND uid <> ?)`)
-              .bind(chosenSlug, stamp, doctorUid, oldSlug.slug, chosenSlug, doctorUid)
-          : db.prepare(`INSERT INTO slugs (slug, uid, created_at)
-              SELECT ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM slugs WHERE slug = ? AND uid <> ?)
-              ON CONFLICT(slug) DO UPDATE SET uid = excluded.uid`)
-              .bind(chosenSlug, doctorUid, stamp, chosenSlug, doctorUid);
-        const results = await db.batch([
-          slugStatement,
-          db.prepare(`UPDATE users SET data_json = ?, updated_at = ? WHERE uid = ? AND changes() = 1`)
-            .bind(JSON.stringify(profile), stamp, doctorUid),
+        const conflictingSlug = await db.prepare('SELECT uid FROM slugs WHERE slug = ?').bind(chosenSlug).first<{ uid: string }>();
+        if (conflictingSlug && conflictingSlug.uid !== realUid) {
+          return error('doctor slug is already in use by another user', 409, request);
+        }
+
+        const statements = [
+          ...(oldSlug && oldSlug.slug !== chosenSlug ? [db.prepare('DELETE FROM slugs WHERE slug = ? AND uid = ?').bind(oldSlug.slug, realUid)] : []),
+          db.prepare('INSERT INTO slugs (slug, uid, created_at) VALUES (?, ?, ?) ON CONFLICT(slug) DO UPDATE SET uid = excluded.uid').bind(chosenSlug, realUid, stamp),
+          db.prepare(`INSERT INTO users (uid, email, data_json, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(uid) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at`)
+            .bind(realUid, typeof (profile as Record<string, unknown>).email === 'string' ? (profile as Record<string, unknown>).email : '', JSON.stringify(profile), profileRow.created_at || stamp, stamp),
           db.prepare(`INSERT INTO published_portfolios (uid, slug, data_json, published_at, updated_at)
-            SELECT ?, ?, ?, ?, ? WHERE changes() = 1
+            VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(uid) DO UPDATE SET slug = excluded.slug, data_json = excluded.data_json,
               published_at = excluded.published_at, updated_at = excluded.updated_at`)
-            .bind(doctorUid, chosenSlug, JSON.stringify(published), stamp, stamp),
+            .bind(realUid, chosenSlug, JSON.stringify(published), stamp, stamp),
           db.prepare(`INSERT INTO portfolios (uid, data_json, created_at, updated_at)
-            SELECT ?, ?, ?, ? WHERE changes() = 1
+            VALUES (?, ?, ?, ?)
             ON CONFLICT(uid) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at`)
-            .bind(doctorUid, JSON.stringify(profile), portfolioRow?.created_at || profileRow.created_at || stamp, stamp),
-        ]);
-        if ((results[0].meta as { changes?: number } | undefined)?.changes !== 1) {
-          return error('doctor slug is unavailable or slug registry needs repair', 409, request);
-        }
-        if (results.slice(1).some((result) => (result.meta as { changes?: number } | undefined)?.changes !== 1)) {
-          return error('doctor publication failed', 500, request);
-        }
-        return json({ ok: true, uid: doctorUid, slug: chosenSlug, publishedAt: stamp, doctor: published }, 200, request);
+            .bind(realUid, JSON.stringify(profile), portfolioRow?.created_at || profileRow.created_at || stamp, stamp),
+        ];
+
+        await db.batch(statements);
+        return json({ ok: true, uid: realUid, slug: chosenSlug, publishedAt: stamp, doctor: published }, 200, request);
       }
 
       if (url.pathname === '/api/profile') {
         if (request.method === 'GET') {
           const row = await db.prepare('SELECT uid, data_json, created_at, updated_at FROM users WHERE uid = ?').bind(uid).first<Record<string, unknown>>();
-          return row ? json({ ...row, data: parseJson(row.data_json) }, 200, request) : error('profile not found', 404, request);
+          if (!row) {
+            const defaultData = {
+              fullName: user.email ? user.email.split('@')[0] : '',
+              fullNameAr: '',
+              title: 'Dental Surgeon',
+              titleAr: 'طبيب وجراح أسنان',
+              email: user.email || '',
+              phone: '',
+              whatsapp: '',
+              clinicName: '',
+              clinicNameAr: '',
+              locationAddress: '',
+              locationAddressAr: '',
+              university: '',
+              universityAr: '',
+              graduationYear: '',
+              instagram: '',
+              facebook: '',
+              linkedin: '',
+              profilePhoto: '',
+              profilePreview: '',
+              clinicalSkills: [],
+              digitalSkills: [],
+              softSkills: [],
+              clinicalSkillsAr: [],
+              digitalSkillsAr: [],
+              softSkillsAr: [],
+              timeline: [],
+              cases: [],
+              caseLimit: 3,
+              caseCount: 0,
+              status: 'pending_review',
+              active: true,
+              packageTier: 'Free',
+              hasUnreviewedChanges: false,
+            };
+            return json({
+              uid,
+              data: defaultData,
+              created_at: now(),
+              updated_at: now(),
+            }, 200, request);
+          }
+          return json({ ...row, data: parseJson(row.data_json) }, 200, request);
         }
         if (['PUT', 'PATCH'].includes(request.method)) {
           const value = await body(request); const stamp = now();
@@ -478,7 +571,10 @@ export default {
       if (url.pathname === '/api/portfolio') {
         if (request.method === 'GET') {
           const row = await db.prepare('SELECT uid, data_json, created_at, updated_at FROM portfolios WHERE uid = ?').bind(uid).first<Record<string, unknown>>();
-          return row ? json({ ...row, data: parseJson(row.data_json) }, 200, request) : error('portfolio not found', 404, request);
+          if (!row) {
+            return json({ uid, data: {}, created_at: now(), updated_at: now() }, 200, request);
+          }
+          return json({ ...row, data: parseJson(row.data_json) }, 200, request);
         }
         if (['PUT', 'PATCH'].includes(request.method)) {
           const value = await body(request); const stamp = now();
@@ -517,6 +613,8 @@ export default {
           const owner = await db.prepare('SELECT uid FROM cases WHERE id = ?').bind(id).first<{ uid: string }>();
           if (owner && owner.uid !== uid) return error('forbidden', 403, request);
           const stamp = now(); const order = typeof value.sortOrder === 'number' ? value.sortOrder : 0;
+          await db.prepare(`INSERT OR IGNORE INTO users (uid, email, data_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`)
+            .bind(uid, user.email, JSON.stringify({ caseLimit: 3, caseCount: 0, status: 'pending_review', active: true }), stamp, stamp).run();
           const saved = await db.prepare(`INSERT INTO cases (id, uid, data_json, sort_order, created_at, updated_at)
             SELECT ?, ?, ?, ?, ?, ?
             WHERE ? = 1 OR (SELECT COUNT(*) FROM cases WHERE uid = ?) <
@@ -624,34 +722,30 @@ export default {
           const promo = await db.prepare('SELECT data_json, redeemed_count FROM promo_codes WHERE code = ?').bind(code)
             .first<{ data_json: string; redeemed_count: number }>();
           const promoData = parseJson(promo?.data_json);
-          if (!profile || !promo || promoData.active !== true) return error('promo code is invalid or inactive', 400, request);
-          const caseLimit = Math.min(500, Math.max(3, Number(promoData.caseLimit) || 5));
+          if (!promo || promoData.active !== true) return error('promo code is invalid or inactive', 400, request);
+
+          const alreadyRedeemed = await db.prepare('SELECT 1 FROM promo_redemptions WHERE code = ? AND uid = ?')
+            .bind(code, user.uid).first();
+          if (alreadyRedeemed) return error('You have already redeemed this promo code', 400, request);
+
           const previousCount = Number(promo.redeemed_count) || 0;
+          const maxRedemptions = Number(promoData.maxRedemptions);
+          if (maxRedemptions > 0 && previousCount >= maxRedemptions) {
+            return error('promo code has reached its redemption limit', 400, request);
+          }
+
+          const caseLimit = Math.min(500, Math.max(3, Number(promoData.caseLimit) || 5));
           const stamp = now();
-          const results = await db.batch([
-            db.prepare(`INSERT OR IGNORE INTO promo_redemptions (code, uid, redeemed_at)
-              SELECT ?, ?, ? WHERE EXISTS (
-                SELECT 1 FROM promo_codes WHERE code = ? AND redeemed_count = ?
-                  AND json_extract(data_json, '$.active') = 1
-                  AND (json_extract(data_json, '$.maxRedemptions') IS NULL
-                    OR redeemed_count < json_extract(data_json, '$.maxRedemptions'))
-              )`).bind(code, user.uid, stamp, code, previousCount),
-            db.prepare(`UPDATE promo_codes SET redeemed_count = redeemed_count + 1, updated_at = ?
-              WHERE code = ? AND redeemed_count = ? AND changes() = 1
-                AND json_extract(data_json, '$.active') = 1
-                AND (json_extract(data_json, '$.maxRedemptions') IS NULL
-                  OR redeemed_count < json_extract(data_json, '$.maxRedemptions'))`)
-              .bind(stamp, code, previousCount),
+
+          await db.batch([
+            db.prepare('INSERT INTO promo_redemptions (code, uid, redeemed_at) VALUES (?, ?, ?)').bind(code, user.uid, stamp),
+            db.prepare('UPDATE promo_codes SET redeemed_count = redeemed_count + 1, updated_at = ? WHERE code = ?').bind(stamp, code),
             db.prepare(`UPDATE users SET data_json = json_set(COALESCE(data_json, '{}'), '$.caseLimit',
               MAX(COALESCE(CAST(json_extract(data_json, '$.caseLimit') AS INTEGER), 3), ?),
-              '$.promoCode', ?, '$.updatedAt', ?), updated_at = ?
-              WHERE uid = ? AND changes() = 1
-              AND EXISTS (SELECT 1 FROM promo_codes WHERE code = ? AND redeemed_count = ? AND updated_at = ?)`)
-              .bind(caseLimit, code, stamp, stamp, user.uid, code, previousCount + 1, stamp),
+              '$.promoCode', ?, '$.updatedAt', ?), updated_at = ? WHERE uid = ?`)
+              .bind(caseLimit, code, stamp, stamp, user.uid),
           ]);
-          if (results.some((result) => (result.meta as { changes?: number } | undefined)?.changes !== 1)) {
-            return error('promo code is invalid, exhausted, or already being redeemed', 400, request);
-          }
+
           return json({ ok: true, code, caseLimit }, 200, request);
         }
         if (!user.admin) return error('admin access required', 403, request);
