@@ -1,4 +1,6 @@
-const CACHE_NAME = 'portfoliohubs-cache-v2';
+const CACHE_NAME = 'portfoliohubs-v4-cache';
+const JSDELIVR_CACHE_NAME = 'portfoliohubs-jsdelivr-images-v1';
+
 const ASSETS_TO_CACHE = [
   '/',
   './index.html',
@@ -22,7 +24,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys
+          .filter((key) => key !== CACHE_NAME && key !== JSDELIVR_CACHE_NAME)
+          .map((key) => caches.delete(key))
       );
     })
   );
@@ -31,51 +35,59 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  
-  // Skip cross-origin or chrome-extension or analytics requests
-  if (!event.request.url.startsWith(self.location.origin)) {
+  const url = event.request.url;
+
+  // 1. CacheFirst Strategy for jsDelivr CDN (Images & Assets)
+  if (url.includes('cdn.jsdelivr.net')) {
+    event.respondWith(
+      caches.open(JSDELIVR_CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                cache.put(event.request, networkResponse.clone());
+              }
+              return networkResponse;
+            })
+            .catch(() => {
+              // Network failed and not in cache
+              return new Response('', { status: 408, statusText: 'Offline CDN Asset' });
+            });
+        });
+      })
+    );
     return;
   }
 
-  // Never let a stale/offline cache layer hide authenticated application errors.
-  if (event.request.mode === 'navigate' && new URL(event.request.url).pathname.startsWith('/admin')) {
+  // Skip other cross-origin or chrome-extension requests
+  if (!url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  // Never cache admin authenticated route
+  if (event.request.mode === 'navigate' && new URL(url).pathname.startsWith('/admin')) {
     event.respondWith(fetch(event.request));
     return;
   }
 
+  // 2. Stale-While-Revalidate Strategy for same-origin assets
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch in background to update cache (stale-while-revalidate)
-        fetch(event.request).then((networkResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, networkResponse.clone());
             });
           }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
           return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return networkResponse;
-      }).catch(() => {
-        // Offline fallback for navigation
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html').then((fallback) => fallback || new Response('', {
-            status: 503,
-            statusText: 'Offline',
-          }));
-        }
-        return new Response('', { status: 503, statusText: 'Network unavailable' });
-      });
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
     })
   );
 });

@@ -101,6 +101,16 @@ export default function ContextAwareChatbot() {
 
   // 3. Determine Context Node based on Route & Active Step
   const currentContextNode = useMemo((): ChatbotNode => {
+    if (location.startsWith('/dsd')) {
+      const dsdNode = CHATBOT_DECISION_TREE.contextualNodes.find(n => n.id === 'ctx-dsd');
+      if (dsdNode) return dsdNode;
+    }
+
+    if (location.startsWith('/motiongraphic') || location.startsWith('/motion')) {
+      const motionNode = CHATBOT_DECISION_TREE.contextualNodes.find(n => n.id === 'ctx-motion');
+      if (motionNode) return motionNode;
+    }
+
     if (location.startsWith('/portfolio') || location.startsWith('/website')) {
       if (activeStep) {
         const matched = CHATBOT_DECISION_TREE.contextualNodes.find(

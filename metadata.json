@@ -1,8 +1,6 @@
 {
-  "name": "Remix PortfolioHubs new build ",
+  "name": "PortfolioHubs",
   "description": "Dental portfolio and professional CV platform for dentists and dental students with PWA support, interactive dashboards, and multi-format exports.",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

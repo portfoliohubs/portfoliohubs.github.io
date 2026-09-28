@@ -211,40 +211,64 @@ export default function BentoGridServices({
           </div>
         </div>
 
-        {/* Auxiliary Bento Card: Clinical Cases Limit & Counter */}
-        <div className="md:col-span-6 rounded-2xl border border-border bg-card p-5 shadow-xs flex flex-col justify-between">
+        {/* Auxiliary Bento Card: DSD Studio */}
+        <div className="md:col-span-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-brand/10 text-brand">
-                <ImageIcon className="h-4 w-4" />
+              <div className="p-2 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                <Sparkles className="h-4 w-4" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-foreground">حد حالات الأسنان المجاني</h4>
-                <p className="text-[11px] text-muted-foreground">حتى 3 حالات مجاناً مع ضغط الويب الذكي</p>
+                <h4 className="text-sm font-bold text-foreground">استوديو تصميم الابتسامة (DSD Studio)</h4>
+                <p className="text-[11px] text-muted-foreground">النسبة الذهبية (1.618) ودليل ألوان Vita BL1-A3 بدقة 4K</p>
               </div>
             </div>
-            <span className="text-xs font-black text-brand px-2.5 py-1 rounded-lg bg-brand/10">
-              {casesCount} / 3 حالات
+            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+              جديد V4
             </span>
           </div>
 
           <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-            تُحسن الصور آلياً لضمان سرعة فائقة وجودة متناهية مع إمكانية توثيق التشخيص والعلاج والتصنيف المهني.
+            أدوات رسم ومحاذاة هندسية، 20 قالباً لشكل الأسنان، ومنزلق مقارنة قبل وبعد مع تصدير عالي الدقة.
           </p>
 
-          <div className="flex items-center justify-between pt-3 border-t border-border/60 text-xs">
-            <span className="text-muted-foreground">هل ترغب في توثيق حالات أكثر؟</span>
-            <a
-              href={`https://wa.me/201271476215?text=${encodeURIComponent(
-                `مرحباً، أنا د. ${doctorName || 'طبيب الأسنان'}، أود ترقية باقة حالات الأسنان غير المحدودة في PortfolioHubs.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-brand font-bold hover:underline inline-flex items-center gap-1"
-            >
-              <span>طلب ترقية الباقة</span>
-              <ArrowRight className="h-3 w-3 rotate-180" />
-            </a>
+          <div className="pt-3 border-t border-indigo-500/20">
+            <Link href="/dsd">
+              <button className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer">
+                <Sparkles className="h-4 w-4" />
+                <span>فتح استوديو DSD Smile Design</span>
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Auxiliary Bento Card: Motion Graphic Studio */}
+        <div className="md:col-span-6 rounded-2xl border border-purple-500/20 bg-purple-500/5 p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-lg bg-purple-500/15 text-purple-600 dark:text-purple-400">
+                <ImageIcon className="h-4 w-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-foreground">استوديو الموشن جرافيك (Reel Studio)</h4>
+                <p className="text-[11px] text-muted-foreground">توليد مقاطع فيديو ريلز 9:16 لحالات الأسنان</p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20">
+              جديد V4
+            </span>
+          </div>
+
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+            تحريك الحالات السريرية بقوالب ليزر قبل وبعد وتكبير سينمائي مع هوية الطبيب وتصدير فيديو فوري.
+          </p>
+
+          <div className="pt-3 border-t border-purple-500/20">
+            <Link href="/motiongraphic">
+              <button className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer">
+                <span>فتح استوديو Motion Reel Studio</span>
+              </button>
+            </Link>
           </div>
         </div>
 

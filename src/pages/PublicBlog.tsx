@@ -14,7 +14,8 @@ import {
   User,
   Calendar
 } from 'lucide-react';
-import { cloudflareApi } from '../lib/cloudflareApiClient';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import Header from '../components/Header';
 import { INITIAL_BLOG_ARTICLES, BLOG_CATEGORIES, BlogArticle } from '../data/blogArticlesData';
 
@@ -29,26 +30,19 @@ export default function PublicBlog() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
 
-  // Fetch published statuses from Cloudflare Worker API
+  // Fetch published statuses from Firestore `blog_articles`
   useEffect(() => {
     async function loadPublishedStatus() {
       try {
         const map: Record<string, { published: boolean; publishedAt?: string }> = {};
-        try {
-          const articles = await cloudflareApi.getBlogOverrides();
-          articles.forEach((article) => {
-            const data = article.data || {};
-            map[article.slug] = {
-              published: Boolean(data.published),
-              publishedAt: (typeof data.publishedAt === 'string' ? data.publishedAt : article.published_at || '') || ''
-            };
-          });
-        } catch (apiError) {
-          console.warn('[PublicBlog] Note: using default blog state:', apiError);
-        }
+        const snap = await getDocs(collection(db, 'blog_articles'));
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          map[docSnap.id] = { published: Boolean(data.published), publishedAt: data.publishedAt || '' };
+        });
         setPublishedArticlesMap(map);
       } catch (err) {
-        console.warn('[PublicBlog] Error loading articles:', err);
+        console.warn('Could not fetch blog_articles from Firestore (using defaults):', err);
       } finally {
         setLoading(false);
       }

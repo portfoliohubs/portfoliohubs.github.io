@@ -7,9 +7,8 @@ import {
   signInWithPopup, 
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../lib/firebase';
-import { uploadBatchResilient } from '../lib/storageHelper';
-import { cloudflareApi } from '../lib/cloudflareApiClient';
+import { auth, db } from '../lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import CONFIG from '../config';
 
 export default function Login() {
@@ -44,96 +43,21 @@ export default function Login() {
         const draftStr = sessionStorage.getItem('portfolio_draft');
         if (draftStr) {
           const draft = JSON.parse(draftStr);
-          
-          // Prepare parallel upload batch for profile and cases
-          const uploadItems: Array<{ key: string; dataUrl: string; path: string }> = [];
-          if (draft.profilePhoto && draft.profilePhoto.startsWith('data:image')) {
-            uploadItems.push({
-              key: 'profile',
-              dataUrl: draft.profilePhoto,
-              path: `profile_${Date.now()}.jpg`
-            });
-          }
 
-          if (draft.cases && Array.isArray(draft.cases)) {
-            draft.cases.forEach((c: any, i: number) => {
-              if (c.photo && c.photo.startsWith('data:image')) {
-                uploadItems.push({
-                  key: `case_${i}`,
-                  dataUrl: c.photo,
-                  path: `cases/${Date.now()}_${i}.jpg`
-                });
-              }
-            });
-          }
-
-          const uploadResults = await uploadBatchResilient(user.uid, uploadItems);
-
-          if (uploadResults['profile']) {
-            draft.profilePhoto = uploadResults['profile'];
-            draft.profilePreview = uploadResults['profile'];
-          }
-
-          if (draft.cases && Array.isArray(draft.cases)) {
-            draft.cases = draft.cases.map((c: any, i: number) => {
-              const photoUrl = uploadResults[`case_${i}`] || c.photo;
-              return {
-                ...c,
-                photo: photoUrl,
-                preview: photoUrl
-              };
-            });
-          }
-
-          const caseLimit = 3;
-
-          const payload = {
+          // Save user profile directly to Firestore
+          const userDocRef = doc(db, 'users', user.uid);
+          await setDoc(userDocRef, {
             ...draft,
             uid: user.uid,
-            service,
             email: user.email || draft.email || '',
-            status: 'pending_review',
-            isApproved: false,
-            caseLimit: caseLimit,
-            active: true,
-            hasUnreviewedChanges: true,
-            paymentConfirmed: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            submittedAt: new Date().toISOString(),
-          };
-
-          await cloudflareApi.saveProfile(payload, user.uid);
-          await cloudflareApi.savePortfolio(payload, user.uid);
-
-          // Also save subcollection cases if present
-          if (draft.cases && Array.isArray(draft.cases)) {
-            for (let i = 0; i < draft.cases.length; i++) {
-              const c = draft.cases[i];
-              const caseId = c.id || `case_${Date.now()}_${i}`;
-              try {
-                await cloudflareApi.saveCase({
-                  ...c,
-                  id: caseId,
-                  uid: user.uid,
-                  sortOrder: i,
-                  updatedAt: new Date().toISOString(),
-                }, user.uid);
-              } catch (err) {
-                console.warn('Error saving case subcollection:', err);
-              }
-            }
-          }
+            updatedAt: serverTimestamp(),
+          }, { merge: true });
 
           sessionStorage.removeItem('portfolio_draft');
-
-          const phone = CONFIG.social.whatsapp.replace(/[^0-9]/g, '');
-          const msg = encodeURIComponent(`Hi, I have just completed my portfolio registration and selected the ${draft.packageTier || 'Free'} package. I'd like to arrange payment.`);
-          window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
         }
       }
 
-      setLocation(service === 'website' ? '/dashboard' : `/${service}`);
+      setLocation(service === 'website' ? '/website' : `/${service}`);
     } catch (e: any) {
       setError(e.message || 'Error during post-auth setup');
     }

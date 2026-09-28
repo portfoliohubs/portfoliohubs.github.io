@@ -27,6 +27,44 @@ export const CHATBOT_DECISION_TREE: DecisionTree = {
   // 1. Contextual Nodes (Triggered based on current route/step)
   contextualNodes: [
     {
+      id: 'ctx-dsd',
+      routePattern: '/dsd',
+      keywords: ['dsd', 'ابتسامة', 'ابتسامه', 'smile', 'design', 'golden', 'vita', 'اسنان', 'teeth'],
+      titleAr: 'مساعد استوديو تصميم الابتسامة الرقمي (DSD Studio)',
+      responseAr: `أهلاً بك يا دكتور في استوديو تصميم الابتسامة الرقمي (DSD Studio V4)! 🦷✨
+
+إليك أهم الأدوات والميزات التي يمكنك استخدامها مباشرة داخل المتصفح بجودة 4K:
+📐 **شبكة النسبة الذهبية (Golden Ratio 1.618):** لضبط تناسق عرض الأسنان الأمامية بدقة هندسية عالمية.
+🎯 **النقاط التشريحية (12 Landmarks):** تحديد خط الوسط الوجهي، زوايا الشفاه، ومنحنى الابتسامة (Smile Arc Curve).
+🦷 **مكتبة قوالب الأسنان (Tooth Library):** 20 شكلاً وتصنيفاً مختلفاً (Hollywood Square, Natural Oval, Youthful Triangular).
+🎨 **دليل الألوان العالمي (Vita Shade Scale):** تدرجات التبييض الفائقة BL1/BL2 وألوان الأسنان الطبيعية A1-A3.
+⚖️ **سلايدر المقارنة الفورية (Before/After):** للمعاينة قبل وبعد التصميم بدون الحاجة لبرامج خارجية.
+💾 **تصدير فوري بدقة فائقة 4K:** حفظ التصميم بصيغة PNG أو JPG بجودة طباعة ومشاركة للمريض والمعمل.`,
+      suggestedActions: [
+        { labelAr: 'تطبيق قالب هوليوود للأسنان الستة', actionType: 'query', payload: 'كيف أطبق قالب هوليوود سمايل الجاهز؟' },
+        { labelAr: 'طريقة تصدير الصورة بجودة 4K', actionType: 'query', payload: 'كيف أصدر الصورة بجودة 4K؟' },
+        { labelAr: 'الذهاب إلى استوديو الموشن جرافيك', actionType: 'navigate', payload: '/motiongraphic' },
+      ]
+    },
+    {
+      id: 'ctx-motion',
+      routePattern: '/motiongraphic',
+      keywords: ['motion', 'فيديو', 'ريلز', 'reel', 'video', 'انيميشن', 'تيك توك', 'انستغرام'],
+      titleAr: 'مساعد استوديو الموشن جرافيك الطبي (Motion Studio)',
+      responseAr: `مرحباً بك يا دكتور في استوديو الموشن جرافيك لحالات الأسنان! 🎬✨
+
+هذا الاستوديو يحول صور حالاتك السريرية إلى مقاطع فيديو ريلز احترافية بأبعاد 9:16 (1080x1920) بدون الحاجة إلى برامج مونتاج معقدة:
+🎞️ **قوالب قبل وبعد التفاعلية (Before/After Laser Wipe):** مسح ليزري انسيابي يكشف التحول التجميلي للابتسامة.
+🔍 **قالب الزوم السينمائي (Macro Zoom & Text Reveal):** تقريب سينمائي عالي الدقة لإبراز تفاصيل الفينير واللمعان.
+✍️ **طبقات النصوص الاحترافية:** إضافة اسم الطبيب، الإجراء العلاجي، واسم المركز الطبي بخطوط طبية عصرية.
+📹 **تسجيل وتصدير مباشر في المتصفح:** يتم توليد فيديو WebM بمعدل 30 إطار في الثانية وبدون استهلاك لسيرفر أو انتظار.`,
+      suggestedActions: [
+        { labelAr: 'بدء تسجيل فيديو Reel للحالة', actionType: 'query', payload: 'كيف أسجل وأحفظ الفيديو؟' },
+        { labelAr: 'الذهاب لتصميم الابتسامة DSD', actionType: 'navigate', payload: '/dsd' },
+        { labelAr: 'تحديث بيانات موقعي الشخصي', actionType: 'navigate', payload: '/website' },
+      ]
+    },
+    {
       id: 'ctx-portfolio-intro',
       routePattern: '/portfolio',
       stepPattern: 'intro',

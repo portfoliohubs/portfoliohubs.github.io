@@ -1,11 +1,6 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // =========================================================================
-    // ADMIN VERIFICATION LOGIC
-    // =========================================================================
     function isAdmin() {
       return request.auth != null
         && request.auth.token.email_verified == true
@@ -15,92 +10,54 @@ service cloud.firestore {
           'portfoliohubs.contact@gmail.com'
         ];
     }
-
-    // Helper: Checks if the user is authenticated and matches the owner UID
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
 
-    // =========================================================================
-    // 1. DOCTOR PROFILE DATA (/users/{uid})
-    // =========================================================================
+    // Users
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       allow write: if isOwner(uid) || isAdmin();
-
-      // Clinical cases subcollection
       match /cases/{caseId} {
-        allow read: if isOwner(uid) || isAdmin();
-        allow write: if isOwner(uid) || isAdmin();
-      }
-
-      // Temporary pending uploads
-      match /pending_uploads/{uploadId} {
         allow read, write: if isOwner(uid) || isAdmin();
       }
     }
 
-    // =========================================================================
-    // 2. BLOG ARTICLES (/blog_articles/{slug})
-    // =========================================================================
-    match /blog_articles/{slug} {
+    // Published websites (public read)
+    match /published_websites/{slug} {
       allow read: if true;
+      allow write: if isAdmin() || (request.auth != null && request.resource.data.uid == request.auth.uid);
+    }
+
+    // Promo codes (admin only write, user can read own redemption)
+    match /promo_codes/{code} {
+      allow read: if isAdmin();
       allow write: if isAdmin();
     }
-
-    // =========================================================================
-    // 3. PUBLICATION & REVIEW STATUS (/publications/{uid})
-    // =========================================================================
-    match /publications/{uid} {
-      allow read: if true;
-      allow write: if isOwner(uid) || isAdmin();
+    match /promo_redemptions/{docId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
     }
 
-    // =========================================================================
-    // 4. SLUG REGISTRY (/slugs/{slug})
-    // =========================================================================
-    match /slugs/{slug} {
-      allow read: if true;
-      allow create: if isAdmin() && request.resource.data.uid != null;
-      allow update: if isAdmin() && request.resource.data.uid == resource.data.uid;
-      allow delete: if isAdmin();
-    }
-
-    // =========================================================================
-    // 5. ADMIN ALLOWLIST (/admins/{email})
-    // =========================================================================
-    match /admins/{email} {
-      allow read: if request.auth != null && (request.auth.token.email == email || isAdmin());
-      allow write: if isAdmin();
-    }
-
-    // =========================================================================
-    // 6. GLOBAL SETTINGS (/settings/{docId})
-    // =========================================================================
+    // Settings (public read, admin write)
     match /settings/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // =========================================================================
-    // 7. PORTFOLIOS & PACKAGES (Backward Compatibility)
-    // =========================================================================
-    match /portfolios/{uid} {
+    // Tenants (for website service)
+    match /tenants/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       allow write: if isOwner(uid) || isAdmin();
     }
-    match /published_portfolios/{uid} {
+    match /sites/{slug} {
       allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /packages/{tier} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // Legacy promo records are admin-only; active redemption is handled by the Worker.
-    match /promo_codes/{code} {
-      allow read, create, update, delete: if isAdmin();
+      allow write: if isAdmin() || (request.auth != null && request.resource.data.tenantId == request.auth.uid);
+      match /cases/{caseId} {
+        allow read: if true;
+        allow write: if isAdmin() || (request.auth != null && get(/databases/$(database)/documents/sites/$(slug)).data.tenantId == request.auth.uid);
+      }
     }
   }
 }
