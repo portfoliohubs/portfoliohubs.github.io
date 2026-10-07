@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Smika — الصفحة انتقلت</title>
+
+    <!--
+      ملف 404: لا يُستدعى إلا عند مسار غير موجود فعلًا على النطاق القديم.
+      صفحات الأطباء المنشورة في مستودعاتها الخاصة لا تصل هنا أبدًا، لأن مستودعها
+      يقدّم صفحته بنفسه. النتيجة: من يفتح رابطًا قديمًا مكسورًا يذهب إلى المكان
+      الصحيح على smika.app بدل أن يقع في صفحة خطأ.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href="https://smika.app/" />
+    <meta name="robots" content="noindex, follow" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #011017;
+        color: #ffffff;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        text-align: center;
+        padding: 24px;
+      }
+      a { color: #0ab4fc; font-weight: 700; }
+      p { line-height: 1.9; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>انتقلنا إلى عنوان جديد</h1>
+      <p>
+        نوجّهك الآن إلى المكان الصحيح. إن لم يحدث ذلك، استخدم:
+        <a id="fallback" href="https://smika.app/">smika.app</a>
+      </p>
+    </main>
+    <script>
+      (function () {
+        var target = 'https://smika.app/';
+        var path = (window.location.pathname || '/').replace(/\/+$/, '');
+
+        // روابط قديمة معروفة داخل المنصة: تُنقل إلى مكافئها مباشرة.
+        var exact = {
+          '/': '/',
+          '/website': '/website',
+          '/cv': '/cv',
+          '/dsd': '/dsd',
+          '/motion': '/motiongraphic',
+          '/motiongraphic': '/motiongraphic',
+          '/portfolio': '/portfolio',
+          '/blog': '/blog',
+          '/docs': '/docs',
+          '/pricing': '/pricing',
+          '/contact': '/contact',
+          '/about': '/platform',
+          '/status': '/status'
+        };
+
+        if (path.indexOf('/dr/') === 0) {
+          // صفحات الأطباء بصيغة المسار القديم: نفس الاسم على العنوان الجديد.
+          target = 'https://smika.app/#' + path;
+        } else if (exact[path] !== undefined) {
+          target = 'https://smika.app/#' + exact[path];
+        } else {
+          target = 'https://smika.app/';
+        }
+
+        document.getElementById('fallback').href = target;
+        var meta = document.createElement('meta');
+        meta.httpEquiv = 'refresh';
+        meta.content = '0; url=' + target;
+        document.head.appendChild(meta);
+
+        try {
+          window.location.replace(target + window.location.hash);
+        } catch (e) {
+          window.location.href = target;
+        }
+      })();
+    </script>
+  </body>
+</html>
