@@ -1,7 +1,0 @@
-Contact: mailto:portfoliohubs.contact@gmail.com
-Preferred-Languages: en, ar
-Canonical: https://portfoliohubs.github.io/.well-known/security.txt
-Policy: https://portfoliohubs.github.io/privacy
-Hiring: https://portfoliohubs.github.io/contact
-Acknowledgments: https://portfoliohubs.github.io/about
-Expires: 2027-12-31T23:59:59.000Z
